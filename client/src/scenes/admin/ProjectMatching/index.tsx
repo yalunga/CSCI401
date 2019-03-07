@@ -52,6 +52,9 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
 
   componentDidMount() {
     this.setState({isLoading: false});
+    fetch('http://' + window.location.hostname + ':8080/projects/assignment-retrieve')
+      .then(response => response.json())
+      .then(data => this.setState({projects: data}));
   }
 
   launch = () => {
@@ -82,6 +85,7 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
   }
 
   render() {
+
     const isLoading = this.state.isLoading;
     const isLaunched = this.state.isLaunched;
     const projects = this.state.projects;
@@ -119,7 +123,7 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
       </div>
     );
 
-    if (!isLaunched) {
+    if (!isLaunched && !projects.length) {
       return header;
     }
 
