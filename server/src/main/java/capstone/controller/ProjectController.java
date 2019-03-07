@@ -216,6 +216,13 @@ public class ProjectController
 		return projectService.runAlgorithm();
 	}
 	
+	@GetMapping("/assignment-retrieve")
+	@CrossOrigin
+	public List<Project> retrieveProjectAssignment()
+	{
+		return projectService.getExistingAssignments();
+	}
+	
 	@GetMapping("/assignment/exists")
 	public String assignmentExists() {
 		List<Project> existing = projectService.getExistingAssignments();
