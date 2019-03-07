@@ -12,10 +12,11 @@ import javax.persistence.Transient;
 import capstone.model.Project;
 
 @Entity
-public class Student extends User {
-	
+public class Student extends User 
+{
 	public String uscid; // only valid if userType = Student
-	public String semester;
+	public int semester;
+	public int fallSpring;
 	
 	@OneToOne(targetEntity=Project.class)
 	Project project;
@@ -38,6 +39,8 @@ public class Student extends User {
 		this.project = orig.project;
 		this.rankings = orig.rankings;
 		this.orderedRankings = orig.orderedRankings;
+		this.semester = orig.semester;
+		this.fallSpring = orig.fallSpring;
 	}
 
 	public String toString() {

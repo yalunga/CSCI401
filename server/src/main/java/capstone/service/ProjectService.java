@@ -12,11 +12,12 @@ import java.util.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import capstone.model.AdminConfiguration;
+import capstone.model.Global;
 import capstone.model.Project;
 import capstone.model.Ranking;
 import capstone.model.users.Student;
 import capstone.repository.AdminConfigurationRepository;
+import capstone.repository.GlobalRepository;
 import capstone.repository.ProjectsRepository;
 import capstone.repository.RankingRepository;
 import capstone.util.EncryptPassword;
@@ -32,6 +33,8 @@ public class ProjectService {
 	public RankingRepository rankRepo;
 	@Autowired
 	AdminConfigurationRepository configRepo;
+	@Autowired
+	GlobalRepository globalRepo;
 	
 	private ProjectAssignment maxAlgorithm;
 	private static String folder_name = "src/main/java/capstone/algorithm/real_data";
@@ -43,14 +46,22 @@ public class ProjectService {
 	public List<Project> runAlgorithm() {
 		
 		for (int iteration = 0; iteration < 30; iteration++) {
+			Global g = globalRepo.findAll().get(0);
+			int targetSemester = g.getSemester();
+			int targetFallSpring = g.getFallSpring();
 			ArrayList<Project> projects = new ArrayList<>();
 			ArrayList<Student> students = new ArrayList<>();
-			
 			for (Project p : findAll()) {
-				projects.add(new Project(p));
+				if (p.getSemester() == targetSemester && p.getFallSpring() == targetFallSpring)
+				{
+					projects.add(new Project(p));
+				}
 			}
 			for (Student s : userService.getStudents()) {
-				students.add(new Student(s));
+				if (s.semester == targetSemester && s.fallSpring == targetFallSpring)
+				{
+					students.add(new Student(s));
+				}
 			}
 			
 			List<Ranking> rankings = rankRepo.findAll();

@@ -46,10 +46,11 @@ public class Project implements Comparable<Object> {
 		public void setMembers(List<Student> members) {
 			this.members = members;
 		}
-
+		
 		@JsonIgnore
 		@Transient
 		String statusType; // not in db table
+		int fallSpring;
 		int semester;
 		int maxSize;
 		int minSize;
@@ -167,6 +168,14 @@ public class Project implements Comparable<Object> {
 			this.semester = semester;
 		}
 
+		public int getFallSpring() {
+			return fallSpring;
+		}
+
+		public void setFallSpring(int fallSpring) {
+			this.fallSpring = fallSpring;
+		}
+		
 		public int getMaxSize() {
 			return maxSize;
 		}
@@ -247,6 +256,8 @@ public class Project implements Comparable<Object> {
 			this.statusId = orig.statusId;
 			this.minSize = orig.minSize;
 			this.maxSize = orig.maxSize;
+			this.fallSpring = orig.fallSpring;
+			this.semester = orig.semester;
 		}
 		
 		public double returnProjSatScore() {

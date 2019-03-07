@@ -1,7 +1,9 @@
 package capstone.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -17,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import capstone.model.Global;
 import capstone.model.RegisteredStudentEmail;
 import capstone.model.users.Admin;
 import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
 import capstone.model.users.User;
+import capstone.repository.GlobalRepository;
 import capstone.repository.RegisteredStudentEmailRepository;
 import capstone.service.EmailService;
 import capstone.service.UserService;
@@ -39,6 +43,8 @@ public class UserController
 	@Autowired
 	private RegisteredStudentEmailRepository regRepo;
 	@Autowired
+	private GlobalRepository globalRepo;
+	@Autowired
 	private EmailService emailService;
 	
 	public UserController()
@@ -54,14 +60,44 @@ public class UserController
 		admin.setEmail("admin@usc.edu");
 		admin.setPassword(EncryptPassword.encryptPassword("admin"));
 		userService.saveUser(admin);
+		
+		Global global = new Global();
+		global.setFallSpring(1);
+		global.setSemester(2019);
+		globalRepo.save(global);
+		
+		Global tempGlobal = globalRepo.findAll().get(0);
 		return Constants.SUCCESS;
+		
+		
 	}
 	
 	@GetMapping("")
 	@CrossOrigin
 	public Collection<User> getUsers()
 	{
-		return userService.getUsers();
+		Global g = globalRepo.findAll().get(0);
+		int targetSemester = g.getSemester();
+		int targetFallSpring = g.getFallSpring();
+		List<User> users = (List<User>) userService.getUsers();
+		List<User> validUsers = new ArrayList<User>();
+		for (User user : users)
+		{
+			if (user.getUserType().equals("Student"))
+			{
+				Student student = (Student) user;
+				if (student.semester == targetSemester && student.fallSpring == targetFallSpring)
+				{
+					validUsers.add(student);
+				}
+			}
+			else
+			{
+				validUsers.add(user);
+			}
+		}
+		return validUsers;
+		//return userService.getUsers();
 	}
 	
 	@GetMapping("/{email:.+}")
@@ -81,7 +117,21 @@ public class UserController
 	@GetMapping("/students")
 	@CrossOrigin
 	public Collection<Student> getStudents() {
-		return userService.getStudents(); 
+		Global g = globalRepo.findAll().get(0);
+		int targetSemester = g.getSemester();
+		int targetFallSpring = g.getFallSpring();
+		List<Student> students = (List<Student>) userService.getStudents();
+		List<Student> validStudents = new ArrayList<Student>();
+		for (Student student : students)
+		{
+			if (student.semester == targetSemester && student.fallSpring == targetFallSpring)
+			{
+				validStudents.add(student);
+			}
+			
+		}
+		return validStudents;
+		//userService.getStudents(); 
 	}
 	
 	@PostMapping("/update-info")
@@ -158,6 +208,8 @@ public class UserController
 		if (userService.findStudentByEmail(email) == null) {
 			Student s = new Student();
 			s.setFirstName(name);
+			s.semester = globalRepo.findAll().get(0).getSemester();
+			s.fallSpring = globalRepo.findAll().get(0).getFallSpring();
 			s.setLastName(lastName);
 			s.setEmail(email);
 			s.setPhone(phone);

@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import capstone.model.Global;
 import capstone.model.Project;
 import capstone.model.Ranking;
 import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
 import capstone.model.users.User;
+import capstone.repository.GlobalRepository;
 import capstone.service.ProjectService;
 import capstone.service.UserService;
 import capstone.util.Constants;
@@ -32,6 +34,8 @@ public class ProjectController
 	private ProjectService projectService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private GlobalRepository globalRepo;
 	
 	public ProjectController()
 	{
@@ -51,21 +55,70 @@ public class ProjectController
 	@CrossOrigin
 	public List<Project> getProjects()
 	{
-		return projectService.findAll();
+		Global g = globalRepo.findAll().get(0);
+		int targetSemester = g.getSemester();
+		int targetFallSpring = g.getFallSpring();
+		List<Project> projects = (List<Project>) projectService.findAll();
+		List<Project> validProjects = new ArrayList<Project>();
+		for (Project project : projects)
+		{
+			if (project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
+			{
+				validProjects.add(project);
+			}
+			
+		}
+		return validProjects;
+		//return projectService.findAll();
 	}
 	
 	@GetMapping("/{email:.+}/rankOrdered")
 	@CrossOrigin
 	public List<Project> getRankOrderedProjects(@PathVariable("email") String email)
 	{
+		//Global g = globalRepo.findAll().get(0);
+		Student student = (Student) userService.findUserByEmail(email);
+		int targetSemester = student.semester;
+		int targetFallSpring = student.fallSpring;
+	
 		List<Project> projects = projectService.findAll();
 		List<Ranking> rankings = projectService.rankRepo.findAll();
 		List<Project> orderedProjects = new ArrayList<Project>(5);
-		orderedProjects.add(null);
-		orderedProjects.add(null);
-		orderedProjects.add(null);
-		orderedProjects.add(null);
-		orderedProjects.add(null);
+		
+		if(!rankings.isEmpty())
+		{
+			boolean hasStudent = false;
+			
+			for(Ranking ranking : rankings)
+			{
+				long studentID = ranking.getStudentId();
+				long userID = userService.findUserByEmail(email).getUserId();
+				if(studentID == userID)
+				{
+					hasStudent = true;
+					break;
+				}
+			}
+			
+			if(hasStudent)
+			{
+				if(projects.size() >= 5)
+				{
+					orderedProjects.add(null);
+					orderedProjects.add(null);
+					orderedProjects.add(null);
+					orderedProjects.add(null);
+					orderedProjects.add(null);
+				}
+				else
+				{
+					for(int i = 0; i < projects.size(); i++)
+					{
+						orderedProjects.add(null);
+					}
+				}
+			}
+		}
 
 		for(Ranking ranking : rankings)
 		{
@@ -83,7 +136,10 @@ public class ProjectController
 			boolean isInList = orderedProjects.contains(project);
 			if(!isInList)
 			{
-				orderedProjects.add(project);
+				if(project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
+				{
+					orderedProjects.add(project);
+				}
 			}
 		}
 		
@@ -219,6 +275,8 @@ public class ProjectController
 		System.out.println(project);
 		System.out.println(project.getProjectName());
 		project.setStatusId(1);
+		project.setSemester(globalRepo.findAll().get(0).getSemester());
+		project.setFallSpring(globalRepo.findAll().get(0).getFallSpring());
 		User user = userService.findUserByEmail(email);
 	    projectService.save(project);
 	    userService.saveProject(user, project);
