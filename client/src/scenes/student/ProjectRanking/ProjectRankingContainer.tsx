@@ -160,24 +160,44 @@ class ProjectRankingContainer extends React.Component<Props, State> {
                                 </Button>
                             </Col>
                         </Row>
+                        <br/>
+                        <Row>
+                            <Col lg={3} style={{width: 10, fontSize: 23}}>
+                            1
+                            <br/>
+                            <br/>
+                            2
+                            <br/>
+                            <br/>
+                            3
+                            <br/>
+                            <br/>
+                            4
+                            <br/>
+                            <br/>
+                            5
+                            </Col>
+                            <Col lg={1}>
+                                {projectCards.map((projectCard: Project, index: number) => (
+                                    <ProjectCard
+                                        key={projectCard.projectId}
+                                        rank={index + 1}
+                                        id={projectCard.projectId}
+                                        name={projectCard.projectName}
+                                        minSize={projectCard.minSize}
+                                        maxSize={projectCard.maxSize}
+                                        technologies={projectCard.technologies}
+                                        background={projectCard.background}
+                                        description={projectCard.description}
+                                        moveCard={this.moveCard}
+                                        findCard={this.findCard}
+                                    />
+                                ))}
+                            </Col>
+                        </Row>
                     </Grid>
                 </div>
                 <br />
-                {projectCards.map((projectCard: Project, index: number) => (
-                    <ProjectCard
-                        key={projectCard.projectId}
-                        rank={index + 1}
-                        id={projectCard.projectId}
-                        name={projectCard.projectName}
-                        minSize={projectCard.minSize}
-                        maxSize={projectCard.maxSize}
-                        technologies={projectCard.technologies}
-                        background={projectCard.background}
-                        description={projectCard.description}
-                        moveCard={this.moveCard}
-                        findCard={this.findCard}
-                    />
-                ))}
             </div>
         );
     }
