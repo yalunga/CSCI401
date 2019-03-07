@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import capstone.model.Project;
+import capstone.model.Ranking;
 import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
 import capstone.model.users.User;
@@ -51,6 +52,42 @@ public class ProjectController
 	public List<Project> getProjects()
 	{
 		return projectService.findAll();
+	}
+	
+	@GetMapping("/{email:.+}/rankOrdered")
+	@CrossOrigin
+	public List<Project> getRankOrderedProjects(@PathVariable("email") String email)
+	{
+		List<Project> projects = projectService.findAll();
+		List<Ranking> rankings = projectService.rankRepo.findAll();
+		List<Project> orderedProjects = new ArrayList<Project>(5);
+		orderedProjects.add(null);
+		orderedProjects.add(null);
+		orderedProjects.add(null);
+		orderedProjects.add(null);
+		orderedProjects.add(null);
+
+		for(Ranking ranking : rankings)
+		{
+			long studentID = ranking.getStudentId();
+			long userID = userService.findUserByEmail(email).getUserId();
+			if(studentID == userID)
+			{
+				int index = ranking.getRank() - 1;
+				orderedProjects.set(index, projectService.findByProjectId(ranking.getProjectId()));
+			}
+		}
+		
+		for(Project project : projects)
+		{
+			boolean isInList = orderedProjects.contains(project);
+			if(!isInList)
+			{
+				orderedProjects.add(project);
+			}
+		}
+		
+		return orderedProjects;
 	}
 	
 	// Get all projects that a stakeholder owns
@@ -156,6 +193,13 @@ public class ProjectController
 	@CrossOrigin
 	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Integer> projects) {
 		User user = userService.findUserByEmail(email);
+		List<Ranking> rankings = projectService.rankRepo.findAll();
+		for (Ranking rank : rankings) {
+			Student student = null;
+				if (user.getUserId() == rank.getStudentId()) {
+					projectService.rankRepo.delete(rank.getRankingId());
+				}
+			}
 		for (int rank = 1; rank <= 5; rank++) {
 			projectService.saveRanking(projects.get(rank-1), user.getUserId(), rank);
 		}

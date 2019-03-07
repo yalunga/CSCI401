@@ -68,37 +68,41 @@ class ProjectRankingContainer extends React.Component<Props, State> {
     }
 
     submitClicked() {
-        var submit = confirm('Are you sure you want to submit rankings?');
-        if (submit) {
-            var request = new XMLHttpRequest();
-            request.withCredentials = true;
-            request.open('POST', 'http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/submit-ranking');
-            request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-            /*var data = JSON.stringify({
-            project1: this.state.projectCards[0].projectName,
-            project2: this.state.projectCards[1].projectName,
-            project3: this.state.projectCards[2].projectName,
-            project4: this.state.projectCards[3].projectName,
-            project5: this.state.projectCards[4].projectName
-            });*/
-            
-            this.state.projectCards.map((project: Project) => (
-                this.state.rankingData.push(project.projectId)
-            ));
-            var data = JSON.stringify(
-               this.state.rankingData
-            );
-            request.setRequestHeader('Cache-Control', 'no-cache');
-            request.send(data);
-            alert('Project rankings have been submitted!');
-            this.setState({submitted: true});
-        }
+        // var submit = confirm('Are you sure you want to submit rankings?');
+        // if (submit) {
+        var request = new XMLHttpRequest();
+        request.withCredentials = true;
+        // yo this ain't submit. it's save
+        request.open('POST', 'http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/submit-ranking');
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        /*var data = JSON.stringify({
+        project1: this.state.projectCards[0].projectName,
+        project2: this.state.projectCards[1].projectName,
+        project3: this.state.projectCards[2].projectName,
+        project4: this.state.projectCards[3].projectName,
+        project5: this.state.projectCards[4].projectName
+        });*/
+        
+        this.state.projectCards.map((project: Project) => (
+            this.state.rankingData.push(project.projectId)
+        ));
+        var data = JSON.stringify(
+            this.state.rankingData
+        );
+        request.setRequestHeader('Cache-Control', 'no-cache');
+        request.send(data);
+        alert('project rankings have been saved!');
+        this.setState({submitted: true});
+        // }
     }
 
     componentDidMount() {
         this.setState({isLoading: true});
    
-        fetch('http://' + window.location.hostname + ':8080/projects')
+        // fetch('http://' + window.location.hostname + ':8080/projects')
+        //     .then(response => response.json())
+        //     .then(data => this.setState({projectCards: data, isLoading: false}));        
+        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/rankOrdered')
             .then(response => response.json())
             .then(data => this.setState({projectCards: data, isLoading: false}));
     }
@@ -128,15 +132,15 @@ class ProjectRankingContainer extends React.Component<Props, State> {
         const { connectDropTarget } = this.props;
         const {projectCards, isLoading, submitted} = this.state;
 
-        if (submitted) {
-            return (
-                <div style={style as any}>
-                    <div style={{width: 600}}>
-                        You have already submitted your rankings.
-                    </div>
-                </div>
-            );
-        }
+        // if (submitted) {
+        //     return (
+        //         <div style={style as any}>
+        //             <div style={{width: 600}}>
+        //                 You have already submitted your rankings.
+        //             </div>
+        //         </div>
+        //     );
+        // }
 
         if (isLoading) {
             return <p>Loading...</p>;
@@ -156,7 +160,7 @@ class ProjectRankingContainer extends React.Component<Props, State> {
                             </Col>
                             <Col lg={2}>
                                 <Button bsStyle="primary" onClick={this.submitClicked}>
-                                    Submit Rankings
+                                    Save Rankings
                                 </Button>
                             </Col>
                         </Row>

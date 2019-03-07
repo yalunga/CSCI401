@@ -29,7 +29,7 @@ public class ProjectService {
 	@Autowired
 	UserService userService;
 	@Autowired
-	RankingRepository rankRepo;
+	public RankingRepository rankRepo;
 	@Autowired
 	AdminConfigurationRepository configRepo;
 	

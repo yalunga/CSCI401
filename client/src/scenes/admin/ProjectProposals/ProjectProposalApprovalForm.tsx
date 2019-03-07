@@ -72,11 +72,13 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         } else if (type === 4) {
             request.open('POST', 'http://' + window.location.hostname + ':8080/projects/change/' + projectId);
         }
-        
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        request.setRequestHeader('Cache-Control', 'no-cache');
         request.send();
-    }
+
+        // request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        // request.setRequestHeader('Cache-Control', 'no-cache');
+        alert(request.responseText + 'changed project state'); 
+        window.location.reload();
+}
 
     editProject(index: number, project: Project) {
         this.setState({
