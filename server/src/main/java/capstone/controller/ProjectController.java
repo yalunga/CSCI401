@@ -174,9 +174,17 @@ public class ProjectController
 	@GetMapping("/student/{email:.+}")
 	@CrossOrigin
 	public @ResponseBody Project getUserProject(@PathVariable("email") String email) {
-		Student user = (Student) userService.findUserByEmail(email);
-		System.out.println(user.getProject().getProjectName());
-		return user.getProject();
+		try
+		{
+			Student user = (Student) userService.findUserByEmail(email);
+			System.out.println(user.getProject().getProjectName());
+			return user.getProject();
+		}
+		catch(NullPointerException e)
+		{
+			System.out.println("NULL");
+			return null;
+		}
 	}
 	
 	/* Getting users from project information */

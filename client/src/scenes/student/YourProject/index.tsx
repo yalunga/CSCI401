@@ -14,6 +14,7 @@ interface ProjectState {
     students: Array<StudentInfo>;
     project: Project;
     isLoading: boolean;
+    projectAssigned: boolean;
   }
   
 interface User {
@@ -51,6 +52,7 @@ class StudentProject extends React.Component<ProjectProps, ProjectState> {
             students: [],
             project: {projectId: 0, projectName: '', members: []},
             isLoading: true,
+            projectAssigned: false
         };
     }
 
@@ -59,15 +61,18 @@ class StudentProject extends React.Component<ProjectProps, ProjectState> {
 
         await fetch('http://' + window.location.hostname + ':8080/projects/student/' + sessionStorage.getItem('email'))
             .then(response => response.json())
-            .then(data => this.setState({project: data, isLoading: false}));
+            .then(data => this.setState({project: data, isLoading: false, projectAssigned: true}))
+            .catch(error => {console.log('no project assigned', error); });
 
         await fetch('http://' + window.location.hostname + ':8080/projects/' + this.state.project.projectId + '/students')
             .then(response => response.json())
-            .then(data => this.setState({students: data}));
+            .then(data => this.setState({students: data}))
+            .catch(error => {console.log('no project assigned', error); });
 
         fetch('http://' + window.location.hostname + ':8080/projects/' + this.state.project.projectId + '/stakeholder')
             .then(response => response.json())
-            .then(data => this.setState({stakeholder: data}));
+            .then(data => this.setState({stakeholder: data}))
+            .catch(error => {console.log('no project assigned', error); });
 
 /*
         var request = new XMLHttpRequest();
@@ -95,12 +100,27 @@ class StudentProject extends React.Component<ProjectProps, ProjectState> {
     }
 
     render() {
+        if (!this.state.projectAssigned) {
+            return <h1>No Project Assigned</h1>;
+        }
+        
         return (
             <div>
             <Panel>
             <Panel.Heading>
                 <Panel.Title componentClass="h3">Overview</Panel.Title>
             </Panel.Heading>
+            <Panel>
+                <Panel.Heading>
+                    Actions
+                </Panel.Heading>
+                <Panel.Body>
+                    <Button>Submit Deliverable</Button>
+                    <Button href="./weeklyreport">Submit Weekly Status Report</Button>
+                    <Button href="./peerreview">Submit Peer Review Form</Button>
+                    <Button>Submit Stakeholder Review Form</Button>
+                </Panel.Body>
+            </Panel>
             <Panel.Body>
                 <h3>Project: {this.state.project.projectName}</h3>
                 <Panel>
@@ -157,18 +177,6 @@ class StudentProject extends React.Component<ProjectProps, ProjectState> {
                     </Panel.Body>
                 </Panel>
             </Panel.Body>
-            </Panel>
-
-            <Panel>
-                <Panel.Heading>
-                    Actions
-                </Panel.Heading>
-                <Panel.Body>
-                    <Button>Submit Deliverable</Button>
-                    <Button href="./weeklyreport">Submit Weekly Status Report</Button>
-                    <Button href="./peerreview">Submit Peer Review Form</Button>
-                    <Button>Submit Stakeholder Review Form</Button>
-                </Panel.Body>
             </Panel>
         </div>
         );
