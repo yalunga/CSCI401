@@ -3,8 +3,10 @@ package capstone.service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -237,12 +239,31 @@ public class ProjectService {
 	}
 
 	public List<Project> getExistingAssignments() {
-		/*AdminConfiguration ac = configRepo.findById(Long.valueOf(1));
-		if (ac == null) {
-			return null;
+		
+		Global g = globalRepo.findAll().get(0);
+		int fall_spring = g.getFallSpring();
+		int semester = g.getSemester();
+		
+		List<Project> allProjects = findAll();
+		List<Project> currentProjects = new ArrayList<Project>();
+		for(Project p: allProjects) {
+			if(p.getSemester() == semester && p.getFallSpring() == fall_spring) {
+				currentProjects.add(new Project(p));
+			}
 		}
-		System.out.println(ac.getAssignment());
-		return ac.getAssignment();*/
-		return savedProjects;
+		
+		Collection<Student> allStudents = userService.getStudents();
+		for(Iterator<Student> it = allStudents.iterator(); it.hasNext();) {
+			Student s = it.next();
+			for(Iterator<Project> itP = currentProjects.iterator(); itP.hasNext();) {
+				Project p = itP.next();
+				//p.members = new ArrayList<Student>();
+				if(p.getProjectId() == s.getProject().getProjectId()) {
+					System.out.println(s.getFirstName() + s.getProject().getProjectId());
+					(p.members).add(s);
+				}
+			}
+		}
+		return currentProjects;
 	}
 }
