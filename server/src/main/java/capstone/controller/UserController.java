@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 
@@ -270,6 +271,46 @@ public class UserController
 			System.out.println("Sent invite to: " + e);
 		}
 	}
+	
+	//allow password changes
+	@RequestMapping(value = "/password-reset",consumes= "application/json",produces= "application/json", method = RequestMethod.POST)
+	@CrossOrigin
+	public void studentPasswordReset(@RequestBody Map<String, String> emailsData)
+	{
+		System.out.println(emailsData);
+		System.out.println("Received HTTP POST");
+		
+		String email = emailsData.get(Constants.EMAIL);
+		
+		System.out.println(email);
+		
+		User user = userService.findUserByEmail(email);
+		
+		String newPassword = generateRandomPassword();
+		
+		user.setPassword(EncryptPassword.encryptPassword(newPassword));
+		userService.saveUser(user);
+		
+		// Send an email invitation
+		emailService.sendEmail("401 Platform Password Reset", "Here is your new password for the 401 project platform: " + newPassword, email);
+	
+	}
+	//generate password function
+	private String generateRandomPassword() {
+		int leftLimit = 97; // letter 'a'
+	    int rightLimit = 122; // letter 'z'
+	    int targetStringLength = 10;
+	    Random random = new Random();
+	    StringBuilder buffer = new StringBuilder(targetStringLength);
+	    for (int i = 0; i < targetStringLength; i++) {
+	        int randomLimitedInt = leftLimit + (int) 
+	          (random.nextFloat() * (rightLimit - leftLimit + 1));
+	        buffer.append((char) randomLimitedInt);
+	    }
+	    String generatedString = buffer.toString();
+	    return generatedString;
+	}
+	
 	
 	/* Login */
 	
