@@ -25,6 +25,7 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
         };
         this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.resetPassword = this.resetPassword.bind(this);
     }
     submitClicked() {
         { this.getToken( 
@@ -34,6 +35,21 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
             );
         }
     }
+
+    resetPassword() {
+        var request = new XMLHttpRequest();
+        var hostname = window.location.hostname;
+        request.withCredentials = true;
+        request.open('POST', 'http://' + hostname + ':8080/users/password-reset');
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        var data = JSON.stringify({
+            email: this.state.email,
+        });
+        request.setRequestHeader('Cache-Control', 'no-cache');
+        request.send(data);
+        alert('Password reset email sent.');
+    }
+
     getToken(callback: any) {
         var request = new XMLHttpRequest();
         var hostname = window.location.hostname;
@@ -114,6 +130,12 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
             <FormGroup>
                 <Col smOffset={2} sm={10}>
                 <Button type="reset" onClick={this.submitClicked}>Sign in</Button>
+                </Col>
+            </FormGroup>
+
+            <FormGroup>
+                <Col smOffset={2} sm={10}>
+                <Button type="reset" onClick={this.resetPassword}>Reset Password</Button>
                 </Col>
             </FormGroup>
 
