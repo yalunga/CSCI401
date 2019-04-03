@@ -16,6 +16,8 @@ projectSize: number;
 technologies: string;
 background: string;
 description: string;
+semester: number;
+fallSpring: number;
 }
 
 class ProposalForm extends React.Component<ProjectProps, ProjectState> {
@@ -26,7 +28,9 @@ constructor(props: ProjectProps) {
     projectSize: 0,
     technologies: '',
     background: '',
-    description: ''
+    description: '',
+    semester: 2019,
+    fallSpring: 0
     };
     this.submitClicked = this.submitClicked.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -44,6 +48,8 @@ constructor(props: ProjectProps) {
             technologies: this.state.technologies,
             background: this.state.background,
             description: this.state.description,
+            semester: this.state.semester,
+            fallSpring: this.state.fallSpring
         });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
@@ -65,6 +71,17 @@ constructor(props: ProjectProps) {
         });
         */
     }
+
+    handleChangeSelect(event: any) {
+        var val = event.target.value === '0' ? 0 : 1; 
+        this.setState({fallSpring: val});
+      }
+    
+      handleChangeText(event: any) {
+        console.log(event.target.value);
+        this.setState({semester: event.target.value});
+      }
+
     handleChange(e: any) {
     this.setState({ [e.target.id]: e.target.value });
 
@@ -146,6 +163,27 @@ constructor(props: ProjectProps) {
                     placeholder="Description"
                     onChange={e => this.handleChange(e)}
                 />
+                </Col>
+            </FormGroup>
+
+            <FormGroup>
+                <Col componentClass={ControlLabel} sm={2}>
+                    <b>Semester</b>
+                </Col> 
+                <Col sm={4}>
+                    <FormControl
+                        type="text"
+                        id="year"
+                        value={this.state.semester}
+                        placeholder="Year"
+                        onChange={e => this.handleChangeText(e)}
+                    />
+                </Col>
+                <Col sm={1}>
+                    <select style={{marginRight: '5px', marginTop: '7px'}} onChange={e => this.handleChangeSelect(e)}>
+                        <option value="0">Fall</option>
+                        <option value="1">Spring</option>
+                    </select>
                 </Col>
             </FormGroup>
 
