@@ -46,6 +46,14 @@ class StakeholderRegistrationForm extends React.Component<StakeholderRegistratio
         request.withCredentials = true;
         request.open('POST', 'http://' + window.location.hostname + ':8080/users/stakeholder-registration');
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        if (this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.phone === '' || this.state.confirm === '' || this.state.password === '') {
+            alert('Please fill in all the information.');
+            window.location.reload();
+        } 
+        if (this.state.firstName !== '' && this.state.lastName !== '' && this.state.email !== '' && this.state.phone !== '' && this.state.confirm !== '' && this.state.password !== '' && this.state.password !== this.state.confirm) {
+            alert('Your passwords do not match. Please try again.');
+            window.location.reload();
+        }
         var data = JSON.stringify({
             firstName: this.state.firstName,
             lastName: this.state.lastName,
