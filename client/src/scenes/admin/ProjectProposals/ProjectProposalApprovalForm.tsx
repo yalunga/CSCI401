@@ -139,7 +139,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
     componentDidMount() {
         this.setState({isLoading: true});
         
-        fetch('http://' + window.location.hostname + ':8080/projects')
+        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'))
             .then(response => response.json())
             .then(data => this.setState({projects: data, isLoading: false}));
     }

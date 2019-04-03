@@ -64,7 +64,15 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
     componentDidMount() {
         this.setState({isLoading: true});
         
-        fetch('http://' + window.location.hostname + ':8080/users', {
+        if (sessionStorage.getItem('viewingYear') === null) {
+            console.log('Set year to default (2019)');
+            sessionStorage.setItem('viewingYear', '2019');
+        }
+        if (sessionStorage.getItem('viewingFallSpring') === null) {
+            console.log('Set fallspring to default (spring)');
+            sessionStorage.setItem('viewingFallSpring', '1');
+        }
+        fetch('http://' + window.location.hostname + ':8080/users/getusersfromsemester/' + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
             method: 'get', 
             headers: new Headers({
                 'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
@@ -106,7 +114,6 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
         var _usersToDisplay: User[] = [];
         const {allUsers} = this.state;
         var userFilterType = '';
-
         if (e === 1) {
             userFilterType = 'All';
         } else if (e === 2) {
@@ -116,6 +123,13 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
         } else if (e === 4) {
             userFilterType = 'Admin';
         }
+
+        // sessionStorage.setItem('semester', '2019');
+        // sessionStorage.setItem('fallspring', '0');
+        // var targetSemester = Number(sessionStorage.getItem('semester'));
+        // var targetFallSpring = Number(sessionStorage.getItem('fallspring'));
+        // console.log(targetSemester);
+        // console.log(targetFallSpring);
 
         allUsers.forEach((user: User) => {
             if (user.userType === userFilterType) {
