@@ -21,6 +21,7 @@ nbproject/private/
 build/
 nbbuild/
 dist/
+bin/
 nbdist/
 .nb-gradle/
 /src/main/java/capstone/algorithm/real_data/iterations/

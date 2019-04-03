@@ -101,6 +101,32 @@ public class UserController
 		//return userService.getUsers();
 	}
 	
+	@GetMapping("getusersfromsemester/{semester}/{fallspring}")
+	@CrossOrigin
+	public Collection<User> getStudentsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
+	{
+		Global g = globalRepo.findAll().get(0);
+		// get users from target semester
+		List<User> users = (List<User>) userService.getUsers();
+		List<User> validUsers = new ArrayList<User>();
+		for (User user : users)
+		{
+			if (user.getUserType().equals("Student"))
+			{
+				Student student = (Student) user;
+				if (student.semester == semester && student.fallSpring == fallspring)
+				{
+					validUsers.add(student);
+				}
+			}
+			else
+			{
+				validUsers.add(user);
+			}
+		}
+		return validUsers;
+	}
+	
 	@GetMapping("/{email:.+}")
 	@CrossOrigin
 	public User getUser(@PathVariable("email") String email)
@@ -171,6 +197,11 @@ public class UserController
 	@PostMapping("/admin-registration")
 	@CrossOrigin
 	public @ResponseBody String adminRegistrationAttempt(@RequestBody Map<String, String> info) {
+		
+
+		Global g = globalRepo.findAll().get(0);
+		int semester = g.getSemester();
+		int fallSpring = g.getFallSpring();
 		String email = info.get(Constants.EMAIL);
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);

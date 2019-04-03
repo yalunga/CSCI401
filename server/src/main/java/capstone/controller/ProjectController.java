@@ -3,6 +3,7 @@ package capstone.controller;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,25 @@ public class ProjectController
 		}
 		return validProjects;
 		//return projectService.findAll();
+	}
+	@GetMapping("getprojectsfromsemester/{semester}/{fallspring}")
+	@CrossOrigin
+	public List<Project> getProjectsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
+	{
+		Global g = globalRepo.findAll().get(0);
+		int targetSemester = semester;
+		int targetFallSpring = fallspring;
+		List<Project> projects = (List<Project>) projectService.findAll();
+		List<Project> validProjects = new ArrayList<Project>();
+		for (Project project : projects)
+		{
+			if (project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
+			{
+				validProjects.add(project);
+			}
+			
+		}
+		return validProjects;
 	}
 	
 	@GetMapping("/{email:.+}/rankOrdered")
