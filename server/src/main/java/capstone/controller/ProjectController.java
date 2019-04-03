@@ -290,8 +290,8 @@ public class ProjectController
 		System.out.println(project);
 		System.out.println(project.getProjectName());
 		project.setStatusId(1);
-		project.setSemester(globalRepo.findAll().get(0).getSemester());
-		project.setFallSpring(globalRepo.findAll().get(0).getFallSpring());
+//		project.setSemester(globalRepo.findAll().get(0).getSemester());
+//		project.setFallSpring(globalRepo.findAll().get(0).getFallSpring());
 		User user = userService.findUserByEmail(email);
 	    projectService.save(project);
 	    userService.saveProject(user, project);
