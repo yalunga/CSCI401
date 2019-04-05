@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import { PropTypes } from 'prop-types';
 import ItemTypes from './ItemTypes';
 import { DropTarget } from 'react-dnd';
 import StudentCard from './StudentCard';
