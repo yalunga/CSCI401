@@ -78,9 +78,15 @@
           <groupId>io.jsonwebtoken</groupId>
           <artifactId>jjwt</artifactId>
           <version>0.9.0</version>
-      </dependency>	    
-  </dependencies>
-
+      </dependency>
+      <dependency>
+		<groupId>driver</groupId>
+		<artifactId>driver</artifactId>
+		<version>1.0</version>
+		<scope>system</scope>
+		<systemPath>${basedir}/mysql-connector-java-5.1.46.jar</systemPath>
+	</dependency>
+ </dependencies> 
   <build>
     <plugins>
       <plugin>
