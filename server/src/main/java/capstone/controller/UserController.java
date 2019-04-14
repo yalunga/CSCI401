@@ -298,7 +298,7 @@ public class UserController
 			// Save the email to registered student email table
 			regRepo.save(new RegisteredStudentEmail(e));
 			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nlocalhost:3000/register/student", e);
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://68.181.97.191:5000/register/student", e);
 			System.out.println("Sent invite to: " + e);
 		}
 	}
