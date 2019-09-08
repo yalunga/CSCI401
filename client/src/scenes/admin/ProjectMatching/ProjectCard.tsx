@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PropTypes } from 'prop-types';
+import PropTypes from '../../../../node_modules/prop-types';
 import ItemTypes from './ItemTypes';
 import { DropTarget } from 'react-dnd';
 import StudentCard from './StudentCard';
@@ -44,23 +44,23 @@ interface ProjectCardState {
 class ProjectCard extends React.Component<ProjectCardProps, ProjectCardState> {
     constructor(props: ProjectCardProps) {
         super(props);
-    
+
         this.state = {
         };
     }
 
     render() {
-        const {project, key, connectDropTarget} = this.props;
+        const { project, key, connectDropTarget } = this.props;
         return connectDropTarget(
             <tr key={key}>
-              <td>{project.projectName}</td>
-              <td>{project.minSize}</td>
-              <td>{project.maxSize}</td>
-              <td>
-              {project.members.map((student: StudentInfo) =>
-                <StudentCard student={student} key={student.userId} />
-              )}
-              </td>
+                <td>{project.projectName}</td>
+                <td>{project.minSize}</td>
+                <td>{project.maxSize}</td>
+                <td>
+                    {project.members.map((student: StudentInfo) =>
+                        <StudentCard student={student} key={student.userId} />
+                    )}
+                </td>
             </tr>
         );
     }

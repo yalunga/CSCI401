@@ -17,26 +17,26 @@ const style = {
 interface StudentRegistrationProps {
 }
 interface StudentRegistrationState {
-firstName: string;
-lastName: string;
-email: string;
-phone: string;
-password: string;
-confirm: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    password: string;
+    confirm: string;
 }
 class StudentRegistrationForm extends React.Component<StudentRegistrationProps, StudentRegistrationState> {
     constructor(props: StudentRegistrationProps) {
-    super(props);
-    this.state = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirm: ''
-    };
-    this.submitClicked = this.submitClicked.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+        super(props);
+        this.state = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            password: '',
+            confirm: ''
+        };
+        this.submitClicked = this.submitClicked.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     submitClicked() {
@@ -47,7 +47,7 @@ class StudentRegistrationForm extends React.Component<StudentRegistrationProps, 
         if (this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.phone === '' || this.state.confirm === '' || this.state.password === '') {
             alert('Please fill in all the information.');
             window.location.reload();
-        } 
+        }
         if (this.state.firstName !== '' && this.state.lastName !== '' && this.state.email !== '' && this.state.phone !== '' && this.state.confirm !== '' && this.state.password !== '' && this.state.password !== this.state.confirm) {
             alert('Your passwords do not match. Please try again.');
             window.location.reload();
@@ -61,33 +61,34 @@ class StudentRegistrationForm extends React.Component<StudentRegistrationProps, 
         });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             window.location.href = '/';
         };
     }
 
     handleChange(e: any) {
-    this.setState({ [e.target.id]: e.target.value });
+        // @ts-ignore
+        this.setState({ [e.target.id]: e.target.value });
     }
 
     formGroup(controlId: string, type: string, id: string, placeholder: string, value: any) {
         return (
             <FormGroup controlId={controlId}>
                 <Col componentClass={ControlLabel} sm={2}>
-                {placeholder}
+                    {placeholder}
                 </Col>
                 <Col sm={10}>
-                <FormControl
-                    type={type}
-                    id={id}
-                    value={value}
-                    placeholder={placeholder}
-                    onChange={e => this.handleChange(e)}
-                />
+                    <FormControl
+                        type={type}
+                        id={id}
+                        value={value}
+                        placeholder={placeholder}
+                        onChange={e => this.handleChange(e)}
+                    />
                 </Col>
             </FormGroup>
         );
-        
+
     }
 
     render() {
@@ -104,7 +105,7 @@ class StudentRegistrationForm extends React.Component<StudentRegistrationProps, 
 
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
-                        <Button type="reset" onClick={this.submitClicked}>Register</Button>
+                            <Button type="reset" onClick={this.submitClicked}>Register</Button>
                         </Col>
                     </FormGroup>
                 </Form>

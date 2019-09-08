@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes from '../../../../node_modules/prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import {
@@ -30,7 +30,7 @@ const cardSource = {
             originalIndex: props.findCard(props.id).index,
         };
     },
-    
+
     endDrag(props: any, monitor: any) {
         const { id: droppedId, originalIndex } = monitor.getItem();
         const didDrop = monitor.didDrop();
@@ -113,12 +113,12 @@ class ProjectCard extends React.Component<Props, State> {
             connectDropTarget(
                 <div style={{ opacity }}>
                     <div onClick={() => this.setState({ open: !this.state.open })} style={cardStyle as any}>
-                        <Glyphicon glyph="menu-hamburger" style={glyphStyle}/>
+                        <Glyphicon glyph="menu-hamburger" style={glyphStyle} />
                         {rank <= 5
                             ? <strong>{rank + '. ' + title}</strong>
                             : <small>{title}</small>
                         }
-                        <Glyphicon glyph={this.state.open ? 'menu-up' : 'menu-down'} style={{padding}}/>
+                        <Glyphicon glyph={this.state.open ? 'menu-up' : 'menu-down'} style={{ padding }} />
                     </div>
                     <br />
                     <Panel expanded={this.state.open} style={panelStyle}>
@@ -126,10 +126,10 @@ class ProjectCard extends React.Component<Props, State> {
                             <Panel.Body>
                                 <strong>Project Description</strong>
                                 <p>{this.props.description}</p>
-                                <br/>
+                                <br />
                                 <strong>Technologies Expected</strong>
                                 <p>{this.props.technologies}</p>
-                                <br/>
+                                <br />
                                 <strong>Background Requested</strong>
                                 <p>{this.props.background}</p>
                             </Panel.Body>

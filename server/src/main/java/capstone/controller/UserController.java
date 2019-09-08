@@ -34,6 +34,8 @@ import capstone.util.Constants;
 import capstone.util.EncryptPassword;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 
 @RestController
 @RequestMapping("/users")
@@ -348,7 +350,6 @@ public class UserController
 	@PostMapping("/login")
 	@CrossOrigin
 	public String login(@RequestBody User login) throws ServletException {
-
 	    String jwtToken = "";
 
 	    if (login.getEmail() == null || login.getPassword() == null) {
@@ -357,7 +358,7 @@ public class UserController
 
 	    String email = login.getEmail();
 	    String password = login.getPassword();
-
+	    
 	    User user = userService.findUserByEmail(email);
 
 	    if (user == null) {
@@ -371,10 +372,11 @@ public class UserController
 	    }
 	    
 	    String userType = userService.getUserType(user);
-
+	    
+	    Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	    
 	    jwtToken = Jwts.builder().setSubject(email).claim("roles", "user").setIssuedAt(new Date())
-	            .signWith(SignatureAlgorithm.HS256, "secretkey").compact();
-	    // System.out.println("Jwt: " + jwtToken);
+	            .signWith(key).compact();
 	    return jwtToken + "," + userType;
 	}
 }

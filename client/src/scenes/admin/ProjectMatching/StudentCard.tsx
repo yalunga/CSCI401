@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from '../../../../node_modules/prop-types';
 import { DragSource } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import {
@@ -45,13 +45,13 @@ function collect(connect: any, monitor: any) {
 class StudentCard extends React.Component<StudentCardProps, StudentCardState> {
     constructor(props: StudentCardProps) {
         super(props);
-    
+
         this.state = {
         };
     }
 
     render() {
-        const {student, key, connectDragSource, isDragging} = this.props;
+        const { student, key, connectDragSource, isDragging } = this.props;
 
         const rankingDetails = (
             <Popover id="popover-positioned-left" title="Rankings">
@@ -66,8 +66,8 @@ class StudentCard extends React.Component<StudentCardProps, StudentCardState> {
         return connectDragSource(
             <div>
                 <OverlayTrigger trigger={['hover', 'focus']} placement="left" overlay={rankingDetails}>
-                    <div 
-                        key={key} 
+                    <div
+                        key={key}
                         style={{
                             ...style,
                             opacity: isDragging ? 0.5 : 1,

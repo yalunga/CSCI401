@@ -1,18 +1,18 @@
 import * as React from 'react';
 
 import {
-  Table,
-  Button,
-  ButtonGroup,
-  Modal,
-  Form,
-  FormGroup,
-  Col,
-  FormControl,
-  ControlLabel,
-  ButtonToolbar,
-  ToggleButtonGroup,
-  ToggleButton
+    Table,
+    Button,
+    ButtonGroup,
+    Modal,
+    Form,
+    FormGroup,
+    Col,
+    FormControl,
+    ControlLabel,
+    ButtonToolbar,
+    ToggleButtonGroup,
+    ToggleButton
 
 } from 'react-bootstrap';
 import StudentRegistrationForm from './StudentRegistrationForm';
@@ -52,7 +52,7 @@ interface User {
 class UserManagement extends React.Component<UserListProps, UserListState> {
     constructor(props: UserListProps) {
         super(props);
-        
+
         this.state = {
             allUsers: [],
             usersToDisplay: [],
@@ -60,10 +60,10 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
             isLoading: false,
         };
     }
-    
+
     componentDidMount() {
-        this.setState({isLoading: true});
-        
+        this.setState({ isLoading: true });
+
         if (sessionStorage.getItem('viewingYear') === null) {
             console.log('Set year to default (2019)');
             sessionStorage.setItem('viewingYear', '2019');
@@ -73,17 +73,17 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
             sessionStorage.setItem('viewingFallSpring', '1');
         }
         fetch('http://' + window.location.hostname + ':8080/users/getusersfromsemester/' + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
-            method: 'get', 
+            method: 'get',
             headers: new Headers({
                 'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
             })
         })
             .then(response => response.json())
-            .then(data => this.setState({allUsers: data, usersToDisplay: data, isLoading: false}));
+            .then(data => this.setState({ allUsers: data, usersToDisplay: data, isLoading: false }));
     }
 
     cancelEdit = () => {
-        this.setState({userIndexToEdit: -1});
+        this.setState({ userIndexToEdit: -1 });
     }
 
     submitEdit = () => {
@@ -103,16 +103,17 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
         request.send(data);
         alert('User has been updated succesfully!');
         window.location.reload();
-        this.setState({userIndexToEdit: -1});
+        this.setState({ userIndexToEdit: -1 });
     }
 
     handleChange(e: any) {
+        // @ts-ignore
         this.setState({ [e.target.id]: e.target.value });
     }
 
     handleUserFilterChange = (e: any) => {
         var _usersToDisplay: User[] = [];
-        const {allUsers} = this.state;
+        const { allUsers } = this.state;
         var userFilterType = '';
         if (e === 1) {
             userFilterType = 'All';
@@ -139,7 +140,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
             }
         });
 
-        this.setState({usersToDisplay: _usersToDisplay});
+        this.setState({ usersToDisplay: _usersToDisplay });
     }
 
     editUser(index: number, user: User) {
@@ -158,7 +159,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
         const name = user.firstName;
         var submit = confirm('Are you sure you want to delete ' + name + '?');
         if (submit) {
-            this.setState({userToDelete: user});
+            this.setState({ userToDelete: user });
         }
     }
 
@@ -168,13 +169,13 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
         });
     }
     render() {
-        const {allUsers, usersToDisplay, isLoading, userIndexToEdit, userToEdit} = this.state;
-        
+        const { allUsers, usersToDisplay, isLoading, userIndexToEdit, userToEdit } = this.state;
+
         if (isLoading) {
             return <p>Loading...</p>;
         }
 
-        var modalEditUser = <div/>;
+        var modalEditUser = <div />;
         if (typeof userToEdit !== 'undefined') {
             modalEditUser = (
                 <Modal bsSize="lg" dialogClassName="modal-90w" show={userIndexToEdit !== -1} onHide={this.cancelEdit}>
@@ -185,80 +186,80 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                         <Form horizontal={true} >
                             <FormGroup controlId="formHorizontalFirstName">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                First Name
+                                    First Name
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl
-                                    type="text"
-                                    id="editFirstName"
-                                    value={this.state.editFirstName}
-                                    placeholder="First Name"
-                                    onChange={e => this.handleChange(e)}
-                                />
+                                    <FormControl
+                                        type="text"
+                                        id="editFirstName"
+                                        value={this.state.editFirstName}
+                                        placeholder="First Name"
+                                        onChange={e => this.handleChange(e)}
+                                    />
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalLastName">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                Last Name
+                                    Last Name
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl
-                                    type="text"
-                                    id="editLastName"
-                                    value={this.state.editLastName}
-                                    placeholder="Last Name"
-                                    onChange={e => this.handleChange(e)}
-                                />
+                                    <FormControl
+                                        type="text"
+                                        id="editLastName"
+                                        value={this.state.editLastName}
+                                        placeholder="Last Name"
+                                        onChange={e => this.handleChange(e)}
+                                    />
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalEmail">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                Email
+                                    Email
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl
-                                    type="text"
-                                    placeholder="Email"
-                                    id="editEmail"
-                                    value={this.state.editEmail}
-                                    onChange={e => this.handleChange(e)}
-                                />
+                                    <FormControl
+                                        type="text"
+                                        placeholder="Email"
+                                        id="editEmail"
+                                        value={this.state.editEmail}
+                                        onChange={e => this.handleChange(e)}
+                                    />
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalUserType">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                User Type
+                                    User Type
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl componentClass="select" placeholder="select" id="editUserType" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
-                                    <option value="Student">Student</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Stakeholder">Stakeholder</option>
-                                </FormControl>
+                                    <FormControl componentClass="select" placeholder="select" id="editUserType" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
+                                        <option value="Student">Student</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Stakeholder">Stakeholder</option>
+                                    </FormControl>
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalUserType">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                Project Assignment
+                                    Project Assignment
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl componentClass="select" placeholder="select" id="editProjectAssignment" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
-                                    <option value="CSCI 401 Project Platform">CSCI 401 Project Platform</option>
-                                </FormControl>
+                                    <FormControl componentClass="select" placeholder="select" id="editProjectAssignment" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
+                                        <option value="CSCI 401 Project Platform">CSCI 401 Project Platform</option>
+                                    </FormControl>
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalYear">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                Year
+                                    Year
                                 </Col>
                                 <Col sm={9}>
-                                <FormControl
-                                    type="text"
-                                    placeholder="Year"
-                                    id="editYear"
-                                    value={this.state.editYear}
-                                    onChange={e => this.handleChange(e)}
-                                />
+                                    <FormControl
+                                        type="text"
+                                        placeholder="Year"
+                                        id="editYear"
+                                        value={this.state.editYear}
+                                        onChange={e => this.handleChange(e)}
+                                    />
                                 </Col>
                             </FormGroup>
                         </Form>
@@ -270,26 +271,26 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                 </Modal>
             );
         }
-        
-        return(
+
+        return (
             <div style={style as any}>
                 <h2>User Management</h2>
 
                 <div>
-                <StudentRegistrationForm/>
-                <ButtonToolbar>
-                    <ToggleButtonGroup
-                        onChange={this.handleUserFilterChange}
-                        type="radio"
-                        name="userFilter"
-                        defaultValue={1}
-                    >
-                    <ToggleButton value={1}>All</ToggleButton>
-                    <ToggleButton value={2}>Student</ToggleButton>
-                    <ToggleButton value={3}>Stakeholder</ToggleButton>
-                    <ToggleButton value={4}>Admin</ToggleButton>
-                    </ToggleButtonGroup>
-                </ButtonToolbar>
+                    <StudentRegistrationForm />
+                    <ButtonToolbar>
+                        <ToggleButtonGroup
+                            onChange={this.handleUserFilterChange}
+                            type="radio"
+                            name="userFilter"
+                            defaultValue={1}
+                        >
+                            <ToggleButton value={1}>All</ToggleButton>
+                            <ToggleButton value={2}>Student</ToggleButton>
+                            <ToggleButton value={3}>Stakeholder</ToggleButton>
+                            <ToggleButton value={4}>Admin</ToggleButton>
+                        </ToggleButtonGroup>
+                    </ButtonToolbar>
                 </div>
 
                 <Table bordered={true} condensed={true}>
@@ -310,7 +311,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                                 <td>{user.userType}</td>
                                 <td>{user.email}</td>
                                 <td>
-                                    <Button style={{margin: 3}} bsSize="small" onClick={() => this.editUser(index, user)}>
+                                    <Button style={{ margin: 3 }} bsSize="small" onClick={() => this.editUser(index, user)}>
                                         Edit User
                                     </Button>
                                     <Button bsStyle="warning" bsSize="small" onClick={() => this.deleteUser(user)}>Delete User</Button>

@@ -7,7 +7,7 @@ import {
     FormGroup,
     Col,
     FormControl,
-    ControlLabel    
+    ControlLabel
 } from 'react-bootstrap';
 const style = {
     width: 1000,
@@ -41,24 +41,25 @@ class StudentProfile extends React.Component<ProfileProps, ProfileState> {
             nPassword: '',
             nConfirm: '',
             user: {
-            firstName: '',
-            email: '',
-            phone: '',
-            password: ''},
+                firstName: '',
+                email: '',
+                phone: '',
+                password: ''
+            },
             isLoading: false,
         };
         this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     componentDidMount() {
-        this.setState({isLoading: true});
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
+        this.setState({ isLoading: true });
         fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email'))
-        .then(response => response.json())
-        .then(data => this.setState({user: data, isLoading: false}));
-        this.setState({nfirstName: this.state.user.firstName});
+            .then(response => response.json())
+            .then(data => this.setState({ user: data, isLoading: false }));
+        this.setState({ nfirstName: this.state.user.firstName });
         this.setState({ nfirstName: this.state.user.phone });
-        
+
     }
     submitClicked() {
         var request = new XMLHttpRequest();
@@ -73,11 +74,12 @@ class StudentProfile extends React.Component<ProfileProps, ProfileState> {
         });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
-        request.onreadystatechange = function() {
+        request.onreadystatechange = function () {
             window.location.href = '/student/profile';
-        }; 
+        };
     }
     handleChange(e: any) {
+        // @ts-ignore
         this.setState({ [e.target.id]: e.target.value });
     }
     render() {
@@ -87,88 +89,88 @@ class StudentProfile extends React.Component<ProfileProps, ProfileState> {
 
         return (
             <div style={style as any}>
-            <Panel>
-            <Panel.Heading>
-                Profile
+                <Panel>
+                    <Panel.Heading>
+                        Profile
             </Panel.Heading>
-            <Panel.Body>
-            <Form horizontal={true}>
-                <FormGroup controlId="formHorizontalStudentName">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Name:
+                    <Panel.Body>
+                        <Form horizontal={true}>
+                            <FormGroup controlId="formHorizontalStudentName">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Name:
                     </Col>
-                    <Col sm={10}>
-                        <FormControl 
-                            type="text" 
-                            id="nfirstName"
-                            defaultValue={this.state.user.firstName}
-                            onChange={e => this.handleChange(e)} 
-                        />
-                    </Col>             
-                </FormGroup>
-                
-                <FormGroup controlId="formHorizontalStudentEmail">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Email:
-                    </Col>
-                    <Col sm={10}>
-                        <FormControl 
-                            type="email" 
-                            id="email"
-                            defaultValue={this.state.user.email} 
-                            onChange={e => this.handleChange(e)} 
-                        />
-                    </Col>             
-                </FormGroup>
-                
-                <FormGroup controlId="formHorizontalStudentPhone">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Phone:
-                    </Col>
-                    <Col sm={10}>
-                        <FormControl 
-                            type="tel" 
-                            id="nNumber"
-                            defaultValue={this.state.user.phone}
-                            onChange={e => this.handleChange(e)} 
-                        />
-                    </Col>             
-                </FormGroup> 
+                                <Col sm={10}>
+                                    <FormControl
+                                        type="text"
+                                        id="nfirstName"
+                                        defaultValue={this.state.user.firstName}
+                                        onChange={e => this.handleChange(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
 
-                <FormGroup controlId="formHorizontalStudentName">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        New Password:
+                            <FormGroup controlId="formHorizontalStudentEmail">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Email:
                     </Col>
-                    <Col sm={10}>
-                        <FormControl 
-                            type="password" 
-                            id="nPassword"
-                            onChange={e => this.handleChange(e)} 
-                        />
-                    </Col>             
-                </FormGroup>
+                                <Col sm={10}>
+                                    <FormControl
+                                        type="email"
+                                        id="email"
+                                        defaultValue={this.state.user.email}
+                                        onChange={e => this.handleChange(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
 
-                <FormGroup controlId="formHorizontalStudentName">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        Confirm Password:
+                            <FormGroup controlId="formHorizontalStudentPhone">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Phone:
                     </Col>
-                    <Col sm={10}>
-                        <FormControl 
-                            type="password" 
-                            id="nConfirm"
-                            onChange={e => this.handleChange(e)} 
-                        />
-                    </Col>             
-                </FormGroup>
-                <FormGroup>
-                    <Col smOffset={2} sm={10}>
-                        <Button type="submit" bsStyle="primary" onClick={this.submitClicked}>Edit/Save Profile</Button>
+                                <Col sm={10}>
+                                    <FormControl
+                                        type="tel"
+                                        id="nNumber"
+                                        defaultValue={this.state.user.phone}
+                                        onChange={e => this.handleChange(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
+
+                            <FormGroup controlId="formHorizontalStudentName">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    New Password:
                     </Col>
-                </FormGroup>               
-            </Form>    
-            </Panel.Body>
-            </Panel>
-        </div>
+                                <Col sm={10}>
+                                    <FormControl
+                                        type="password"
+                                        id="nPassword"
+                                        onChange={e => this.handleChange(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
+
+                            <FormGroup controlId="formHorizontalStudentName">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Confirm Password:
+                    </Col>
+                                <Col sm={10}>
+                                    <FormControl
+                                        type="password"
+                                        id="nConfirm"
+                                        onChange={e => this.handleChange(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
+                            <FormGroup>
+                                <Col smOffset={2} sm={10}>
+                                    <Button type="submit" bsStyle="primary" onClick={this.submitClicked}>Edit/Save Profile</Button>
+                                </Col>
+                            </FormGroup>
+                        </Form>
+                    </Panel.Body>
+                </Panel>
+            </div>
         );
     }
 }
