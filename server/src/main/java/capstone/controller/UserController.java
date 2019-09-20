@@ -362,13 +362,13 @@ public class UserController
 	    User user = userService.findUserByEmail(email);
 
 	    if (user == null) {
-	        throw new ServletException("Invalid login");
+	       return "Email not found.";
 	    }
 
 	    String pwd = user.getPassword();
 
 	    if (!EncryptPassword.checkPassword(password, pwd)) {
-	        throw new ServletException("Invalid login");
+	        return "Incorrect password.";
 	    }
 	    
 	    String userType = userService.getUserType(user);
