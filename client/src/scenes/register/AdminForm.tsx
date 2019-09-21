@@ -41,12 +41,12 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
     }
     async submitClicked() {
         if (this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.phone === '' || this.state.confirm === '' || this.state.password === '') {
-            alert('Please fill in all the information.');
-            window.location.reload();
+            this.setState({ errorMsg: 'Please fill in all the information.' });
+            return;
         }
         if (this.state.password !== this.state.confirm) {
-            alert('Your passwords do not match. Please try again.');
-            window.location.reload();
+            this.setState({ errorMsg: 'Your passwords do not match. Please try again.' });
+            return;
         }
         var data = JSON.stringify({
             firstName: this.state.firstName,
