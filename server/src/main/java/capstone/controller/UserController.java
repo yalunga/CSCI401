@@ -107,7 +107,8 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getStudentsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
-		Global g = globalRepo.findAll().get(0);
+		System.out.println(semester);
+		System.out.println(fallspring);
 		// get users from target semester
 		List<User> users = (List<User>) userService.getUsers();
 		List<User> validUsers = new ArrayList<User>();
@@ -119,6 +120,11 @@ public class UserController
 				if (student.semester == semester && student.fallSpring == fallspring)
 				{
 					validUsers.add(student);
+				}
+			} else if(user.getUserType().equals("Admin")) {
+				Admin admin = (Admin) user;
+				if(admin.semester == 0 || (admin.semester == semester && admin.fallSpring == fallspring)) {
+					validUsers.add(admin);
 				}
 			}
 			else
@@ -199,9 +205,8 @@ public class UserController
 	@PostMapping("/admin-registration")
 	@CrossOrigin
 	public @ResponseBody String adminRegistrationAttempt(@RequestBody Map<String, String> info) {
-		Global g = globalRepo.findAll().get(0);
-		int semester = g.getSemester();
-		int fallSpring = g.getFallSpring();
+		int semester = Integer.parseInt(info.get("semester"));
+		int fallSpring = Integer.parseInt(info.get("fallSpring"));
 		String email = info.get(Constants.EMAIL);
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
@@ -224,6 +229,8 @@ public class UserController
 		admin.setPhone(phone);
 		admin.setPassword(encryptedPassword);
 		admin.setUserType(Constants.ADMIN);
+		admin.semester = semester;
+		admin.fallSpring = fallSpring;
 		userService.saveUser(admin);
 		System.out.println("New admin created");
 		return Constants.SUCCESS;
@@ -316,13 +323,16 @@ public class UserController
 		System.out.println("Received HTTP POST");
 		
 		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
+		String fallSpring = emailsData.get("fallSpring");
+		String semester = emailsData.get("year");
+		String url = "http://localhost:3000/register/admin?fallSpring="+fallSpring+"&semester="+semester;
 		
 		for(String e : emailsArray)
 		{
 			// Save the email to registered student email table
 			regRepo.save(new RegisteredStudentEmail(e));
 			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/admin", e);
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \n" + url, e);
 			System.out.println("Sent invite to: " + e);
 		}
 	}

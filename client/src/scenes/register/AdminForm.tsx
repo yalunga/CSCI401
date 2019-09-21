@@ -23,6 +23,8 @@ interface AdminRegistrationState {
     password: string;
     confirm: string;
     errorMsg: string;
+    fallSpring: string | null;
+    semester: string | null;
 }
 class AdminRegistrationForm extends React.Component<AdminRegistrationProps, AdminRegistrationState> {
     constructor(props: AdminRegistrationProps) {
@@ -34,11 +36,25 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
             phone: '',
             password: '',
             confirm: '',
-            errorMsg: ''
+            errorMsg: '',
+            fallSpring: '',
+            semester: ''
         };
         this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
+
+    componentDidMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.get('fallSpring') || !urlParams.get('semester')) {
+            window.location.href = '/';
+        }
+        this.setState({
+            fallSpring: urlParams.get('fallSpring'),
+            semester: urlParams.get('semester')
+        });
+    }
+
     async submitClicked() {
         if (this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.phone === '' || this.state.confirm === '' || this.state.password === '') {
             this.setState({ errorMsg: 'Please fill in all the information.' });
@@ -53,7 +69,9 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
             lastName: this.state.lastName,
             email: this.state.email,
             phone: this.state.phone,
-            password: this.state.password
+            password: this.state.password,
+            fallSpring: this.state.fallSpring,
+            semester: this.state.semester
         });
         const response = await fetch(`http://${window.location.hostname}:8080/users/admin-registration`, {
             method: 'POST',

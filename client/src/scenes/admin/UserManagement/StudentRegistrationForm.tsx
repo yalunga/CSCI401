@@ -14,21 +14,35 @@ interface StudentRegistrationProps {
 interface StudentRegistrationState {
   studentEmails: string;
   adminEmails: string;
+  viewingYear: string | null;
+  viewingFallSpring: string | null;
 }
 class StudentRegistrationForm extends React.Component<StudentRegistrationProps, StudentRegistrationState> {
   constructor(props: StudentRegistrationProps) {
     super(props);
     this.state = {
       studentEmails: '',
-      adminEmails: ''
+      adminEmails: '',
+      viewingYear: '',
+      viewingFallSpring: ''
     };
     this.submitClicked = this.submitClicked.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
+  componentDidMount() {
+    this.setState({
+      viewingYear: sessionStorage.getItem('viewingYear'),
+      viewingFallSpring: sessionStorage.getItem('viewingFallSpring')
+    });
+  }
+
   async submitClicked(id: string) {
     const endpoint = (id === 'studentEmails') ? 'student-emails-registration' : 'admin-emails-registration';
     var data = JSON.stringify({
       emails: this.state[id],
+      year: this.state.viewingYear,
+      fallSpring: this.state.viewingFallSpring
     });
     const response = await fetch(`http://${window.location.hostname}:8080/users/${endpoint}`, {
       method: 'POST',
@@ -74,6 +88,7 @@ class StudentRegistrationForm extends React.Component<StudentRegistrationProps, 
   }
 
   render() {
+    console.log(this.state);
     return (
       <div>
         <Form horizontal={true} >
