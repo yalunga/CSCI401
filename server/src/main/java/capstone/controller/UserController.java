@@ -199,8 +199,6 @@ public class UserController
 	@PostMapping("/admin-registration")
 	@CrossOrigin
 	public @ResponseBody String adminRegistrationAttempt(@RequestBody Map<String, String> info) {
-		
-
 		Global g = globalRepo.findAll().get(0);
 		int semester = g.getSemester();
 		int fallSpring = g.getFallSpring();
@@ -210,21 +208,26 @@ public class UserController
 		String phone = info.get(Constants.PHONE);
 		String encryptedPassword = EncryptPassword.encryptPassword(info.get(Constants.PASSWORD));
 		
-		// Check if email is a registered student email and not already registered
-		if (regRepo.findByEmail(email) != null && 
-				userService.findStudentByEmail(email) == null) {
-			Admin admin = new Admin();
-			admin.setFirstName(firstName);
-			admin.setLastName(lastName);
-			admin.setEmail(email);
-			admin.setPhone(phone);
-			admin.setPassword(encryptedPassword);
-			admin.setUserType(Constants.ADMIN);
-			userService.saveUser(admin);
-			System.out.println("New admin created");
-			return Constants.SUCCESS;
+		if(regRepo.findByEmail(email) == null) {
+			return "This email has not recieved an invite.";
 		}
-		return Constants.EMPTY;
+		if(userService.findStudentByEmail(email) != null) {
+			return "This email is registered as a student.";
+		}
+		if(userService.findAdminByEmail(email) != null) {
+			return "This email is registered as an admin.";
+		}
+		Admin admin = new Admin();
+		admin.setFirstName(firstName);
+		admin.setLastName(lastName);
+		admin.setEmail(email);
+		admin.setPhone(phone);
+		admin.setPassword(encryptedPassword);
+		admin.setUserType(Constants.ADMIN);
+		userService.saveUser(admin);
+		System.out.println("New admin created");
+		return Constants.SUCCESS;
+	
 	}
 	
 	// Student registration
@@ -300,10 +303,30 @@ public class UserController
 			// Save the email to registered student email table
 			regRepo.save(new RegisteredStudentEmail(e));
 			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://68.181.97.191:5000/register/student", e);
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/student", e);
 			System.out.println("Sent invite to: " + e);
 		}
 	}
+	
+	@RequestMapping(value = "/admin-emails-registration",consumes= "application/json",produces= "application/json", method = RequestMethod.POST)
+	@CrossOrigin
+	public void adminEmailRegistrationAttempt(@RequestBody Map<String, String> emailsData)
+	{
+		System.out.println(emailsData);
+		System.out.println("Received HTTP POST");
+		
+		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
+		
+		for(String e : emailsArray)
+		{
+			// Save the email to registered student email table
+			regRepo.save(new RegisteredStudentEmail(e));
+			// Send an email invitation
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/admin", e);
+			System.out.println("Sent invite to: " + e);
+		}
+	}
+	
 	
 	//allow password changes
 	@RequestMapping(value = "/password-reset",consumes= "application/json",produces= "application/json", method = RequestMethod.POST)
