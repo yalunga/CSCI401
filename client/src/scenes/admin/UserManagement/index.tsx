@@ -214,7 +214,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
               </FormGroup>
               <FormGroup controlId="formHorizontalEmail">
                 <Col componentClass={ControlLabel} sm={3}>
-                  Email
+                  Email123123123
                                 </Col>
                 <Col sm={9}>
                   <FormControl
