@@ -6,6 +6,4 @@ import javax.persistence.Id;
 
 @Entity
 public class Admin extends User {
-	public int semester;
-	public int fallSpring;
 }

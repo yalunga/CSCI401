@@ -64,6 +64,17 @@ public class UserController
 		admin.setPassword(EncryptPassword.encryptPassword("admin"));
 		userService.saveUser(admin);
 		
+		System.out.println("Test-stakeholder");
+		Stakeholder stakeholder = new Stakeholder();
+		stakeholder.setFirstName("Test");
+		stakeholder.setLastName("Stakeholder");
+		stakeholder.setEmail("test@test.edu");
+		stakeholder.setPassword(EncryptPassword.encryptPassword("1234"));
+		userService.saveUser(stakeholder);
+
+		
+		
+		
 		Global global = new Global();
 		global.setFallSpring(1);
 		global.setSemester(2019);
@@ -107,8 +118,7 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getStudentsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
-		System.out.println(semester);
-		System.out.println(fallspring);
+		Global g = globalRepo.findAll().get(0);
 		// get users from target semester
 		List<User> users = (List<User>) userService.getUsers();
 		List<User> validUsers = new ArrayList<User>();
@@ -120,11 +130,6 @@ public class UserController
 				if (student.semester == semester && student.fallSpring == fallspring)
 				{
 					validUsers.add(student);
-				}
-			} else if(user.getUserType().equals("Admin")) {
-				Admin admin = (Admin) user;
-				if(admin.semester == 0 || (admin.semester == semester && admin.fallSpring == fallspring)) {
-					validUsers.add(admin);
 				}
 			}
 			else
@@ -172,24 +177,28 @@ public class UserController
 	@PostMapping("/update-info")
 	@CrossOrigin
 	public void updateUserInfo(@RequestBody Map<String, String> info) {
+		System.out.println("CHANGING USER");
 		String originalEmail = info.get(Constants.EMAIL);
 		String phone = info.get(Constants.PHONE);
 		String password = info.get(Constants.PASSWORD);
 		String firstName = info.get(Constants.FIRST_NAME);
+		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
 		
+		System.out.println(info);
+
+		
 		User user = findUser(originalEmail);
-		if(!firstName.isEmpty()) {
-			user.setFirstName(firstName);
-		}
-		if(!phone.isEmpty()) {
-			user.setPhone(phone);
-		}
-		if(!password.isEmpty()) {
-			user.setPassword(EncryptPassword.encryptPassword(password));
-		}
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
 		user.setUserType(userType);
+		
+		System.out.println("FOUNDUSER");
+
+		
 		userService.saveUser(user);
+		System.out.println("SAVED USER");
+
 	}
 	
 	public User findUser(String email) {
@@ -205,36 +214,32 @@ public class UserController
 	@PostMapping("/admin-registration")
 	@CrossOrigin
 	public @ResponseBody String adminRegistrationAttempt(@RequestBody Map<String, String> info) {
-		int semester = Integer.parseInt(info.get("semester"));
-		int fallSpring = Integer.parseInt(info.get("fallSpring"));
+		
+
+		Global g = globalRepo.findAll().get(0);
+		int semester = g.getSemester();
+		int fallSpring = g.getFallSpring();
 		String email = info.get(Constants.EMAIL);
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String phone = info.get(Constants.PHONE);
 		String encryptedPassword = EncryptPassword.encryptPassword(info.get(Constants.PASSWORD));
 		
-		if(regRepo.findByEmail(email) == null) {
-			return "This email has not recieved an invite.";
+		// Check if email is a registered student email and not already registered
+		if (regRepo.findByEmail(email) != null && 
+				userService.findStudentByEmail(email) == null) {
+			Admin admin = new Admin();
+			admin.setFirstName(firstName);
+			admin.setLastName(lastName);
+			admin.setEmail(email);
+			admin.setPhone(phone);
+			admin.setPassword(encryptedPassword);
+			admin.setUserType(Constants.ADMIN);
+			userService.saveUser(admin);
+			System.out.println("New admin created");
+			return Constants.SUCCESS;
 		}
-		if(userService.findStudentByEmail(email) != null) {
-			return "This email is registered as a student.";
-		}
-		if(userService.findAdminByEmail(email) != null) {
-			return "This email is registered as an admin.";
-		}
-		Admin admin = new Admin();
-		admin.setFirstName(firstName);
-		admin.setLastName(lastName);
-		admin.setEmail(email);
-		admin.setPhone(phone);
-		admin.setPassword(encryptedPassword);
-		admin.setUserType(Constants.ADMIN);
-		admin.semester = semester;
-		admin.fallSpring = fallSpring;
-		userService.saveUser(admin);
-		System.out.println("New admin created");
-		return Constants.SUCCESS;
-	
+		return Constants.EMPTY;
 	}
 	
 	// Student registration
@@ -310,33 +315,10 @@ public class UserController
 			// Save the email to registered student email table
 			regRepo.save(new RegisteredStudentEmail(e));
 			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/student", e);
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://68.181.97.191:5000/register/student", e);
 			System.out.println("Sent invite to: " + e);
 		}
 	}
-	
-	@RequestMapping(value = "/admin-emails-registration",consumes= "application/json",produces= "application/json", method = RequestMethod.POST)
-	@CrossOrigin
-	public void adminEmailRegistrationAttempt(@RequestBody Map<String, String> emailsData)
-	{
-		System.out.println(emailsData);
-		System.out.println("Received HTTP POST");
-		
-		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
-		String fallSpring = emailsData.get("fallSpring");
-		String semester = emailsData.get("year");
-		String url = "http://localhost:3000/register/admin?fallSpring="+fallSpring+"&semester="+semester;
-		
-		for(String e : emailsArray)
-		{
-			// Save the email to registered student email table
-			regRepo.save(new RegisteredStudentEmail(e));
-			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \n" + url, e);
-			System.out.println("Sent invite to: " + e);
-		}
-	}
-	
 	
 	//allow password changes
 	@RequestMapping(value = "/password-reset",consumes= "application/json",produces= "application/json", method = RequestMethod.POST)
@@ -395,13 +377,13 @@ public class UserController
 	    User user = userService.findUserByEmail(email);
 
 	    if (user == null) {
-	       return "Email not found.";
+	        throw new ServletException("Invalid login");
 	    }
 
 	    String pwd = user.getPassword();
 
 	    if (!EncryptPassword.checkPassword(password, pwd)) {
-	        return "Incorrect password.";
+	        throw new ServletException("Invalid login");
 	    }
 	    
 	    String userType = userService.getUserType(user);

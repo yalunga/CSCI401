@@ -22,9 +22,6 @@ interface AdminRegistrationState {
     phone: string;
     password: string;
     confirm: string;
-    errorMsg: string;
-    fallSpring: string | null;
-    semester: string | null;
 }
 class AdminRegistrationForm extends React.Component<AdminRegistrationProps, AdminRegistrationState> {
     constructor(props: AdminRegistrationProps) {
@@ -35,60 +32,37 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
             email: '',
             phone: '',
             password: '',
-            confirm: '',
-            errorMsg: '',
-            fallSpring: '',
-            semester: ''
+            confirm: ''
         };
         this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
-    componentDidMount() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.get('fallSpring') || !urlParams.get('semester')) {
-            window.location.href = '/';
-        }
-        this.setState({
-            fallSpring: urlParams.get('fallSpring'),
-            semester: urlParams.get('semester')
-        });
-    }
-
-    async submitClicked() {
+    submitClicked() {
+        var request = new XMLHttpRequest();
+        request.withCredentials = true;
+        request.open('POST', 'http://' + window.location.hostname + ':8080/users/admin-registration');
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         if (this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.phone === '' || this.state.confirm === '' || this.state.password === '') {
-            this.setState({ errorMsg: 'Please fill in all the information.' });
-            return;
+            alert('Please fill in all the information.');
+            window.location.reload();
         }
-        if (this.state.password !== this.state.confirm) {
-            this.setState({ errorMsg: 'Your passwords do not match. Please try again.' });
-            return;
+        if (this.state.firstName !== '' && this.state.lastName !== '' && this.state.email !== '' && this.state.phone !== '' && this.state.confirm !== '' && this.state.password !== '' && this.state.password !== this.state.confirm) {
+            alert('Your passwords do not match. Please try again.');
+            window.location.reload();
         }
         var data = JSON.stringify({
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             email: this.state.email,
             phone: this.state.phone,
-            password: this.state.password,
-            fallSpring: this.state.fallSpring,
-            semester: this.state.semester
+            password: this.state.password
         });
-        const response = await fetch(`http://${window.location.hostname}:8080/users/admin-registration`, {
-            method: 'POST',
-            body: data,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const responseText = await response.text();
-        if (responseText === 'This email has not recieved an invite.'
-            || responseText === 'This email is registered as a student.'
-            || responseText === 'This email is registered as an admin.') {
-            this.setState({ errorMsg: responseText });
-        } else if (responseText === 'success') {
+        request.setRequestHeader('Cache-Control', 'no-cache');
+        request.send(data);
+        request.onreadystatechange = function () {
             window.location.href = '/';
-        }
-        console.log(responseText);
+        };
+
     }
 
     handleChange(e: any) {
@@ -109,7 +83,6 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
                         value={value}
                         placeholder={placeholder}
                         onChange={e => this.handleChange(e)}
-                        onFocus={() => this.setState({ errorMsg: '' })}
                     />
                 </Col>
             </FormGroup>
@@ -122,20 +95,13 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
             <div style={style as any}>
                 <h2>Admin Registration</h2>
                 <Form horizontal={true} >
-                    {this.formGroup('formHorizontalName', 'text', 'firstName', 'First Name', this.state.firstName)}
-                    {this.formGroup('formHorizontalName', 'text', 'lastName', 'Last Name', this.state.lastName)}
+                    {this.formGroup('formHorizontalName', 'text', 'name', 'First Name', this.state.firstName)}
+                    {this.formGroup('formHorizontalName', 'text', 'name', 'Last Name', this.state.lastName)}
                     {this.formGroup('formHorizontalEmail', 'text', 'email', 'Email', this.state.email)}
                     {this.formGroup('formHorizontalPhone', 'phone', 'phone', 'Phone', this.state.phone)}
                     {this.formGroup('formHorizontalPassword', 'password', 'password', 'Password', this.state.password)}
-                    {this.formGroup('formHorizontalConfirm', 'password', 'confirm', 'Confirm Password', this.state.confirm)}
+                    {this.formGroup('formHorizontalConfirm', 'text', 'confirm', 'Confirm Password', this.state.confirm)}
 
-                    {this.state.errorMsg && (
-                        <FormGroup>
-                            <Col smOffset={2} sm={10}>
-                                <span style={{ color: 'red' }}>{this.state.errorMsg}</span>
-                            </Col>
-                        </FormGroup>
-                    )}
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
                             <Button type="reset" onClick={this.submitClicked}>Register</Button>
