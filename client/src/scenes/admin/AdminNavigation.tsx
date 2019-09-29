@@ -1,4 +1,6 @@
 import * as React from 'react';
+import Cleave from 'cleave.js/react';
+
 import {
   Route,
   BrowserRouter,
@@ -32,70 +34,70 @@ interface SemesterState {
 }
 
 class AdminNavigation extends React.Component<SemesterStateProps, SemesterState> {
-    constructor(props: SemesterStateProps) {
-        super(props);
-        this.state = {fallOrSpringText: 'Unselected', fallOrSpring: 0, year: 0, isLoading: false};
-        this.submitClicked = this.submitClicked.bind(this);
+  constructor(props: SemesterStateProps) {
+    super(props);
+    this.state = { fallOrSpringText: 'Unselected', fallOrSpring: 0, year: 0, isLoading: false };
+    this.submitClicked = this.submitClicked.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+
+    let displayYear = 2019;
+    let displaySemester = '0';
+    let sessionYear = sessionStorage.getItem('viewingYear');
+    let sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
+    console.log(sessionYear);
+    console.log(sessionFallSpring);
+    if (sessionYear === null) {
+      sessionStorage.setItem('viewingYear', '2019');
+    } else {
+      displayYear = Number(sessionYear);
     }
-  
+    if (sessionFallSpring === null) {
+      sessionStorage.setItem('viewingFallSpring', '0');
+    } else {
+      displaySemester = sessionFallSpring;
+    }
+    this.setState({ year: Number(displayYear), fallOrSpring: Number(displaySemester) });
+    let fallSpringText = 'Spring';
+    if (this.state.fallOrSpring === 0) {
+      fallSpringText = 'Fall';
+    }
+    this.setState({ fallOrSpringText: fallSpringText, isLoading: false });
+  }
+
   logOutClicked() {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('userType');
-    window.location.href = '/';  
-  }  
-  
+    window.location.href = '/';
+  }
+
   handleChange(event: any) {
-    var val = event.target.value === '0' ? 0 : 1; 
+    var val = event.target.value === '0' ? 0 : 1;
     console.log('Set local form value for fallspring');
     console.log(val);
-    this.setState({fallOrSpring: val});
+    this.setState({ fallOrSpring: val });
     if (val === 0) {
-        this.setState({fallOrSpringText: 'Fall'});
+      this.setState({ fallOrSpringText: 'Fall' });
     } else {
-        this.setState({fallOrSpringText: 'Spring'});
+      this.setState({ fallOrSpringText: 'Spring' });
     }
   }
 
   handleChangeText(event: any) {
     console.log(event.target.value);
-    this.setState({year: event.target.value});
+    this.setState({ year: event.target.value });
   }
-  
-submitClicked(event: any) {
+
+  submitClicked(event: any) {
     console.log('submitted semester change');
     console.log(this.state.year);
     console.log(this.state.fallOrSpring);
     sessionStorage.setItem('viewingYear', this.state.year.toString());
     sessionStorage.setItem('viewingFallSpring', this.state.fallOrSpring.toString());
     window.location.reload();
-}
-  
-  componentDidMount() {
-    this.setState({isLoading: true});
-    
-    var displayYear = 2019;
-    var displaySemester = '0';
-    var sessionYear = sessionStorage.getItem('viewingYear');
-    var sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
-    console.log(sessionYear);
-    console.log(sessionFallSpring);
-    if (sessionYear === null) {
-        sessionStorage.setItem('viewingYear', '2019');
-    } else {
-        displayYear = Number(sessionYear);
-    }
-    if (sessionFallSpring === null) {
-        sessionStorage.setItem('viewingFallSpring', '0');
-    } else {
-        displaySemester = sessionFallSpring;
-    }
-    this.setState({year: Number(displayYear), fallOrSpring: Number(displaySemester)});
-    var fallSpringText = 'Spring';
-    if (this.state.fallOrSpring === 0) {
-        fallSpringText = 'Fall';
-    }
-    this.setState({fallOrSpringText: fallSpringText, isLoading: false});
- }
+  }
 
   render() {
     if (this.state.isLoading) {
@@ -104,18 +106,18 @@ submitClicked(event: any) {
     return (
       <BrowserRouter>
         <div>
-            <Navbar>
+          <Navbar>
             <Navbar.Header>
               <Navbar.Brand>
                 <img src={logo} className="App-logo" alt="logo" />
               </Navbar.Brand>
-              
+
               <Navbar.Brand>
-              <LinkContainer to="/admin">
-                <a>CSCI 401</a>
+                <LinkContainer to="/admin">
+                  <a>CSCI 401</a>
                 </LinkContainer>
-              </Navbar.Brand> 
-              
+              </Navbar.Brand>
+
             </Navbar.Header>
             <Nav>
               <LinkContainer to="/admin/users">
@@ -134,33 +136,41 @@ submitClicked(event: any) {
                 </NavItem>
               </LinkContainer> */}
               <LinkContainer to="/admin/matching">
-              <NavItem eventKey={5}>
-                Project Matching
+                <NavItem eventKey={5}>
+                  Project Matching
               </NavItem>
               </LinkContainer>
               <NavItem eventKey={6}>
                 <FormGroup>
                   <Button type="submit" onClick={this.logOutClicked}>Log Out</Button>
-              </FormGroup>
+                </FormGroup>
               </NavItem>
             </Nav>
             <div>
-                <select style={{marginRight: '15px'}} onChange={e => this.handleChange(e)}>
-                    <option value="0" selected={this.state.fallOrSpring === 0}>Fall</option>
-                    <option value="1" selected={this.state.fallOrSpring === 1}>Spring</option>
-                </select>
-                <input value={this.state.year} onChange={e => this.handleChangeText(e)} type="text" name="year" />
-                    <br />
-                  
-                <button type="submit" onClick={this.submitClicked}>Change Viewing Semester</button>
+              <select style={{ marginRight: '15px' }} onChange={e => this.handleChange(e)}>
+                <option value="0" selected={this.state.fallOrSpring === 0}>Fall</option>
+                <option value="1" selected={this.state.fallOrSpring === 1}>Spring</option>
+              </select>
+              <Cleave
+                value={this.state.year}
+                onChange={e => this.handleChangeText(e)}
+                name="year"
+                options={{
+                  date: true,
+                  datePattern: ['Y']
+                }}
+              />
+              <br />
+
+              <button type="submit" onClick={this.submitClicked}>Change Viewing Semester</button>
             </div>
           </Navbar>
           <div className="content">
-            <Route exact={true} path="/admin" component={AdminHome}/>
-            <Route path="/admin/users" component={UserManagement}/>
-            <Route path="/admin/proposals" component={ProjectProposals}/>
-            <Route path="/admin/class" component={ClassOverview}/>
-            <Route path="/admin/matching" component={ProjectMatching}/>
+            <Route exact={true} path="/admin" component={AdminHome} />
+            <Route path="/admin/users" component={UserManagement} />
+            <Route path="/admin/proposals" component={ProjectProposals} />
+            <Route path="/admin/class" component={ClassOverview} />
+            <Route path="/admin/matching" component={ProjectMatching} />
           </div>
         </div>
       </BrowserRouter>
