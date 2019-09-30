@@ -87,6 +87,7 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
         var token = resp[0];
         sessionStorage.setItem('jwt', token);
       }
+      sessionStorage.setItem('email', this.state.email);
     }
   }
 
