@@ -39,9 +39,22 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
     }
     componentDidMount() {
         this.setState({ isLoading: true });
-        fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email'))
+        fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email')) // link
+            // .then(response => response.json())
             .then(response => response.json())
-            .then(data => this.setState({ user: data, isLoading: false }));
+            // .then((responseText) => {
+            //     console.log(responseText);
+            //     console.log('location: ' + window.location.hostname);
+            //     console.log('session storage: ' + sessionStorage.getItem('email'));
+            //     console.log(Object.keys(sessionStorage));
+            // })
+            .then(data => this.setState({
+                 user: data, 
+                 isLoading: false 
+            }))
+            .catch((error) => {
+                console.log('error: ' + error);
+            });
         /*var request = new XMLHttpRequest();
         request.withCredentials = true;
         request.open('GET', 'http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email'));
@@ -87,7 +100,11 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
     }
     handleChange(e: any) {
         // @ts-ignore
-        this.setState({ [e.target.id]: e.target.value });
+        var user = {...this.state.user};
+        user[e.target.id] = e.target.value;
+        this.setState({
+            user
+        });
     }
     render() {
         if (this.state.isLoading) {
@@ -109,7 +126,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                                 <Col sm={10}>
                                     <FormControl
                                         type="text"
-                                        id="name"
+                                        id="firstName"
                                         value={this.state.user.firstName}
                                         onChange={e => this.handleChange(e)}
                                     />
@@ -137,7 +154,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                                 <Col sm={10}>
                                     <FormControl
                                         type="text"
-                                        id="company"
+                                        id="organization"
                                         value={this.state.user.organization}
                                         onChange={e => this.handleChange(e)}
                                     />
