@@ -205,8 +205,6 @@ public class UserController
 	@PostMapping("/admin-registration")
 	@CrossOrigin
 	public @ResponseBody String adminRegistrationAttempt(@RequestBody Map<String, String> info) {
-		int semester = Integer.parseInt(info.get("semester"));
-		int fallSpring = Integer.parseInt(info.get("fallSpring"));
 		String email = info.get(Constants.EMAIL);
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
@@ -222,6 +220,8 @@ public class UserController
 		if(userService.findAdminByEmail(email) != null) {
 			return "This email is registered as an admin.";
 		}
+		
+		RegisteredStudentEmail regEmail = regRepo.findByEmail(email);
 		Admin admin = new Admin();
 		admin.setFirstName(firstName);
 		admin.setLastName(lastName);
@@ -229,8 +229,8 @@ public class UserController
 		admin.setPhone(phone);
 		admin.setPassword(encryptedPassword);
 		admin.setUserType(Constants.ADMIN);
-		admin.semester = semester;
-		admin.fallSpring = fallSpring;
+		admin.semester = regEmail.getSemester();
+		admin.fallSpring = regEmail.getFallSpring();
 		userService.saveUser(admin);
 		System.out.println("New admin created");
 		return Constants.SUCCESS;
@@ -249,21 +249,29 @@ public class UserController
 		
 		//regRepo.findByEmail(email) != null && s
 		// Check if email is a registered student email and not already registered
-		if (userService.findStudentByEmail(email) == null) {
-			Student s = new Student();
-			s.setFirstName(name);
-			s.semester = globalRepo.findAll().get(0).getSemester();
-			s.fallSpring = globalRepo.findAll().get(0).getFallSpring();
-			s.setLastName(lastName);
-			s.setEmail(email);
-			s.setPhone(phone);
-			s.setPassword(encryptedPassword);
-			s.setUserType(Constants.STUDENT);
-			userService.saveUser(s);
-			System.out.println("New student created");
-			return Constants.SUCCESS;
+		if(regRepo.findByEmail(email) == null) {
+			return "This email has not recieved an invite.";
 		}
-		return Constants.EMPTY;
+		if(userService.findStudentByEmail(email) != null) {
+			return "This email is registered as a student.";
+		}
+		if(userService.findAdminByEmail(email) != null) {
+			return "This email is registered as an admin.";
+		}
+		
+		Student s = new Student();
+		RegisteredStudentEmail regEmail = regRepo.findByEmail(email);
+		s.setFirstName(name);
+		s.semester = regEmail.getSemester();
+		s.fallSpring = regEmail.getFallSpring();
+		s.setLastName(lastName);
+		s.setEmail(email);
+		s.setPhone(phone);
+		s.setPassword(encryptedPassword);
+		s.setUserType(Constants.STUDENT);
+		userService.saveUser(s);
+		System.out.println("New student created");
+		return Constants.SUCCESS;
 	}
 	
 	// Stakeholder registration
@@ -304,11 +312,13 @@ public class UserController
 		System.out.println("Received HTTP POST");
 		
 		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
+		int fallSpring = Integer.parseInt(emailsData.get("fallSpring"));
+		int semester = Integer.parseInt(emailsData.get("year"));
 		
 		for(String e : emailsArray)
 		{
 			// Save the email to registered student email table
-			regRepo.save(new RegisteredStudentEmail(e));
+			regRepo.save(new RegisteredStudentEmail(e, fallSpring, semester));
 			// Send an email invitation
 			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/student", e);
 			System.out.println("Sent invite to: " + e);
@@ -323,14 +333,14 @@ public class UserController
 		System.out.println("Received HTTP POST");
 		
 		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
-		String fallSpring = emailsData.get("fallSpring");
-		String semester = emailsData.get("year");
-		String url = "http://localhost:3000/register/admin?fallSpring="+fallSpring+"&semester="+semester;
+		int fallSpring = Integer.parseInt(emailsData.get("fallSpring"));
+		int semester = Integer.parseInt(emailsData.get("year"));
+		String url = "http://localhost:3000/register/admin";
 		
 		for(String e : emailsArray)
 		{
 			// Save the email to registered student email table
-			regRepo.save(new RegisteredStudentEmail(e));
+			regRepo.save(new RegisteredStudentEmail(e, fallSpring, semester));
 			// Send an email invitation
 			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \n" + url, e);
 			System.out.println("Sent invite to: " + e);
