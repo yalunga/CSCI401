@@ -45,6 +45,7 @@ interface User {
   userId: number;
   firstName: string;
   lastName: string;
+  year: number;
   userType: string;
   email: string;
 }
@@ -253,13 +254,12 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                   Year
                                 </Col>
                 <Col sm={9}>
-                  <FormControl
-                    type="text"
-                    placeholder="Year"
-                    id="editYear"
-                    value={this.state.editYear}
-                    onChange={e => this.handleChange(e)}
-                  />
+                  <FormControl type="text" componentClass="select" placeholder="Year" id="editYear" value={this.state.editYear} onChange={e => this.handleChange(e)}>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    {/* <option value="2022">2022</option> */}
+                  </FormControl>
                 </Col>
               </FormGroup>
             </Form>
@@ -298,6 +298,8 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
             <tr>
               <th>First Name</th>
               <th>Last Name</th>
+              <th>Semester</th>
+
               <th>User Type</th>
               <th>Email</th>
               <th>Edit/Delete</th>
@@ -308,6 +310,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
               <tr key={user.userId}>
                 <td>{user.firstName}</td>
                 <td>{user.lastName}</td>
+                <td>{user.year}</td>
                 <td>{user.userType}</td>
                 <td>{user.email}</td>
                 <td>
