@@ -64,6 +64,19 @@ public class UserController
 		admin.setPassword(EncryptPassword.encryptPassword("admin"));
 		userService.saveUser(admin);
 		
+		
+		
+		
+		Stakeholder stakeholder = new Stakeholder();
+		stakeholder.setFirstName("TestFirst");
+		stakeholder.setLastName("TestLast");
+		stakeholder.setEmail("test@usc.edu");
+		stakeholder.setPassword(EncryptPassword.encryptPassword("test"));
+		userService.saveUser(stakeholder);
+		
+		
+		
+		
 		Global global = new Global();
 		global.setFallSpring(1);
 		global.setSemester(2019);
@@ -79,6 +92,8 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getUsers()
 	{
+		System.out.println("CALLS GET USERS");
+
 		Global g = globalRepo.findAll().get(0);
 		int targetSemester = g.getSemester();
 		int targetFallSpring = g.getFallSpring();
@@ -172,24 +187,32 @@ public class UserController
 	@PostMapping("/update-info")
 	@CrossOrigin
 	public void updateUserInfo(@RequestBody Map<String, String> info) {
+		System.out.println("CHANGING USER");
 		String originalEmail = info.get(Constants.EMAIL);
 		String phone = info.get(Constants.PHONE);
 		String password = info.get(Constants.PASSWORD);
 		String firstName = info.get(Constants.FIRST_NAME);
+		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
+		String year_string = info.get(Constants.YEAR);
+		
+		Integer year_int = Integer.parseInt(year_string);
+		
+		System.out.println(info);
+
 		
 		User user = findUser(originalEmail);
-		if(!firstName.isEmpty()) {
-			user.setFirstName(firstName);
-		}
-		if(!phone.isEmpty()) {
-			user.setPhone(phone);
-		}
-		if(!password.isEmpty()) {
-			user.setPassword(EncryptPassword.encryptPassword(password));
-		}
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
 		user.setUserType(userType);
+		user.setYear(year_int);
+		
+		System.out.println("FOUNDUSER");
+
+		
 		userService.saveUser(user);
+		System.out.println("SAVED USER");
+
 	}
 	
 	public User findUser(String email) {

@@ -16,6 +16,8 @@ public class Constants {
 	public static String PASSWORD = "password";
 	public static String FIRST_NAME = "firstName";
 	public static String LAST_NAME = "lastName";
+	public static String YEAR = "year";
+
 	public static String PHONE = "phone";
 	public static String CONFIRM = "confirm";
 	public static String COMPANY = "company";
