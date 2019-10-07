@@ -51,6 +51,8 @@ public class UserService {
 		User u = findStudentByEmail(email);
 		if (u == null) {
 			u = findStakeholderByEmail(email);
+			// System.out.println("in find stakeholder by email");
+			// System.out.println("get name in find user: " + u.getFirstName());
 		}
 		if (u == null) {
 			u = findAdminByEmail(email);

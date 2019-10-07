@@ -170,8 +170,15 @@ public class ProjectController
 	@GetMapping("/{email:.+}")
 	@CrossOrigin
 	public List<Project> getProjectsByEmail(@PathVariable("email") String email) {
+		System.out.println("stakeholder email : " + email);
+		
 		Stakeholder user = userService.findStakeholderByEmail(email);
 		List<Project> projects = userService.getStakeholderProjects(user);
+		
+		for(Project pro : projects) {
+			System.out.println("project name: " + pro.getProjectName());
+		}
+		
 		return projects;
 	}
 	

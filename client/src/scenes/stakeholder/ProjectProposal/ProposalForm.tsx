@@ -20,6 +20,8 @@ interface ProjectState {
     fallSpring: number;
 }
 
+var nameSet = new Set();
+
 class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     constructor(props: ProjectProps) {
         super(props);
@@ -32,44 +34,56 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             semester: 2019,
             fallSpring: 0
         };
-        this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.submitProject = this.submitProject.bind(this);
+        this.getProjectList = this.getProjectList.bind(this);
 
+        this.getProjectList();
     }
-    submitClicked() {
-        var request = new XMLHttpRequest();
-        request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/projects/save/' + sessionStorage.getItem('email'));
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        var data = JSON.stringify({
-            projectName: this.state.projectName,
-            minSize: this.state.projectSize,
-            maxSize: this.state.projectSize,
-            technologies: this.state.technologies,
-            background: this.state.background,
-            description: this.state.description,
-            semester: this.state.semester,
-            fallSpring: this.state.fallSpring
-        });
-        request.setRequestHeader('Cache-Control', 'no-cache');
-        request.send(data);
-        alert('Your project proposal has been submitted!');
-        /*
-        fetch('http://' + window.location.hostname + ':8080/projectData/', {
-        method: 'POST',
-        headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-        projectName: this.state.projectName,
-        projectSize: this.state.projectSize,
-        technologiesExpected: this.state.technologiesExpected,
-        backgroundRequested: this.state.backgroundRequested,
-        projectDescription: this.state.projectDescription,
+
+    getProjectList() {
+        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email'))
+        .then(response => response.json())
+        .then((data) => {
+            Object.keys(data).forEach(function(key: any) {
+                // alert('key: ' + key + ' val: ' + data[key]);
+                // alert(data[key].projectName);
+                nameSet.add(data[key].projectName);
+            });
         })
+        .catch((error) => {
+            alert('GET error: ' + error);
         });
-        */
+    }
+
+    submitProject() {
+        alert('in submit project');
+        alert('set size: ' + nameSet.size);
+        var newProjectName = this.state.projectName;
+        if (nameSet.has(newProjectName)) {
+            alert('project name already exists');
+            return;
+        }
+        
+        fetch('http://' + window.location.hostname + ':8080/projects/save/' + sessionStorage.getItem('email'), {
+            method: 'POST',
+            body: JSON.stringify({
+                projectName: this.state.projectName,
+                minSize: this.state.projectSize,
+                maxSize: this.state.projectSize,
+                technologies: this.state.technologies,
+                background: this.state.background,
+                description: this.state.description,
+                semester: this.state.semester,
+                fallSpring: this.state.fallSpring
+            }),
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Cache-Control': 'no-cache'
+            },
+        }).then((res) => res.json())
+        .then((data) => nameSet.add(newProjectName))
+        .catch((err) => alert('POST error: ' + err));
     }
 
     handleChangeSelect(event: any) {
@@ -190,7 +204,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
 
                 <FormGroup>
                     <Col smOffset={2} sm={10}>
-                        <Button type="submit" onClick={this.submitClicked}>Submit</Button>
+                        <Button type="submit" onClick={this.submitProject}>Submit</Button>
                     </Col>
                 </FormGroup>
             </Form>

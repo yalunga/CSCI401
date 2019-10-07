@@ -36,17 +36,19 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
         };
         this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     componentDidMount() {
         this.setState({ isLoading: true });
+        // console.log('did mount');
         fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email')) // link
-            // .then(response => response.json())
             .then(response => response.json())
+            // .then(response => response.text())
             // .then((responseText) => {
-            //     console.log(responseText);
-            //     console.log('location: ' + window.location.hostname);
-            //     console.log('session storage: ' + sessionStorage.getItem('email'));
-            //     console.log(Object.keys(sessionStorage));
+            //     console.log('response: ' + responseText);
+            //     // console.log('location: ' + window.location.hostname);
+            //     // console.log('session storage: ' + sessionStorage.getItem('email'));
+            //     // console.log(Object.keys(sessionStorage));
             // })
             .then(data => this.setState({
                  user: data, 
@@ -106,6 +108,38 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
             user
         });
     }
+
+    handleSubmit(e: any) {
+        // e.preventDefault();
+        alert('on submit');
+        // alert('email: ' + this.state.user.email);
+
+        // var temp = new Map();
+        // temp.set('email', 'test@usc.edu');
+        // temp.set('phone', 'testphone');
+        // temp.set('password', 'testpwd');
+        // temp.set('firstName', 'testfn');
+        // temp.set('userType', 'tempuser');
+
+        // change phone, password, name
+        
+        fetch('http://' + window.location.hostname + ':8080/users/update-info', {
+            method: 'POST',
+            body: JSON.stringify({
+                email: sessionStorage.getItem('email'),
+                phone: this.state.user.phone,
+                password: '',
+                firstName: this.state.user.firstName,
+                userType: ''
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((res) => res.json())
+        .then((data) => alert(Object.keys(data)))
+        .catch((err) => console.log(err));
+    }
+
     render() {
         if (this.state.isLoading) {
             return <p>Loading...</p>;
@@ -116,9 +150,9 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                 <Panel>
                     <Panel.Heading>
                         Profile
-            </Panel.Heading>
+                </Panel.Heading>
                     <Panel.Body>
-                        <Form horizontal={true}>
+                        <Form horizontal={true} onSubmit={this.handleSubmit}>
                             <FormGroup controlId="formHorizontalStakeholderName">
                                 <Col componentClass={ControlLabel} sm={2}>
                                     Name:
