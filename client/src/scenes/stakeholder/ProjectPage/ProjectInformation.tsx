@@ -16,7 +16,8 @@ interface ProjectProps {
 interface Project {
     projectId: number;
     projectName: string;
-    minSize: string;
+    minSize: number;
+    maxSize: number;
     technologies: string;
     background: string;
     description: string;
@@ -42,7 +43,8 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
             project: {
                 projectId: 0,
                 projectName: '',
-                minSize: '',
+                minSize: 0,
+                maxSize: 0,
                 technologies: '',
                 background: '',
                 description: ''
@@ -75,10 +77,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 <Panel.Body>
                     <Form horizontal={true} >
                         <FormGroup controlId="formHorizontalProjectName">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Project Name</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="projectName"
@@ -89,26 +91,41 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             </Col>
                         </FormGroup>
 
-                        <FormGroup controlId="formHorizontalNumberStudents">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                <b>Number of Students</b>
+                        <FormGroup controlId="formHorizontalMinNumberStudents">
+                            <Col componentClass={ControlLabel} sm={3}>
+                                <b>Minimum Number of Students</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
-                                    id="projectSize"
-                                    placeholder="Number of Students"
+                                    id="projectMin"
+                                    placeholder="Min Number of Students"
                                     onChange={e => this.handleChange(e)}
                                     value={this.state.project.minSize}
                                 />
                             </Col>
                         </FormGroup>
+                        
+                        <FormGroup controlId="formHorizontalMaxNumberStudents">
+                            <Col componentClass={ControlLabel} sm={3}>
+                                <b>Maximum Number of Students</b>
+                            </Col>
+                            <Col sm={8}>
+                                <FormControl
+                                    type="text"
+                                    id="projectMax"
+                                    placeholder="Max Number of Students"
+                                    onChange={e => this.handleChange(e)}
+                                    value={this.state.project.maxSize}
+                                />
+                            </Col>
+                        </FormGroup>
 
                         <FormGroup controlId="formHorizontalTechnologies">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Technologies Expected</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="technologiesExpected"
@@ -120,10 +137,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup controlId="formHorizontalBackground">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Background Requested</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="backgroundRequested"
@@ -135,10 +152,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup controlId="formHorizontalDescription">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Description</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     componentClass="textarea"
                                     type="text"
@@ -151,7 +168,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup>
-                            <Col smOffset={2} sm={10}>
+                            <Col smOffset={3} sm={8}>
                                 <Button type="submit">Edit/Save</Button>
                             </Col>
                         </FormGroup>
