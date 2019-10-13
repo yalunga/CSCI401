@@ -13,12 +13,13 @@ interface ProjectProps {
 }
 interface ProjectState {
     projectName: string;
-    projectSize: number;
+    projectMin: number;
+    projectMax: number;
     technologies: string;
     background: string;
     description: string;
+    fallSpringSum: number;
     semester: number;
-    fallSpring: number;
 }
 
 var nameSet = new Set();
@@ -28,12 +29,13 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
         super(props);
         this.state = {
             projectName: '',
-            projectSize: 0,
+            projectMin: 0,
+            projectMax: 0,
             technologies: '',
             background: '',
             description: '',
-            semester: 2019,
-            fallSpring: 0
+            fallSpringSum: 0,
+            semester: 2019
         };
         this.handleChange = this.handleChange.bind(this);
         this.submitProject = this.submitProject.bind(this);
@@ -51,11 +53,12 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             .then(response => response.json())
             .then((data) => this.setState({
                 projectName: data.projectName,
-                projectSize: data.minSize,
+                projectMax: data.minSize,
+                projectMin: data.minSize,
                 technologies: data.technologies,
                 background: data.background,
                 semester: data.semester,
-                fallSpring: data.fallSpring,
+                fallSpringSum: data.fallSpring,
             }))
             .catch((err) => console.log('GET error: ' + err));
         } 
@@ -96,13 +99,13 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             method: 'POST',
             body: JSON.stringify({
                 projectName: this.state.projectName,
-                minSize: this.state.projectSize,
-                maxSize: this.state.projectSize,
+                minSize: this.state.projectMin,
+                maxSize: this.state.projectMax,
                 technologies: this.state.technologies,
                 background: this.state.background,
                 description: this.state.description,
                 semester: this.state.semester,
-                fallSpring: this.state.fallSpring
+                fallSpringSum: this.state.fallSpringSum,
             }),
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -114,8 +117,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     }
 
     handleChangeSelect(event: any) {
-        var val = event.target.value === '0' ? 0 : 1;
-        this.setState({ fallSpring: val });
+        var val = event.target.value === '0' ? 0 : 2;
+        this.setState({ fallSpringSum: val });
 
         nameSet.clear();
         console.log('semester: ' + this.state.semester + ' ' + 'val: ' + val);
@@ -144,18 +147,18 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
 
     handleChange(e: any) {
         // @ts-ignore
+        
         this.setState({ [e.target.id]: e.target.value });
-
     }
 
     render() {
         return (
             <Form horizontal={true} >
                 <FormGroup controlId="formHorizontalProjectName">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                         <b>Project Name</b>
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={8}>
                         <FormControl
                             type="text"
                             id="projectName"
@@ -166,26 +169,41 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                     </Col>
                 </FormGroup>
 
-                <FormGroup controlId="formHorizontalNumberStudents">
-                    <Col componentClass={ControlLabel} sm={2}>
-                        <b>Number of Students</b>
+                <FormGroup controlId="formHorizontalMinNumberStudents">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        <b>Minimum Number of Students</b>
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={8}>
                         <FormControl
                             type="text"
-                            id="projectSize"
-                            placeholder="Number of Students"
+                            id="projectMin"
+                            placeholder="Min Number of Students"
                             onChange={e => this.handleChange(e)}
-                            value={this.state.projectSize}
+                            value={this.state.projectMin}
+                        />
+                    </Col>
+                </FormGroup>
+                
+                <FormGroup controlId="formHorizontalMaxNumberStudents">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        <b>Maximum Number of Students</b>
+                    </Col>
+                    <Col sm={8}>
+                        <FormControl
+                            type="text"
+                            id="projectMax"
+                            placeholder="Max Number of Students"
+                            onChange={e => this.handleChange(e)}
+                            value={this.state.projectMax}
                         />
                     </Col>
                 </FormGroup>
 
                 <FormGroup controlId="formHorizontalTechnologies">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                         <b>Technologies Expected</b>
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={8}>
                         <FormControl
                             type="text"
                             id="technologies"
@@ -197,10 +215,10 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                 </FormGroup>
 
                 <FormGroup controlId="formHorizontalBackground">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                         <b>Background Requested</b>
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={8}>
                         <FormControl
                             type="text"
                             id="background"
@@ -212,10 +230,10 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                 </FormGroup>
 
                 <FormGroup controlId="formHorizontalDescription">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                         <b>Description</b>
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={8}>
                         <FormControl
                             componentClass="textarea"
                             type="text"
@@ -228,8 +246,15 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                 </FormGroup>
 
                 <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                         <b>Semester</b>
+                    </Col>
+                    <Col sm={1}>
+                        <select style={{ marginRight: '5px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
+                            <option value="0">Fall</option>
+                            <option value="1">Spring</option>
+                            <option value="2">Summer</option>
+                        </select>
                     </Col>
                     <Col sm={4}>
                         <FormControl
@@ -240,16 +265,10 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                             onChange={e => this.handleChangeText(e)}
                         />
                     </Col>
-                    <Col sm={1}>
-                        <select style={{ marginRight: '5px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
-                            <option value="0">Fall</option>
-                            <option value="1">Spring</option>
-                        </select>
-                    </Col>
                 </FormGroup>
 
                 <FormGroup>
-                    <Col smOffset={2} sm={10}>
+                    <Col smOffset={3} sm={9}>
                         <Button type="submit" onClick={this.submitProject}>Submit</Button>
                     </Col>
                 </FormGroup>

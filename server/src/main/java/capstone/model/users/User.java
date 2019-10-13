@@ -23,6 +23,7 @@ public class User
 	private String email;
 	private String phone;
 	private String userType;
+	private Integer year;
 	public Long getUserId() {
 		return userId;
 	}
@@ -48,6 +49,7 @@ public class User
 	// Login
 	@Transient
 	private String password; //encrypted
+
 	
 	public Long getId() 
 	{
@@ -93,5 +95,14 @@ public class User
 	public void setPhone(String phone) 
 	{
 		this.phone = phone;
+	}
+	public void setYear(Integer year) {
+		// TODO Auto-generated method stub
+		this.year = year;
+		
+	}
+	public Integer getYear() 
+	{
+		return year;
 	}
 }

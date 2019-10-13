@@ -17,7 +17,8 @@ interface ProjectProps {
 interface Project {
     projectId: number;
     projectName: string;
-    minSize: string;
+    minSize: number;
+    maxSize: number;
     technologies: string;
     background: string;
     description: string;
@@ -43,7 +44,8 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
             project: {
                 projectId: 0,
                 projectName: '',
-                minSize: '',
+                minSize: 0,
+                maxSize: 0,
                 technologies: '',
                 background: '',
                 description: ''
@@ -57,7 +59,11 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
     componentDidMount() {
         fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/' + this.props.projectId)
             .then(response => response.json())
-            .then(data => this.setState({ project: data, isLoading: false }));
+            // .then((responseText) => alert(responseText));
+            .then(data => this.setState({ 
+                project: data, 
+                isLoading: false 
+            }));
     }
 
     handleChange(e: any) {
@@ -71,24 +77,27 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
 
     handleSubmit(e: any) {
         // alert('in handle submit');
-        console.log('projectId: ' + this.state.project.projectId);
-        console.log('projectName: ' + this.state.project.projectName);
-        console.log('projectNum: ' + this.state.project.minSize);
-        console.log('technology: ' + this.state.project.technologies);
-        console.log('background: ' + this.state.project.background);
-        console.log('description: ' + this.state.project.description);
+        // console.log('projectId: ' + this.state.project.projectId);
+        // console.log('projectName: ' + this.state.project.projectName);
+        // console.log('projectNum: ' + this.state.project.minSize);
+        // console.log('technology: ' + this.state.project.technologies);
+        // console.log('background: ' + this.state.project.background);
+        // console.log('description: ' + this.state.project.description);
   
         if (this.state.students.length !== 0) {
             alert('Students are assigned, cannot edit project');
             return;
         }
         
+        alert('project min: ' + this.state.project.minSize);
+        alert('project max: ' + this.state.project.maxSize);
         fetch('http://' + window.location.hostname + ':8080/projects/dabao/', {
             method: 'POST',
             body: JSON.stringify({
                 projectId: this.state.project.projectId,
                 projectName: this.state.project.projectName,
-                projectNum: this.state.project.minSize,
+                projectMin: this.state.project.minSize,
+                projectMax: this.state.project.maxSize,
                 technology: this.state.project.technologies,
                 background: this.state.project.background,
                 description: this.state.project.description
@@ -115,10 +124,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 <Panel.Body>
                     <Form horizontal={true} >
                         <FormGroup controlId="formHorizontalProjectName">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Project Name</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="projectName"
@@ -129,26 +138,41 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             </Col>
                         </FormGroup>
 
-                        <FormGroup controlId="formHorizontalNumberStudents">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                <b>Number of Students</b>
+                        <FormGroup controlId="formHorizontalMinNumberStudents">
+                            <Col componentClass={ControlLabel} sm={3}>
+                                <b>Minimum Number of Students</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="minSize"
-                                    placeholder="Number of Students"
+                                    placeholder="Min Number of Students"
                                     onChange={e => this.handleChange(e)}
                                     value={this.state.project.minSize}
                                 />
                             </Col>
                         </FormGroup>
+                        
+                        <FormGroup controlId="formHorizontalMaxNumberStudents">
+                            <Col componentClass={ControlLabel} sm={3}>
+                                <b>Maximum Number of Students</b>
+                            </Col>
+                            <Col sm={8}>
+                                <FormControl
+                                    type="text"
+                                    id="maxSize"
+                                    placeholder="Max Number of Students"
+                                    onChange={e => this.handleChange(e)}
+                                    value={this.state.project.maxSize}
+                                />
+                            </Col>
+                        </FormGroup>
 
                         <FormGroup controlId="formHorizontalTechnologies">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Technologies Expected</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="technologies"
@@ -160,10 +184,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup controlId="formHorizontalBackground">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Background Requested</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     type="text"
                                     id="background"
@@ -175,10 +199,10 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup controlId="formHorizontalDescription">
-                            <Col componentClass={ControlLabel} sm={2}>
+                            <Col componentClass={ControlLabel} sm={3}>
                                 <b>Description</b>
                             </Col>
-                            <Col sm={10}>
+                            <Col sm={8}>
                                 <FormControl
                                     componentClass="textarea"
                                     type="text"
@@ -191,7 +215,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                         </FormGroup>
 
                         <FormGroup>
-                            <Col smOffset={2} sm={10}>
+                            <Col smOffset={3} sm={8}>
                                 <Button type="submit" onClick={this.handleSubmit}>Save</Button>
                             </Col>
                         </FormGroup>

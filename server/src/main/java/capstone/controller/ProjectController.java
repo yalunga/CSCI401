@@ -405,7 +405,8 @@ public class ProjectController
 		
 		
 		String name = info.get("projectName");
-		int number = Integer.parseInt(info.get("projectNum"));
+		int min = Integer.parseInt(info.get("projectMin"));
+		int max = Integer.parseInt(info.get("projectMax"));
 		String technology = info.get("technology");
 		String background = info.get("background");
 		String descrip = info.get("description");
@@ -415,7 +416,8 @@ public class ProjectController
 		System.out.println("new t: " + technology);
 		System.out.println("descrip: " + descrip);
 		
-		project.setMinSize(number);
+		project.setMinSize(min);
+		project.setMaxSize(max);
 		project.setTechnologies(technology);
 		project.setBackground(background);
 		project.setDescription(descrip);
