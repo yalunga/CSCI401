@@ -18,6 +18,8 @@ interface Project {
     projectId: number;
     projectName: string;
     statusId: number;
+    semester: number;
+    fallSpring: number;
 }
 
 interface HomeState {
@@ -78,15 +80,23 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                         <thead>
                             <th>Project</th>
                             <th>Status</th>
+                            <th>Semester</th>
                             <th>View/Edit</th>
+                            <th>Duplicate</th>
                         </thead>
                         <tbody>
                             {projects.map((project: Project, index: number) =>
                                 <tr key={project.projectId}>
                                     <td>{project.projectName}</td>
                                     <td>{this.getStatus(project.statusId)}</td>
+                                    <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
                                     <td>
                                         <LinkContainer to={{pathname: 'stakeholder/project/' + project.projectId}}>
+                                        <img src={viewIcon}/>
+                                        </LinkContainer>
+                                    </td>
+                                    <td>
+                                        <LinkContainer to={{pathname: 'stakeholder/proposals/' + project.projectId}}>
                                         <img src={viewIcon}/>
                                         </LinkContainer>
                                     </td>

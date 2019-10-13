@@ -3,6 +3,7 @@ package capstone.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -92,7 +93,6 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getUsers()
 	{
-		System.out.println("CALLS GET USERS");
 
 		Global g = globalRepo.findAll().get(0);
 		int targetSemester = g.getSemester();
@@ -187,7 +187,6 @@ public class UserController
 	@PostMapping("/update-info")
 	@CrossOrigin
 	public void updateUserInfo(@RequestBody Map<String, String> info) {
-		System.out.println("CHANGING USER");
 		String originalEmail = info.get(Constants.EMAIL);
 		String phone = info.get(Constants.PHONE);
 		String password = info.get(Constants.PASSWORD);
@@ -202,9 +201,18 @@ public class UserController
 
 		
 		User user = findUser(originalEmail);
+		
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		user.setUserType(userType);
+		
+		if(!phone.isEmpty()) {
+			user.setPhone(phone);
+		}
+		if(!password.isEmpty()) {
+			user.setPassword(EncryptPassword.encryptPassword(password));
+		}
+		
+		//user.setUserType(userType);
 		user.setYear(year_int);
 		
 		System.out.println("FOUNDUSER");

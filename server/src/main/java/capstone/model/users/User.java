@@ -60,6 +60,7 @@ public class User
 		this.userId = id;
 	}
 	public String getFirstName() {
+		// System.out.println("in User: " + firstName);
 		return firstName;
 	}
 	public void setFirstName(String name) {

@@ -9,6 +9,7 @@ import {
     Panel,
     Table
 } from 'react-bootstrap';
+import { runInThisContext } from 'vm';
 
 interface ProjectProps {
     projectId: string;
@@ -52,18 +53,64 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
             isLoading: true
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
         fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/' + this.props.projectId)
             .then(response => response.json())
-            .then(data => this.setState({ project: data, isLoading: false }));
+            // .then((responseText) => alert(responseText));
+            .then(data => this.setState({ 
+                project: data, 
+                isLoading: false 
+            }));
     }
 
     handleChange(e: any) {
         // @ts-ignore
-        this.setState({ [e.target.id]: e.target.value });
+        var project = {...this.state.project};
+        project[e.target.id] = e.target.value;
+        this.setState({
+            project
+        });
+    }
 
+    handleSubmit(e: any) {
+        // alert('in handle submit');
+        // console.log('projectId: ' + this.state.project.projectId);
+        // console.log('projectName: ' + this.state.project.projectName);
+        // console.log('projectNum: ' + this.state.project.minSize);
+        // console.log('technology: ' + this.state.project.technologies);
+        // console.log('background: ' + this.state.project.background);
+        // console.log('description: ' + this.state.project.description);
+  
+        if (this.state.students.length !== 0) {
+            alert('Students are assigned, cannot edit project');
+            return;
+        }
+        
+        alert('project min: ' + this.state.project.minSize);
+        alert('project max: ' + this.state.project.maxSize);
+        fetch('http://' + window.location.hostname + ':8080/projects/dabao/', {
+            method: 'POST',
+            body: JSON.stringify({
+                projectId: this.state.project.projectId,
+                projectName: this.state.project.projectName,
+                projectMin: this.state.project.minSize,
+                projectMax: this.state.project.maxSize,
+                technology: this.state.project.technologies,
+                background: this.state.project.background,
+                description: this.state.project.description
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((res) => res.text())
+        .then((responsetext => alert('dabao here: ' + responsetext)))
+        // .then((res) => res.json())
+        // .then((data) => nameSet.add(newProjectName))
+        .catch((err) => alert('dabao error: ' + err));
     }
 
     render() {
@@ -98,7 +145,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             <Col sm={8}>
                                 <FormControl
                                     type="text"
-                                    id="projectMin"
+                                    id="minSize"
                                     placeholder="Min Number of Students"
                                     onChange={e => this.handleChange(e)}
                                     value={this.state.project.minSize}
@@ -113,7 +160,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             <Col sm={8}>
                                 <FormControl
                                     type="text"
-                                    id="projectMax"
+                                    id="maxSize"
                                     placeholder="Max Number of Students"
                                     onChange={e => this.handleChange(e)}
                                     value={this.state.project.maxSize}
@@ -128,7 +175,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             <Col sm={8}>
                                 <FormControl
                                     type="text"
-                                    id="technologiesExpected"
+                                    id="technologies"
                                     value={this.state.project.technologies}
                                     placeholder="Technologies expected"
                                     onChange={e => this.handleChange(e)}
@@ -143,7 +190,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             <Col sm={8}>
                                 <FormControl
                                     type="text"
-                                    id="backgroundRequested"
+                                    id="background"
                                     value={this.state.project.background}
                                     placeholder="Background requested"
                                     onChange={e => this.handleChange(e)}
@@ -159,7 +206,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                                 <FormControl
                                     componentClass="textarea"
                                     type="text"
-                                    id="projectDescription"
+                                    id="description"
                                     value={this.state.project.description}
                                     placeholder="Description"
                                     onChange={e => this.handleChange(e)}
@@ -169,7 +216,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
 
                         <FormGroup>
                             <Col smOffset={3} sm={8}>
-                                <Button type="submit">Edit/Save</Button>
+                                <Button type="submit" onClick={this.handleSubmit}>Save</Button>
                             </Col>
                         </FormGroup>
                     </Form>

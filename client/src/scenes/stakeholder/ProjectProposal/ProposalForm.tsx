@@ -9,6 +9,7 @@ import {
 } from 'react-bootstrap';
 
 interface ProjectProps {
+    projectId: string;
 }
 interface ProjectState {
     projectName: string;
@@ -20,6 +21,8 @@ interface ProjectState {
     fallSpringSum: number;
     semester: number;
 }
+
+var nameSet = new Set();
 
 class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     constructor(props: ProjectProps) {
@@ -34,33 +37,107 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             fallSpringSum: 0,
             semester: 2019
         };
-        this.submitClicked = this.submitClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.submitProject = this.submitProject.bind(this);
+        this.getProjectList = this.getProjectList.bind(this);
+        // this.getProjectContent = this.getProjectContent.bind(this);
 
+        this.getProjectList();
     }
-    submitClicked() {
-        var request = new XMLHttpRequest();
-        request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/projects/save/' + sessionStorage.getItem('email'));
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        var data = JSON.stringify({
-            projectName: this.state.projectName,
-            minSize: this.state.projectMin,
-            maxSize: this.state.projectMax,
-            technologies: this.state.technologies,
-            background: this.state.background,
-            description: this.state.description,
-            fallSpringSum: this.state.fallSpringSum,
-            semester: this.state.semester
+
+    componentDidMount() {
+        // alert('email: ' + sessionStorage.getItem('email'));
+        // alert('project id: ' + this.props.projectId);
+        if (this.props.projectId !== undefined) {
+            fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/' + this.props.projectId)
+            .then(response => response.json())
+            .then((data) => this.setState({
+                projectName: data.projectName,
+                projectMax: data.minSize,
+                projectMin: data.minSize,
+                technologies: data.technologies,
+                background: data.background,
+                semester: data.semester,
+                fallSpringSum: data.fallSpring,
+            }))
+            .catch((err) => console.log('GET error: ' + err));
+        } 
+    }
+
+    getProjectList() {
+        nameSet.clear();
+        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + this.state.semester + '/' + 0)
+        // .then((response) => response.text())
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('data: ' + data);
+            console.log('object size: ' + Object.keys(data).length);
+            Object.keys(data).forEach(function(key: any) {
+                // alert('key: ' + key + ' val: ' + data[key]);
+                // alert(data[key].projectName);
+                nameSet.add(data[key].projectName);
+            });
+        })
+        // .then((responseText) => console.log(responseText))
+        .catch((error) => {
+            alert('handle change select error: ' + error);
         });
-        request.setRequestHeader('Cache-Control', 'no-cache');
-        request.send(data);
-        alert('Your project proposal has been submitted!');
+    }
+    // getProjectContent() {
+
+    // }
+    submitProject() {
+        // alert('in submit project');
+        // alert('set size: ' + nameSet.size);
+        var newProjectName = this.state.projectName;
+        if (nameSet.has(newProjectName)) {
+            alert('project name already exists');
+            return;
+        }
+        
+        fetch('http://' + window.location.hostname + ':8080/projects/save/' + sessionStorage.getItem('email'), {
+            method: 'POST',
+            body: JSON.stringify({
+                projectName: this.state.projectName,
+                minSize: this.state.projectMin,
+                maxSize: this.state.projectMax,
+                technologies: this.state.technologies,
+                background: this.state.background,
+                description: this.state.description,
+                semester: this.state.semester,
+                fallSpringSum: this.state.fallSpringSum,
+            }),
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Cache-Control': 'no-cache'
+            },
+        }).then((res) => res.json())
+        .then((data) => nameSet.add(newProjectName))
+        .catch((err) => alert('POST error: ' + err));
     }
 
     handleChangeSelect(event: any) {
         var val = event.target.value === '0' ? 0 : 2;
         this.setState({ fallSpringSum: val });
+
+        nameSet.clear();
+        console.log('semester: ' + this.state.semester + ' ' + 'val: ' + val);
+        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + this.state.semester + '/' + val)
+        // .then((response) => response.text())
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('data: ' + data);
+            console.log('object size: ' + Object.keys(data).length);
+            Object.keys(data).forEach(function(key: any) {
+                // alert('key: ' + key + ' val: ' + data[key]);
+                // alert(data[key].projectName);
+                nameSet.add(data[key].projectName);
+            });
+        })
+        // .then((responseText) => console.log(responseText))
+        .catch((error) => {
+            alert('handle change select error: ' + error);
+        });
     }
 
     handleChangeText(event: any) {
@@ -70,8 +147,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
 
     handleChange(e: any) {
         // @ts-ignore
+        
         this.setState({ [e.target.id]: e.target.value });
-
     }
 
     render() {
@@ -192,7 +269,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
 
                 <FormGroup>
                     <Col smOffset={3} sm={9}>
-                        <Button type="submit" onClick={this.submitClicked}>Submit</Button>
+                        <Button type="submit" onClick={this.submitProject}>Submit</Button>
                     </Col>
                 </FormGroup>
             </Form>
