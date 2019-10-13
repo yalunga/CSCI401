@@ -3,8 +3,10 @@ package capstone.controller;
 
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +29,7 @@ import capstone.repository.GlobalRepository;
 import capstone.service.ProjectService;
 import capstone.service.UserService;
 import capstone.util.Constants;
+import capstone.util.EncryptPassword;
 
 @RestController
 @RequestMapping("/projects")
@@ -74,20 +78,24 @@ public class ProjectController
 	}
 	@GetMapping("getprojectsfromsemester/{semester}/{fallspring}")
 	@CrossOrigin
-	public List<Project> getProjectsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
+	public @ResponseBody List<Project> getProjectsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
-		Global g = globalRepo.findAll().get(0);
+		System.out.println("in the get projects from semester");
+		// Global g = globalRepo.findAll().get(0);
 		int targetSemester = semester;
 		int targetFallSpring = fallspring;
 		List<Project> projects = (List<Project>) projectService.findAll();
+		System.out.println("projects size: " + projects.size());
 		List<Project> validProjects = new ArrayList<Project>();
 		for (Project project : projects)
 		{
+			System.out.println("target s: " + semester + " target sf: " + fallspring);
+			System.out.println("semester: " + project.getSemester() + " fallspring: " + project.getFallSpring());
 			if (project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
 			{
 				validProjects.add(project);
 			}
-			
+			System.out.println("valid size: " + validProjects.size());
 		}
 		return validProjects;
 	}
@@ -354,6 +362,71 @@ public class ProjectController
 		projectService.save(project);
 		return Constants.SUCCESS;
 	}
+	
+//	@PostMapping("/update-info")
+//	@CrossOrigin
+//	public @ResponseBody String updateProjectInfo(@RequestBody Map<String, String> info) {
+//		System.out.println("in the update project info");
+		
+//		String projectId = info.get("projectId");
+//		Project project = projectService.findByProjectId(Integer.parseInt(projectId));
+//		
+//		
+//		String name = info.get("projectName");
+//		int number = Integer.parseInt(info.get("projectNum"));
+//		String technology = info.get("technology");
+//		String background = info.get("background");
+//		String descrip = info.get("description");
+//		
+//		System.out.print("id: " + projectId);
+//		System.out.print("new name: " + name);
+//		System.out.println("new t: " + technology);
+//		
+//		
+//		project.setMinSize(number);
+//		project.setTechnologies(technology);
+//		project.setBackground(background);
+//		project.setDescription(descrip);
+//		project.setProjectName(name);
+//		
+//		System.out.println("after chage");
+//		projectService.save(project);
+//		return "in the update project";
+//	}
+	
+	@RequestMapping(value = "/dabao", method = RequestMethod.POST)
+	@CrossOrigin
+	public void update(@RequestBody Map<String, String> info) {
+		System.out.println("info in test: " + info.size());
+		System.out.println("name: " + info.get("projectName"));
+		
+		String projectId = info.get("projectId");
+		Project project = projectService.findByProjectId(Integer.parseInt(projectId));
+		
+		
+		String name = info.get("projectName");
+		int number = Integer.parseInt(info.get("projectNum"));
+		String technology = info.get("technology");
+		String background = info.get("background");
+		String descrip = info.get("description");
+		
+		System.out.print("id: " + projectId);
+		System.out.print("new name: " + name);
+		System.out.println("new t: " + technology);
+		System.out.println("descrip: " + descrip);
+		
+		project.setMinSize(number);
+		project.setTechnologies(technology);
+		project.setBackground(background);
+		project.setDescription(descrip);
+		project.setProjectName(name);
+		
+		System.out.println("after chage");
+		projectService.save(project);
+		return;
+	}
+	
+	
 	
 	@PostMapping("/change/{projectId}")
 	@CrossOrigin

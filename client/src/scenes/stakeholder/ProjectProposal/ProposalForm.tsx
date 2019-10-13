@@ -9,6 +9,7 @@ import {
 } from 'react-bootstrap';
 
 interface ProjectProps {
+    projectId: string;
 }
 interface ProjectState {
     projectName: string;
@@ -37,28 +38,54 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
         this.handleChange = this.handleChange.bind(this);
         this.submitProject = this.submitProject.bind(this);
         this.getProjectList = this.getProjectList.bind(this);
+        // this.getProjectContent = this.getProjectContent.bind(this);
 
         this.getProjectList();
     }
 
+    componentDidMount() {
+        // alert('email: ' + sessionStorage.getItem('email'));
+        // alert('project id: ' + this.props.projectId);
+        if (this.props.projectId !== undefined) {
+            fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/' + this.props.projectId)
+            .then(response => response.json())
+            .then((data) => this.setState({
+                projectName: data.projectName,
+                projectSize: data.minSize,
+                technologies: data.technologies,
+                background: data.background,
+                semester: data.semester,
+                fallSpring: data.fallSpring,
+            }))
+            .catch((err) => console.log('GET error: ' + err));
+        } 
+    }
+
     getProjectList() {
-        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email'))
-        .then(response => response.json())
+        nameSet.clear();
+        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + this.state.semester + '/' + 0)
+        // .then((response) => response.text())
+        .then((response) => response.json())
         .then((data) => {
+            console.log('data: ' + data);
+            console.log('object size: ' + Object.keys(data).length);
             Object.keys(data).forEach(function(key: any) {
                 // alert('key: ' + key + ' val: ' + data[key]);
                 // alert(data[key].projectName);
                 nameSet.add(data[key].projectName);
             });
         })
+        // .then((responseText) => console.log(responseText))
         .catch((error) => {
-            alert('GET error: ' + error);
+            alert('handle change select error: ' + error);
         });
     }
+    // getProjectContent() {
 
+    // }
     submitProject() {
-        alert('in submit project');
-        alert('set size: ' + nameSet.size);
+        // alert('in submit project');
+        // alert('set size: ' + nameSet.size);
         var newProjectName = this.state.projectName;
         if (nameSet.has(newProjectName)) {
             alert('project name already exists');
@@ -89,6 +116,25 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     handleChangeSelect(event: any) {
         var val = event.target.value === '0' ? 0 : 1;
         this.setState({ fallSpring: val });
+
+        nameSet.clear();
+        console.log('semester: ' + this.state.semester + ' ' + 'val: ' + val);
+        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + this.state.semester + '/' + val)
+        // .then((response) => response.text())
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('data: ' + data);
+            console.log('object size: ' + Object.keys(data).length);
+            Object.keys(data).forEach(function(key: any) {
+                // alert('key: ' + key + ' val: ' + data[key]);
+                // alert(data[key].projectName);
+                nameSet.add(data[key].projectName);
+            });
+        })
+        // .then((responseText) => console.log(responseText))
+        .catch((error) => {
+            alert('handle change select error: ' + error);
+        });
     }
 
     handleChangeText(event: any) {

@@ -183,12 +183,6 @@ public class UserController
 		
 		User user = findUser(originalEmail);
 		
-		// System.out.println("original email: " + originalEmail);
-		
-//		System.out.println("user null: " + user == null);
-//		System.out.println("firstName: " + firstName);
-//		System.out.println("get firstName: " + user.getFirstName());
-		
 		if(!firstName.isEmpty()) {
 			user.setFirstName(firstName);
 		}
