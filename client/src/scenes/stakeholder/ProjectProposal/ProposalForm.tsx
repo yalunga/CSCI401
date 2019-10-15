@@ -53,12 +53,13 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             .then(response => response.json())
             .then((data) => this.setState({
                 projectName: data.projectName,
-                projectMax: data.minSize,
                 projectMin: data.minSize,
+                projectMax: data.maxSize,
                 technologies: data.technologies,
                 background: data.background,
                 semester: data.semester,
                 fallSpringSum: data.fallSpring,
+                description: data.description
             }))
             .catch((err) => console.log('GET error: ' + err));
         } 
