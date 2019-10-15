@@ -66,14 +66,21 @@ public class UserController
 		userService.saveUser(admin);
 		
 		
-		
-		
 		Stakeholder stakeholder = new Stakeholder();
 		stakeholder.setFirstName("TestFirst");
 		stakeholder.setLastName("TestLast");
 		stakeholder.setEmail("test@usc.edu");
 		stakeholder.setPassword(EncryptPassword.encryptPassword("test"));
 		userService.saveUser(stakeholder);
+		
+		Student student = new Student();
+		student.setFirstName("StudentFirst");
+		student.setLastName("StudentLast");
+		student.setEmail("student@usc.edu");
+		student.setYear(2019);
+		student.setPassword(EncryptPassword.encryptPassword("student"));
+		userService.saveUser(student);
+		
 		
 		
 		
@@ -122,20 +129,31 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getStudentsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
+		System.out.println("CALLS GET STUDENTS FROM SEMESTER");
+
 		System.out.println(semester);
 		System.out.println(fallspring);
 		// get users from target semester
 		List<User> users = (List<User>) userService.getUsers();
+		
+		
+		System.out.println(users.get(0).getUserType());
+		
+		
+		
 		List<User> validUsers = new ArrayList<User>();
 		for (User user : users)
 		{
 			if (user.getUserType().equals("Student"))
 			{
+				
+				
 				Student student = (Student) user;
-				if (student.semester == semester && student.fallSpring == fallspring)
-				{
+//				if (student.semester == semester && student.fallSpring == fallspring)
+//				{
+					System.out.println("FOUND STUDENT - ADDING INTO ARRAY");
 					validUsers.add(student);
-				}
+//				}
 			} else if(user.getUserType().equals("Admin")) {
 				Admin admin = (Admin) user;
 				if(admin.semester == 0 || (admin.semester == semester && admin.fallSpring == fallspring)) {
@@ -214,6 +232,8 @@ public class UserController
 		
 		//user.setUserType(userType);
 		user.setYear(year_int);
+		
+		
 		
 		System.out.println("FOUNDUSER");
 

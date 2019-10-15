@@ -255,9 +255,11 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                                 </Col>
                 <Col sm={9}>
                   <FormControl type="text" componentClass="select" placeholder="Year" id="editYear" value={this.state.editYear} onChange={e => this.handleChange(e)}>
-                    <option value="2019">2019</option>
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
+                    <option value="2019">Fall 2019</option>
+                    <option value="2019">Spring 2019</option>
+                    <option value="2020">Fall 2020</option>
+                    <option value="2020">Spring 2020</option>
+                    {/* <option value="2021">2021</option> */}
                     {/* <option value="2022">2022</option> */}
                   </FormControl>
                 </Col>
