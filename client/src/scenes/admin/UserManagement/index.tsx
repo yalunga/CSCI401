@@ -35,7 +35,7 @@ interface UserListState {
   editFirstName?: string;
   editLastName?: string;
   editUserType?: string;
-  editYear?: string;
+  editSemester?: string;
   editEmail?: string;
   originalEmail?: string;
   isLoading: boolean;
@@ -45,7 +45,8 @@ interface User {
   userId: number;
   firstName: string;
   lastName: string;
-  year: number;
+  fall_spring: number;
+  semester: string;
   userType: string;
   email: string;
 }
@@ -96,7 +97,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       firstName: this.state.editFirstName,
       lastName: this.state.editLastName,
       userType: this.state.editUserType,
-      year: this.state.editYear,
+      semester: this.state.editSemester,
       email: this.state.editEmail,
       originalEmail: this.state.originalEmail
     });
@@ -151,16 +152,26 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       editFirstName: user.firstName,
       editLastName: user.lastName,
       editUserType: user.userType,
+      editSemester: user.semester,
       editEmail: user.email,
       originalEmail: user.email
     });
   }
 
-  deleteUser(user: User) {
+  deleteUser(index: number, user: User) {
     const name = user.firstName;
     var submit = confirm('Are you sure you want to delete ' + name + '?');
     if (submit) {
       this.setState({ userToDelete: user });
+      var request = new XMLHttpRequest();
+      request.withCredentials = true;
+      request.open('POST', 'http://' + window.location.hostname + ':8080/users/delete-info');
+      request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+      var data = JSON.stringify({
+        email: user.email
+      });
+      request.setRequestHeader('Cache-Control', 'no-cache');
+      request.send(data);
     }
   }
 
@@ -249,19 +260,24 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                   </FormControl>
                 </Col>
               </FormGroup>
+              {this.state.editUserType === 'Student' ? (
               <FormGroup controlId="formHorizontalYear">
                 <Col componentClass={ControlLabel} sm={3}>
                   Year
                                 </Col>
                 <Col sm={9}>
-                  <FormControl type="text" componentClass="select" placeholder="Year" id="editYear" value={this.state.editYear} onChange={e => this.handleChange(e)}>
-                    <option value="2019">2019</option>
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    {/* <option value="2022">2022</option> */}
+                  <FormControl type="text" componentClass="select" placeholder="Semester" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
+                    <option value="02019">Fall 2019</option>
+                    <option value="12019">Spring 2019</option>
+                    <option value="22019">Summer 2019</option>
+                    <option value="02020">Fall 2020</option>
+                    <option value="12020">Spring 2020</option>
                   </FormControl>
                 </Col>
               </FormGroup>
+               ) : (
+                ''
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -298,8 +314,6 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
             <tr>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Semester</th>
-
               <th>User Type</th>
               <th>Email</th>
               <th>Edit/Delete</th>
@@ -310,14 +324,13 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
               <tr key={user.userId}>
                 <td>{user.firstName}</td>
                 <td>{user.lastName}</td>
-                <td>{user.year}</td>
                 <td>{user.userType}</td>
                 <td>{user.email}</td>
                 <td>
                   <Button style={{ margin: 3 }} bsSize="small" onClick={() => this.editUser(index, user)}>
                     Edit User
                                     </Button>
-                  <Button bsStyle="warning" bsSize="small" onClick={() => this.deleteUser(user)}>Delete User</Button>
+                  <Button bsStyle="warning" bsSize="small" onClick={() => this.deleteUser(index, user)}>Delete User</Button>
                 </td>
               </tr>
             )}

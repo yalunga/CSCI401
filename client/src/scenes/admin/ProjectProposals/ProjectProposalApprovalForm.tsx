@@ -21,6 +21,11 @@ interface ProjectListState {
     projectToEdit?: Project;
     editAdminComments: string;
     projectIndexToEdit: number;
+    editProjectName: string;
+    editProjectTechnologies: string;
+    editMinSize: string;
+    editMaxSize: string;
+
     // <Button onClick={this.toggleCheckboxes}>Select All</Button>
 }
 
@@ -43,6 +48,10 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         this.state = {
             projects: [],
             editAdminComments: '',
+            editProjectName: '',
+            editProjectTechnologies: '',
+            editMinSize: '',
+            editMaxSize: '',
             isLoading: false,
             selected: false,
             projectIndexToEdit: -1
@@ -85,7 +94,11 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         this.setState({
             projectIndexToEdit: index,
             projectToEdit: project,
-            editAdminComments: project.adminComments
+            editAdminComments: project.adminComments,
+            editProjectName: project.projectName,
+            editProjectTechnologies: project.technologies,
+            editMinSize: project.minSize,
+            editMaxSize: project.maxSize
         });
     }
     cancelEdit = () => {
@@ -98,6 +111,13 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         request.open('POST', 'http://' + window.location.hostname + ':8080/projects/change/adminComments/' + this.state.projectIndexToEdit);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = this.state.editAdminComments;
+        // var data = JSON.stringify({
+        //     name: this.state.editProjectName,
+        //     technologies: this.state.editProjectName,
+        //     name: this.state.editProjectName,
+        //     name: this.state.editProjectName,
+        //     adminComments: this.state.editAdminComments
+        //   });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
         // alert('Project has been updated succesfully!');
@@ -175,6 +195,59 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                     </Modal.Header>
                     <Modal.Body>
                         <Form horizontal={true} >
+                        <FormGroup controlId="formHorizontalProjectName">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Project Name
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl
+                                        type="text"
+                                        id="editProjectName"
+                                        value={this.state.editProjectName}
+                                        placeholder="Project Name"
+                                        onChange={e => this.handleChangeModal(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalTechnologies">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Technologies
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl
+                                        type="text"
+                                        id="editProjectTechnologies"
+                                        value={this.state.editProjectTechnologies}
+                                        placeholder="Project Technologies"
+                                        onChange={e => this.handleChangeModal(e)}
+                                    />
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalMinSize">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Min Size
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl type="text" componentClass="select" placeholder="Min Size" id="editMinSize" value={this.state.editMinSize} onChange={e => this.handleChangeModal(e)}>
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </FormControl>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalMaxSize">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Min Size
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl type="text" componentClass="select" placeholder="Min Size" id="editMaxSize" value={this.state.editMaxSize} onChange={e => this.handleChangeModal(e)}>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </FormControl>
+                                </Col>
+                            </FormGroup>
                             <FormGroup controlId="formHorizontalAdminComment">
                                 <Col componentClass={ControlLabel} sm={3}>
                                     Admin Comment
@@ -221,7 +294,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                                     <td>
                                         <Button style={{ marginRight: '5px' }} type="submit" bsStyle="success" onClick={() => this.submitClicked(project.projectId, 2)}>Approve</Button>
                                         <Button style={{ marginRight: '5px' }} type="submit" bsStyle="danger" onClick={() => this.submitClicked(project.projectId, 3)}>Reject</Button>
-                                        <Button bsStyle="warning" onClick={() => this.editProject(project.projectId, project)}>Changes</Button>
+                                        <Button bsStyle="warning" onClick={() => this.editProject(project.projectId, project)}>Edit</Button>
 
                                     </td>
                                     <td>{project.projectName}</td>
