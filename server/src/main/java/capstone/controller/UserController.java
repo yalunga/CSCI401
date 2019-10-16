@@ -160,7 +160,7 @@ public class UserController
 					validUsers.add(admin);
 				}
 			}
-			else
+			else if (user.fallSpring != 5)
 			{
 				validUsers.add(user);
 			}

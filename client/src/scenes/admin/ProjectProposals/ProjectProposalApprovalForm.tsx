@@ -24,6 +24,7 @@ interface ProjectListState {
     editProjectName: string;
     editProjectTechnologies: string;
     editMinSize: string;
+    editMaxSize: string;
 
     // <Button onClick={this.toggleCheckboxes}>Select All</Button>
 }
@@ -50,6 +51,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
             editProjectName: '',
             editProjectTechnologies: '',
             editMinSize: '',
+            editMaxSize: '',
             isLoading: false,
             selected: false,
             projectIndexToEdit: -1
@@ -96,6 +98,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
             editProjectName: project.projectName,
             editProjectTechnologies: project.technologies,
             editMinSize: project.minSize,
+            editMaxSize: project.maxSize
         });
     }
     cancelEdit = () => {
@@ -108,6 +111,13 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         request.open('POST', 'http://' + window.location.hostname + ':8080/projects/change/adminComments/' + this.state.projectIndexToEdit);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = this.state.editAdminComments;
+        // var data = JSON.stringify({
+        //     name: this.state.editProjectName,
+        //     technologies: this.state.editProjectName,
+        //     name: this.state.editProjectName,
+        //     name: this.state.editProjectName,
+        //     adminComments: this.state.editAdminComments
+        //   });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
         // alert('Project has been updated succesfully!');
@@ -213,18 +223,29 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                                     />
                                 </Col>
                             </FormGroup>
-                            <FormGroup controlId="formHorizontalTechnologies">
+                            <FormGroup controlId="formHorizontalMinSize">
                                 <Col componentClass={ControlLabel} sm={3}>
                                     Min Size
                                 </Col>
                                 <Col sm={9}>
-                                  
                                     <FormControl type="text" componentClass="select" placeholder="Min Size" id="editMinSize" value={this.state.editMinSize} onChange={e => this.handleChangeModal(e)}>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </FormControl>
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </FormControl>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalMaxSize">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Min Size
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl type="text" componentClass="select" placeholder="Min Size" id="editMaxSize" value={this.state.editMaxSize} onChange={e => this.handleChangeModal(e)}>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </FormControl>
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalAdminComment">
