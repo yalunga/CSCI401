@@ -77,13 +77,13 @@ public class UserController
 		student.setFirstName("StudentFirst");
 		student.setLastName("StudentLast");
 		student.setEmail("student@usc.edu");
-		student.setYear(2019);
+		student.semester = 2019;
+		student.fallSpring = 0;
 		student.setPassword(EncryptPassword.encryptPassword("student"));
 		userService.saveUser(student);
 		
 		
-		
-		
+
 		
 		Global global = new Global();
 		global.setFallSpring(1);
@@ -129,15 +129,15 @@ public class UserController
 	@CrossOrigin
 	public Collection<User> getStudentsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
-		System.out.println("CALLS GET STUDENTS FROM SEMESTER");
+//		System.out.println("CALLS GET STUDENTS FROM SEMESTER");
 
-		System.out.println(semester);
-		System.out.println(fallspring);
+//		System.out.println(semester);
+//		System.out.println(fallspring);
 		// get users from target semester
 		List<User> users = (List<User>) userService.getUsers();
 		
 		
-		System.out.println(users.get(0).getUserType());
+//		System.out.println(users.get(0).getUserType());
 		
 		
 		
@@ -149,11 +149,11 @@ public class UserController
 				
 				
 				Student student = (Student) user;
-//				if (student.semester == semester && student.fallSpring == fallspring)
-//				{
-					System.out.println("FOUND STUDENT - ADDING INTO ARRAY");
+				if (student.semester == semester && student.fallSpring == fallspring)
+				{
+//					System.out.println("FOUND STUDENT - ADDING INTO ARRAY");
 					validUsers.add(student);
-//				}
+				}
 			} else if(user.getUserType().equals("Admin")) {
 				Admin admin = (Admin) user;
 				if(admin.semester == 0 || (admin.semester == semester && admin.fallSpring == fallspring)) {
@@ -211,15 +211,22 @@ public class UserController
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
-		String year_string = info.get(Constants.YEAR);
+		String semester = info.get(Constants.SEMESTER);
+		String fall_spring = semester.substring(0, 1);
+		semester = semester.substring(1);
 		
-		Integer year_int = Integer.parseInt(year_string);
 		
-		System.out.println(info);
+		System.out.println("fallspring = " + fall_spring);
+		System.out.println("semester = " + semester);
 
 		
-		User user = findUser(originalEmail);
+		System.out.println(info);
 		
+
+
+		//GENERIC USER
+		User user = new User();
+		user = findUser(originalEmail);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 		
@@ -229,18 +236,32 @@ public class UserController
 		if(!password.isEmpty()) {
 			user.setPassword(EncryptPassword.encryptPassword(password));
 		}
-		
-		//user.setUserType(userType);
-		user.setYear(year_int);
-		
-		
-		
+		user.setUserType(userType);
+		user.semester = Integer.parseInt(semester);
+		user.fallSpring = Integer.parseInt(fall_spring);
+		userService.saveUser(user);
+			
 		System.out.println("FOUNDUSER");
 
 		
-		userService.saveUser(user);
 		System.out.println("SAVED USER");
 
+	}
+	
+	@PostMapping("/delete-info")
+	@CrossOrigin
+	public void deleteUserInfo(@RequestBody Map<String, String> info) {
+		System.out.println("DELETING USER");
+		System.out.println(info);
+		
+		String originalEmail = info.get(Constants.EMAIL);
+
+		//SET FALL SPRING TO 5 SO THAT IT DOESNT SHOW IN FRONTEND
+		
+		User user = new User();
+		user = findUser(originalEmail);
+		user.fallSpring = 5;
+		userService.saveUser(user);
 	}
 	
 	public User findUser(String email) {

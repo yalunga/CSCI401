@@ -35,7 +35,7 @@ interface UserListState {
   editFirstName?: string;
   editLastName?: string;
   editUserType?: string;
-  editYear?: string;
+  editSemester?: string;
   editEmail?: string;
   originalEmail?: string;
   isLoading: boolean;
@@ -45,7 +45,8 @@ interface User {
   userId: number;
   firstName: string;
   lastName: string;
-  year: number;
+  fall_spring: number;
+  semester: number;
   userType: string;
   email: string;
 }
@@ -156,11 +157,26 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
     });
   }
 
-  deleteUser(user: User) {
+  deleteUser(index: number, user: User) {
     const name = user.firstName;
-    var submit = confirm('Are you sure you want to delete ' + name + '?');
+    var submit = confirm("Are you sure you want to delete " + name + "?");
     if (submit) {
       this.setState({ userToDelete: user });
+      var request = new XMLHttpRequest();
+      request.withCredentials = true;
+      request.open(
+        "POST",
+        "http://" + window.location.hostname + ":8080/users/delete-info"
+      );
+      request.setRequestHeader(
+        "Content-Type",
+        "application/json; charset=UTF-8"
+      );
+      var data = JSON.stringify({
+        email: user.email
+      });
+      request.setRequestHeader("Cache-Control", "no-cache");
+      request.send(data);
     }
   }
 
