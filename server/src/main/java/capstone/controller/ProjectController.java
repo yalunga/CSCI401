@@ -442,10 +442,33 @@ public class ProjectController
 	@PostMapping("/change/adminComments/{projectId}")
 	@CrossOrigin
 	public @ResponseBody String requestChangeAdminCommentProjects(@PathVariable("projectId") int projectId,
-																  @RequestBody String adminComments) {
+																  @RequestBody Map<String, String> info) {
 		Project project = projectService.findByProjectId(projectId);
 		project.setStatusId(4);
-		project.setAdminComments(adminComments);
+		
+		System.out.println("INFO = " + info);
+		
+		String name = info.get(Constants.PROJECT_NAME);
+		String technologies = info.get(Constants.PROJECT_TECHNOLOGIES);
+		String min = info.get(Constants.PROJECT_MIN_SIZE);
+		String max = info.get(Constants.PROJECT_MAX_SIZE);
+		String description = info.get(Constants.PROJECT_DESCRIPTION);
+
+		String comment = info.get(Constants.PROJECT_ADMIN_COMMENT);	
+		
+		System.out.println("name = " + name);
+		System.out.println("technologies = " + technologies);
+		System.out.println("min = " + min);
+		System.out.println("max = " + max);
+
+
+		
+		project.setProjectName(name);
+		project.setTechnologies(technologies);
+		project.setMinSize(Integer.parseInt(min));
+		project.setMaxSize(Integer.parseInt(max));
+		project.setDescription(description);
+		project.setAdminComments(comment);
 		projectService.save(project);
 		return Constants.SUCCESS;
 	}

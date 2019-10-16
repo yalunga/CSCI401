@@ -25,6 +25,7 @@ interface ProjectListState {
     editProjectTechnologies: string;
     editMinSize: string;
     editMaxSize: string;
+    editDescription: string;
 
     // <Button onClick={this.toggleCheckboxes}>Select All</Button>
 }
@@ -52,6 +53,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
             editProjectTechnologies: '',
             editMinSize: '',
             editMaxSize: '',
+            editDescription: '',
             isLoading: false,
             selected: false,
             projectIndexToEdit: -1
@@ -98,7 +100,8 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
             editProjectName: project.projectName,
             editProjectTechnologies: project.technologies,
             editMinSize: project.minSize,
-            editMaxSize: project.maxSize
+            editMaxSize: project.maxSize,
+            editDescription: project.description
         });
     }
     cancelEdit = () => {
@@ -110,14 +113,15 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         request.withCredentials = true;
         request.open('POST', `${process.env.REACT_APP_API_URL}/projects/change/adminComments/` + this.state.projectIndexToEdit);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        var data = this.state.editAdminComments;
-        // var data = JSON.stringify({
-        //     name: this.state.editProjectName,
-        //     technologies: this.state.editProjectName,
-        //     name: this.state.editProjectName,
-        //     name: this.state.editProjectName,
-        //     adminComments: this.state.editAdminComments
-        //   });
+        // var data = this.state.editAdminComments;
+        var data = JSON.stringify({
+            projectName: this.state.editProjectName,
+            projectTechnologies: this.state.editProjectTechnologies,
+            projectMin: this.state.editMinSize,
+            projectMax: this.state.editMaxSize,
+            projectDescription: this.state.editDescription,
+            projectAdminComment: this.state.editAdminComments
+          });
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
         // alert('Project has been updated succesfully!');
@@ -238,7 +242,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                             </FormGroup>
                             <FormGroup controlId="formHorizontalMaxSize">
                                 <Col componentClass={ControlLabel} sm={3}>
-                                    Min Size
+                                    Max Size
                                 </Col>
                                 <Col sm={9}>
                                     <FormControl type="text" componentClass="select" placeholder="Min Size" id="editMaxSize" value={this.state.editMaxSize} onChange={e => this.handleChangeModal(e)}>
@@ -246,6 +250,20 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                                         <option value="4">4</option>
                                         <option value="5">5</option>
                                     </FormControl>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalProjectDescription">
+                                <Col componentClass={ControlLabel} sm={3}>
+                                    Description
+                                </Col>
+                                <Col sm={9}>
+                                    <FormControl
+                                        type="text"
+                                        id="editDescription"
+                                        value={this.state.editDescription}
+                                        placeholder="Description"
+                                        onChange={e => this.handleChangeModal(e)}
+                                    />
                                 </Col>
                             </FormGroup>
                             <FormGroup controlId="formHorizontalAdminComment">

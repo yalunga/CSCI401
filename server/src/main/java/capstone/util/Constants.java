@@ -32,5 +32,12 @@ public class Constants {
 	/* Projects */
 	public static String PROJECTS = "projects";
 	public static String PROJECT_NAME = "projectName";
+	public static String PROJECT_TECHNOLOGIES = "projectTechnologies";
+	public static String PROJECT_MIN_SIZE = "projectMin";
+	public static String PROJECT_MAX_SIZE = "projectMax";
+	public static String PROJECT_DESCRIPTION = "projectDescription";
+	public static String PROJECT_ADMIN_COMMENT = "projectAdminComment";
+
+
 	public static String PROJECT_ID = "projectId";
 }
