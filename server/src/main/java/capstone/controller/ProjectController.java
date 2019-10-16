@@ -443,8 +443,6 @@ public class ProjectController
 	@CrossOrigin
 	public @ResponseBody String requestChangeAdminCommentProjects(@PathVariable("projectId") int projectId,
 																  @RequestBody String adminComments) {
-		
-		
 		Project project = projectService.findByProjectId(projectId);
 		project.setStatusId(4);
 		project.setAdminComments(adminComments);
