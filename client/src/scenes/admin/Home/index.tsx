@@ -34,7 +34,7 @@ class AdminHome extends React.Component<ProjectListProps, ProjectListState> {
   componentDidMount() {
     this.setState({ isLoading: true });
     if (sessionStorage.getItem('viewingYear') === null || sessionStorage.getItem('viewingFallSpring') === null) {
-      fetch('http://' + window.location.hostname + ':8080/admin/configurations/globalData')
+      fetch(`${process.env.REACT_APP_API_URL}/admin/configurations/globalData`)
         .then(response => response.json())
         .then(data => this.getGlobalData(data));
     } else {
@@ -65,7 +65,7 @@ class AdminHome extends React.Component<ProjectListProps, ProjectListState> {
   }
 
   submitClicked(event: any) {
-    fetch('http://' + window.location.hostname + ':8080/admin/configurations/' + this.state.year + '/' + this.state.fallOrSpring)
+    fetch(`${process.env.REACT_APP_API_URL}/admin/configurations/` + this.state.year + '/' + this.state.fallOrSpring)
       .then(() => {
         sessionStorage.setItem('viewingYear', String(this.state.year));
         sessionStorage.setItem('viewingFallSpring', String(this.state.fallOrSpring));

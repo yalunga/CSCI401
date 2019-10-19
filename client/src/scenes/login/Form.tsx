@@ -37,7 +37,7 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
     var request = new XMLHttpRequest();
     var hostname = window.location.hostname;
     request.withCredentials = true;
-    request.open('POST', 'http://' + hostname + ':8080/users/password-reset');
+    request.open('POST', `${process.env.REACT_APP_API_URL}/users/password-reset`);
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     var data = JSON.stringify({
       email: this.state.email,
@@ -59,7 +59,7 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
       email: this.state.email,
       password: this.state.password
     });
-    const response = await fetch('http://' + hostname + ':8080/users/login', {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
       method: 'POST',
       body: data,
       headers: {

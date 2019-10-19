@@ -54,7 +54,7 @@ class StudentProfile extends React.Component<ProfileProps, ProfileState> {
     componentDidMount() {
         this.setState({ isLoading: true });
         this.setState({ isLoading: true });
-        fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email'))
+        fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email'))
             .then(response => response.json())
             .then(data => this.setState({ user: data, isLoading: false }));
         this.setState({ nfirstName: this.state.user.firstName });
@@ -64,7 +64,7 @@ class StudentProfile extends React.Component<ProfileProps, ProfileState> {
     submitClicked() {
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/users/update-info');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/users/update-info`);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = JSON.stringify({
             firstName: this.state.nfirstName,

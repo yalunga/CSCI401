@@ -44,7 +44,7 @@ class StudentRegistrationForm extends React.Component<StudentRegistrationProps, 
       year: this.state.viewingYear,
       fallSpring: this.state.viewingFallSpring
     });
-    const response = await fetch(`http://${window.location.hostname}:8080/users/${endpoint}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${endpoint}`, {
       method: 'POST',
       body: data,
       headers: {

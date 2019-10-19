@@ -37,7 +37,7 @@ class PeerReviewForm extends React.Component<PeerReviewProps, PeerReviewState> {
 
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/peerReviewForm/');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/peerReviewForm/`);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = JSON.stringify({
             uscusername: this.state.uscusername,

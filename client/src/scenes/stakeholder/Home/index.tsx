@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {
     Panel,
-    Table, 
+    Table,
     Alert,
     Button
 } from 'react-bootstrap';
-import { 
+import {
     LinkContainer
 } from 'react-router-bootstrap';
 const viewIcon = require('../../../svg/viewIcon.svg');
@@ -40,11 +40,11 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
 
-        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email'))
-        .then(response => response.json())
-        .then(data => this.setState({projects: data, isLoading: false}));
+        fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email'))
+            .then(response => response.json())
+            .then(data => this.setState({ projects: data, isLoading: false }));
     }
 
     getStatus(statusId: number) {
@@ -60,7 +60,7 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
     }
 
     render() {
-        const {projects, isLoading} = this.state;
+        const { projects, isLoading } = this.state;
 
         if (isLoading) {
             return <p>Loading...</p>;
@@ -69,43 +69,43 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
         return (
             <div style={style as any}>
 
-            <h3>Welcome back!</h3>
+                <h3>Welcome back!</h3>
 
-            <Panel>
-                <Panel.Heading>
-                    <Panel.Title componentClass="h3">Your Projects</Panel.Title>
-                </Panel.Heading>
-                <Panel.Body>
-                    <Table>
-                        <thead>
-                            <th>Project</th>
-                            <th>Status</th>
-                            <th>Semester</th>
-                            <th>View/Edit</th>
-                            <th>Duplicate</th>
-                        </thead>
-                        <tbody>
-                            {projects.map((project: Project, index: number) =>
-                                <tr key={project.projectId}>
-                                    <td>{project.projectName}</td>
-                                    <td>{this.getStatus(project.statusId)}</td>
-                                    <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
-                                    <td>
-                                        <LinkContainer to={{pathname: 'stakeholder/project/' + project.projectId}}>
-                                        <img src={viewIcon}/>
-                                        </LinkContainer>
-                                    </td>
-                                    <td>
-                                        <LinkContainer to={{pathname: 'stakeholder/proposals/' + project.projectId}}>
-                                        <img src={viewIcon}/>
-                                        </LinkContainer>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </Table>
-                </Panel.Body>
-            </Panel>
+                <Panel>
+                    <Panel.Heading>
+                        <Panel.Title componentClass="h3">Your Projects</Panel.Title>
+                    </Panel.Heading>
+                    <Panel.Body>
+                        <Table>
+                            <thead>
+                                <th>Project</th>
+                                <th>Status</th>
+                                <th>Semester</th>
+                                <th>View/Edit</th>
+                                <th>Duplicate</th>
+                            </thead>
+                            <tbody>
+                                {projects.map((project: Project, index: number) =>
+                                    <tr key={project.projectId}>
+                                        <td>{project.projectName}</td>
+                                        <td>{this.getStatus(project.statusId)}</td>
+                                        <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
+                                        <td>
+                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId }}>
+                                                <img src={viewIcon} />
+                                            </LinkContainer>
+                                        </td>
+                                        <td>
+                                            <LinkContainer to={{ pathname: 'stakeholder/proposals/' + project.projectId }}>
+                                                <img src={viewIcon} />
+                                            </LinkContainer>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </Table>
+                    </Panel.Body>
+                </Panel>
             </div>
         );
     }

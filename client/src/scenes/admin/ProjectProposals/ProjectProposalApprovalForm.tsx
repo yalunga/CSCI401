@@ -74,13 +74,13 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
         var request = new XMLHttpRequest();
         request.withCredentials = true;
         if (type === 1) {
-            request.open('POST', 'http://' + window.location.hostname + ':8080/projects/pending/' + projectId);
+            request.open('POST', `${process.env.REACT_APP_API_URL}/projects/pending/` + projectId);
         } else if (type === 2) {
-            request.open('POST', 'http://' + window.location.hostname + ':8080/projects/approve/' + projectId);
+            request.open('POST', `${process.env.REACT_APP_API_URL}/projects/approve/` + projectId);
         } else if (type === 3) {
-            request.open('POST', 'http://' + window.location.hostname + ':8080/projects/reject/' + projectId);
+            request.open('POST', `${process.env.REACT_APP_API_URL}/projects/reject/` + projectId);
         } else if (type === 4) {
-            request.open('POST', 'http://' + window.location.hostname + ':8080/projects/change/' + projectId);
+            request.open('POST', `${process.env.REACT_APP_API_URL}/projects/change/` + projectId);
         }
         request.send();
 
@@ -108,7 +108,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
     submitEdit = () => {
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/projects/change/adminComments/' + this.state.projectIndexToEdit);
+        request.open('POST', `${process.env.REACT_APP_API_URL}/projects/change/adminComments/` + this.state.projectIndexToEdit);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = this.state.editAdminComments;
         // var data = JSON.stringify({
@@ -163,7 +163,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
     componentDidMount() {
         this.setState({ isLoading: true });
 
-        fetch('http://' + window.location.hostname + ':8080/projects/getprojectsfromsemester/' + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'))
+        fetch(`${process.env.REACT_APP_API_URL}/projects/getprojectsfromsemester/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'))
             .then(response => response.json())
             .then(data => this.setState({ projects: data, isLoading: false }));
     }
@@ -195,7 +195,7 @@ class ProjectProposalApprovalForm extends React.Component<ProjectListProps, Proj
                     </Modal.Header>
                     <Modal.Body>
                         <Form horizontal={true} >
-                        <FormGroup controlId="formHorizontalProjectName">
+                            <FormGroup controlId="formHorizontalProjectName">
                                 <Col componentClass={ControlLabel} sm={3}>
                                     Project Name
                                 </Col>

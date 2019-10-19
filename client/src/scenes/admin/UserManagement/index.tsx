@@ -74,7 +74,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       console.log('Set fallspring to default (spring)');
       sessionStorage.setItem('viewingFallSpring', '1');
     }
-    fetch('http://' + window.location.hostname + ':8080/users/getusersfromsemester/' + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
+    fetch(`${process.env.REACT_APP_API_URL}/users/getusersfromsemester/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
       method: 'get',
       headers: new Headers({
         'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
@@ -91,7 +91,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
   submitEdit = () => {
     var request = new XMLHttpRequest();
     request.withCredentials = true;
-    request.open('POST', 'http://' + window.location.hostname + ':8080/users/update-info');
+    request.open('POST', `${process.env.REACT_APP_API_URL}/users/update-info`);
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     var data = JSON.stringify({
       firstName: this.state.editFirstName,
@@ -165,7 +165,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       this.setState({ userToDelete: user });
       var request = new XMLHttpRequest();
       request.withCredentials = true;
-      request.open('POST', 'http://' + window.location.hostname + ':8080/users/delete-info');
+      request.open('POST', `${process.env.REACT_APP_API_URL}/users/delete-info`);
       request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
       var data = JSON.stringify({
         email: user.email
@@ -261,23 +261,23 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                 </Col>
               </FormGroup>
               {this.state.editUserType === 'Student' ? (
-              <FormGroup controlId="formHorizontalYear">
-                <Col componentClass={ControlLabel} sm={3}>
-                  Year
+                <FormGroup controlId="formHorizontalYear">
+                  <Col componentClass={ControlLabel} sm={3}>
+                    Year
                                 </Col>
-                <Col sm={9}>
-                  <FormControl type="text" componentClass="select" placeholder="Semester" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
-                    <option value="02019">Fall 2019</option>
-                    <option value="12019">Spring 2019</option>
-                    <option value="22019">Summer 2019</option>
-                    <option value="02020">Fall 2020</option>
-                    <option value="12020">Spring 2020</option>
-                  </FormControl>
-                </Col>
-              </FormGroup>
-               ) : (
-                ''
-              )}
+                  <Col sm={9}>
+                    <FormControl type="text" componentClass="select" placeholder="Semester" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
+                      <option value="02019">Fall 2019</option>
+                      <option value="12019">Spring 2019</option>
+                      <option value="22019">Summer 2019</option>
+                      <option value="02020">Fall 2020</option>
+                      <option value="12020">Spring 2020</option>
+                    </FormControl>
+                  </Col>
+                </FormGroup>
+              ) : (
+                  ''
+                )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
