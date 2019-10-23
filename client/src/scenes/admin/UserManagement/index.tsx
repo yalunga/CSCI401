@@ -35,6 +35,7 @@ interface UserListState {
   editFirstName?: string;
   editLastName?: string;
   editUserType?: string;
+  editFall_Spring?: string;
   editSemester?: string;
   editEmail?: string;
   originalEmail?: string;
@@ -45,7 +46,7 @@ interface User {
   userId: number;
   firstName: string;
   lastName: string;
-  fall_spring: number;
+  fallSpring: string;
   semester: string;
   userType: string;
   email: string;
@@ -97,6 +98,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       firstName: this.state.editFirstName,
       lastName: this.state.editLastName,
       userType: this.state.editUserType,
+      fallSpring: this.state.editFall_Spring,
       semester: this.state.editSemester,
       email: this.state.editEmail,
       originalEmail: this.state.originalEmail
@@ -152,6 +154,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       editFirstName: user.firstName,
       editLastName: user.lastName,
       editUserType: user.userType,
+      editFall_Spring: user.fallSpring,
       editSemester: user.semester,
       editEmail: user.email,
       originalEmail: user.email
@@ -250,6 +253,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                   </FormControl>
                 </Col>
               </FormGroup>
+              {this.state.editUserType !== 'Admin' ? (
               <FormGroup controlId="formHorizontalUserType">
                 <Col componentClass={ControlLabel} sm={3}>
                   Project Assignment
@@ -260,24 +264,34 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
                   </FormControl>
                 </Col>
               </FormGroup>
-              {this.state.editUserType === 'Student' ? (
-                <FormGroup controlId="formHorizontalYear">
-                  <Col componentClass={ControlLabel} sm={3}>
-                    Year
-                                </Col>
-                  <Col sm={9}>
-                    <FormControl type="text" componentClass="select" placeholder="Semester" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
-                      <option value="02019">Fall 2019</option>
-                      <option value="12019">Spring 2019</option>
-                      <option value="22019">Summer 2019</option>
-                      <option value="02020">Fall 2020</option>
-                      <option value="12020">Spring 2020</option>
-                    </FormControl>
-                  </Col>
-                </FormGroup>
               ) : (
-                  ''
-                )}
+                ''
+                   )}
+              {this.state.editUserType === 'Student' ? (
+              <FormGroup controlId="formHorizontalYear">
+                <Col componentClass={ControlLabel} sm={3}>
+                  Semester
+                </Col>
+                <Col sm={2}>
+                  <FormControl type="select" componentClass="select" placeholder="select" id="editFall_Spring" value={this.state.editFall_Spring} onChange={e => this.handleChange(e)}>
+                    <option value="0">Fall</option>
+                    <option value="1">Spring</option>
+                    <option value="2">Summer</option>
+                  </FormControl>
+                </Col>
+                <Col componentClass={ControlLabel} sm={3}>
+                  Year
+                                </Col>
+                <Col sm={2}>
+                  <FormControl type="select" componentClass="select" placeholder="select" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                  </FormControl>
+                </Col>
+              </FormGroup>
+               ) : (
+                ''
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>

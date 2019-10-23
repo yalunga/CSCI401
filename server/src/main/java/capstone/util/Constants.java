@@ -17,7 +17,7 @@ public class Constants {
 	public static String FIRST_NAME = "firstName";
 	public static String LAST_NAME = "lastName";
 	public static String SEMESTER = "semester";
-	public static String FALL_SPRING = "fall_spring";
+	public static String FALL_SPRING = "fallSpring";
 
 
 	public static String PHONE = "phone";

@@ -211,9 +211,10 @@ public class UserController
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
+		String fall_spring = info.get(Constants.FALL_SPRING);
 		String semester = info.get(Constants.SEMESTER);
-		String fall_spring = semester.substring(0, 1);
-		semester = semester.substring(1);
+//		String fall_spring = semester.substring(0, 1);
+//		semester = semester.substring(1);
 		
 		
 		System.out.println("fallspring = " + fall_spring);
@@ -229,16 +230,15 @@ public class UserController
 		user = findUser(originalEmail);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		
-		if(!phone.isEmpty()) {
-			user.setPhone(phone);
-		}
-		if(!password.isEmpty()) {
-			user.setPassword(EncryptPassword.encryptPassword(password));
-		}
 		user.setUserType(userType);
-		user.semester = Integer.parseInt(semester);
-		user.fallSpring = Integer.parseInt(fall_spring);
+		
+		
+		if(userType.equals("Student"))
+		{
+			user.semester = Integer.parseInt(semester);
+			user.fallSpring = Integer.parseInt(fall_spring);
+		}
+		
 		userService.saveUser(user);
 			
 		System.out.println("FOUNDUSER");
