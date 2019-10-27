@@ -41,7 +41,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
     componentDidMount() {
         this.setState({ isLoading: true });
         // console.log('did mount');
-        fetch('http://' + window.location.hostname + ':8080/users/' + sessionStorage.getItem('email')) // link
+        fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email')) // link
             .then(response => response.json())
             // .then(response => response.text())
             // .then((responseText) => {
@@ -51,8 +51,8 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
             //     // console.log(Object.keys(sessionStorage));
             // })
             .then(data => this.setState({
-                 user: data, 
-                 isLoading: false 
+                user: data,
+                isLoading: false
             }))
             .catch((error) => {
                 console.log('error: ' + error);
@@ -102,7 +102,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
     }
     handleChange(e: any) {
         // @ts-ignore
-        var user = {...this.state.user};
+        var user = { ...this.state.user };
         user[e.target.id] = e.target.value;
         this.setState({
             user
@@ -122,8 +122,8 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
         // temp.set('userType', 'tempuser');
 
         // change phone, password, name
-        
-        fetch('http://' + window.location.hostname + ':8080/users/update-info', {
+
+        fetch(`${process.env.REACT_APP_API_URL}/users/update-info`, {
             method: 'POST',
             body: JSON.stringify({
                 email: sessionStorage.getItem('email'),
@@ -136,8 +136,8 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                 'Content-Type': 'application/json'
             }
         }).then((res) => res.json())
-        .then((data) => alert(Object.keys(data)))
-        .catch((err) => console.log(err));
+            .then((data) => alert(Object.keys(data)))
+            .catch((err) => console.log(err));
     }
 
     render() {

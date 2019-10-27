@@ -74,14 +74,18 @@ class AdminNavigation extends React.Component<SemesterStateProps, SemesterState>
   }
 
   handleChange(event: any) {
-    var val = event.target.value === '0' ? 0 : 1;
+    // var val = event.target.value === '0' ? 0 : 1;
+    var val = event.target.value;
+
     console.log('Set local form value for fallspring');
     console.log(val);
     this.setState({ fallOrSpring: val });
     if (val === 0) {
       this.setState({ fallOrSpringText: 'Fall' });
-    } else {
+    } else if (val === 1) {
       this.setState({ fallOrSpringText: 'Spring' });
+    } else {
+      this.setState({ fallOrSpringText: 'Summer' });
     }
   }
 
@@ -150,6 +154,7 @@ class AdminNavigation extends React.Component<SemesterStateProps, SemesterState>
               <select style={{ marginRight: '15px' }} onChange={e => this.handleChange(e)}>
                 <option value="0" selected={this.state.fallOrSpring === 0}>Fall</option>
                 <option value="1" selected={this.state.fallOrSpring === 1}>Spring</option>
+                <option value="2" selected={this.state.fallOrSpring === 2}>Summer</option>
               </select>
               <Cleave
                 value={this.state.year}

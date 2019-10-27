@@ -57,18 +57,18 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
     }
 
     componentDidMount() {
-        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/' + this.props.projectId)
+        fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
             .then(response => response.json())
             // .then((responseText) => alert(responseText));
-            .then(data => this.setState({ 
-                project: data, 
-                isLoading: false 
+            .then(data => this.setState({
+                project: data,
+                isLoading: false
             }));
     }
 
     handleChange(e: any) {
         // @ts-ignore
-        var project = {...this.state.project};
+        var project = { ...this.state.project };
         project[e.target.id] = e.target.value;
         this.setState({
             project
@@ -83,15 +83,15 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
         // console.log('technology: ' + this.state.project.technologies);
         // console.log('background: ' + this.state.project.background);
         // console.log('description: ' + this.state.project.description);
-  
+
         if (this.state.students.length !== 0) {
             alert('Students are assigned, cannot edit project');
             return;
         }
-        
+
         alert('project min: ' + this.state.project.minSize);
         alert('project max: ' + this.state.project.maxSize);
-        fetch('http://' + window.location.hostname + ':8080/projects/dabao/', {
+        fetch(`${process.env.REACT_APP_API_URL}/projects/dabao/`, {
             method: 'POST',
             body: JSON.stringify({
                 projectId: this.state.project.projectId,
@@ -106,15 +106,15 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 'Content-Type': 'application/json'
             },
         })
-        .then((res) => res.text())
-        .then((responsetext => alert('dabao here: ' + responsetext)))
-        // .then((res) => res.json())
-        // .then((data) => nameSet.add(newProjectName))
-        .catch((err) => alert('dabao error: ' + err));
+            .then((res) => res.text())
+            .then((responsetext => alert('dabao here: ' + responsetext)))
+            // .then((res) => res.json())
+            // .then((data) => nameSet.add(newProjectName))
+            .catch((err) => alert('dabao error: ' + err));
     }
 
     render() {
-        fetch('http://' + window.location.hostname + ':8080/projects/' + this.state.project.projectId + '/students')
+        fetch(`${process.env.REACT_APP_API_URL}/projects/` + this.state.project.projectId + '/students')
             .then(response => response.json())
             .then(data => this.setState({ students: data }));
 
@@ -152,7 +152,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                                 />
                             </Col>
                         </FormGroup>
-                        
+
                         <FormGroup controlId="formHorizontalMaxNumberStudents">
                             <Col componentClass={ControlLabel} sm={3}>
                                 <b>Maximum Number of Students</b>

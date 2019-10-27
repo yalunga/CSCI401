@@ -51,17 +51,17 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
   }
 
   componentDidMount() {
-    this.setState({isLoading: false});
-    fetch('http://' + window.location.hostname + ':8080/projects/assignment-retrieve')
+    this.setState({ isLoading: false });
+    fetch(`${process.env.REACT_APP_API_URL}/projects/assignment-retrieve`)
       .then(response => response.json())
-      .then(data => this.setState({projects: data}));
+      .then(data => this.setState({ projects: data }));
   }
 
   launch = () => {
-    this.setState({isLaunched: true});
-    fetch('http://' + window.location.hostname + ':8080/projects/assignment')
+    this.setState({ isLaunched: true });
+    fetch(`${process.env.REACT_APP_API_URL}/projects/assignment`)
       .then(response => response.json())
-      .then(data => this.setState({projects: data}));
+      .then(data => this.setState({ projects: data }));
   }
 
   buttonTitle() {
@@ -74,9 +74,9 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
   assignProjects() {
     var request = new XMLHttpRequest();
     request.withCredentials = true;
-    request.open('POST', 'http://' + window.location.hostname + ':8080/projects/assign-to-students');
+    request.open('POST', `${process.env.REACT_APP_API_URL}/projects/assign-to-students`);
     var data = JSON.stringify(
-        this.state.projects
+      this.state.projects
     );
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     request.setRequestHeader('Cache-Control', 'no-cache');
@@ -95,28 +95,28 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
     }
 
     const header = (
-      <div style={{margin: 'auto', float: 'none', width: 1000}}>
+      <div style={{ margin: 'auto', float: 'none', width: 1000 }}>
         <h2>Project Matching</h2>
         <form>
           <Grid>
             <Row>
-                <Col lg={8}>
+              <Col lg={8}>
                 <FormGroup>
                   <FormControl
                     type="text"
                     placeholder="Enter number of ranked projects to consider"
                   />
                   <FormControl.Feedback />
-                  <Button type="submit" onClick={this.launch} style={{margin: 5}}>
+                  <Button type="submit" onClick={this.launch} style={{ margin: 5 }}>
                     {this.buttonTitle()}
                   </Button>
                 </FormGroup>
-                </Col>
-                <Col lg={4}>
-                  <Button onClick={this.assignProjects} bsStyle="primary" disabled={projects.length === 0}>
-                      Assign Projects
+              </Col>
+              <Col lg={4}>
+                <Button onClick={this.assignProjects} bsStyle="primary" disabled={projects.length === 0}>
+                  Assign Projects
                   </Button>
-                </Col>
+              </Col>
             </Row>
           </Grid>
         </form>
@@ -129,7 +129,7 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
 
     if (isLaunched && !projects.length) {
       return (
-        <div style={{margin: 'auto', float: 'none', width: 1000}}>
+        <div style={{ margin: 'auto', float: 'none', width: 1000 }}>
           {header}
           <p>Loading...</p>
         </div>
@@ -138,9 +138,9 @@ class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatch
 
     return (
       <div>
-      {header}
+        {header}
 
-      <ProjectsList projects={this.state.projects} />
+        <ProjectsList projects={this.state.projects} />
 
       </div>
     );

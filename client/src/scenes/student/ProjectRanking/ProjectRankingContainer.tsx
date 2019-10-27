@@ -73,7 +73,7 @@ class ProjectRankingContainer extends React.Component<Props, State> {
         var request = new XMLHttpRequest();
         request.withCredentials = true;
         // yo this ain't submit. it's save
-        request.open('POST', 'http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/submit-ranking');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/submit-ranking');
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         /*var data = JSON.stringify({
         project1: this.state.projectCards[0].projectName,
@@ -82,7 +82,7 @@ class ProjectRankingContainer extends React.Component<Props, State> {
         project4: this.state.projectCards[3].projectName,
         project5: this.state.projectCards[4].projectName
         });*/
-        
+
         this.state.projectCards.map((project: Project) => (
             this.state.rankingData.push(project.projectId)
         ));
@@ -92,19 +92,19 @@ class ProjectRankingContainer extends React.Component<Props, State> {
         request.setRequestHeader('Cache-Control', 'no-cache');
         request.send(data);
         alert('project rankings have been saved!');
-        this.setState({submitted: true});
+        this.setState({ submitted: true });
         // }
     }
 
     componentDidMount() {
-        this.setState({isLoading: true});
-   
+        this.setState({ isLoading: true });
+
         // fetch('http://' + window.location.hostname + ':8080/projects')
         //     .then(response => response.json())
         //     .then(data => this.setState({projectCards: data, isLoading: false}));        
-        fetch('http://' + window.location.hostname + ':8080/projects/' + sessionStorage.getItem('email') + '/rankOrdered')
+        fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/rankOrdered')
             .then(response => response.json())
-            .then(data => this.setState({projectCards: data, isLoading: false}));
+            .then(data => this.setState({ projectCards: data, isLoading: false }));
     }
 
     moveCard(id: number, atIndex: number) {
@@ -130,7 +130,7 @@ class ProjectRankingContainer extends React.Component<Props, State> {
 
     render() {
         const { connectDropTarget } = this.props;
-        const {projectCards, isLoading, submitted} = this.state;
+        const { projectCards, isLoading, submitted } = this.state;
 
         // if (submitted) {
         //     return (
@@ -148,14 +148,14 @@ class ProjectRankingContainer extends React.Component<Props, State> {
 
         return connectDropTarget(
             <div style={style as any}>
-                <div style={{width: 600}}>
+                <div style={{ width: 600 }}>
                     <h3>Rank Projects</h3>
                     <Grid>
                         <Row>
                             <Col lg={4}>
-                                Drag to reorder projects by priority. 
+                                Drag to reorder projects by priority.
                                 Your first 5 preferences will be considered.
-                                Click "Submit Rankings" when finished. 
+                                Click "Submit Rankings" when finished.
                                 Rankings can only be submitted once.
                             </Col>
                             <Col lg={2}>
@@ -164,22 +164,22 @@ class ProjectRankingContainer extends React.Component<Props, State> {
                                 </Button>
                             </Col>
                         </Row>
-                        <br/>
+                        <br />
                         <Row>
-                            <Col lg={3} style={{width: 10, fontSize: 23}}>
-                            1
-                            <br/>
-                            <br/>
-                            2
-                            <br/>
-                            <br/>
-                            3
-                            <br/>
-                            <br/>
-                            4
-                            <br/>
-                            <br/>
-                            5
+                            <Col lg={3} style={{ width: 10, fontSize: 23 }}>
+                                1
+                            <br />
+                                <br />
+                                2
+                            <br />
+                                <br />
+                                3
+                            <br />
+                                <br />
+                                4
+                            <br />
+                                <br />
+                                5
                             </Col>
                             <Col lg={1}>
                                 {projectCards.map((projectCard: Project, index: number) => (

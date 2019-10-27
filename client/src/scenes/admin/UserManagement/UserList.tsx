@@ -24,21 +24,21 @@ class UserList extends React.Component<UserListProps, UserListState> {
   }
 
   componentDidMount() {
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
 
-    fetch('http://' + window.location.hostname + ':8080/users')
+    fetch(`${process.env.REACT_APP_API_URL}/users`)
       .then(response => response.json())
-      .then(data => this.setState({users: data, isLoading: false}));
+      .then(data => this.setState({ users: data, isLoading: false }));
   }
 
-    /*
-        submitClicked() {
-        }
+  /*
+      submitClicked() {
+      }
 
-    */
+  */
 
   render() {
-    const {users, isLoading} = this.state;
+    const { users, isLoading } = this.state;
 
     if (isLoading) {
       return <p>Loading...</p>;

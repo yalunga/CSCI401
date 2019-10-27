@@ -96,7 +96,7 @@ class WeeklyReportForm extends React.Component<WeeklyReportProps, WeeklyReportSt
 
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/weeklyReportForm/');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/weeklyReportForm/`);
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = JSON.stringify({
             name: this.state.name,

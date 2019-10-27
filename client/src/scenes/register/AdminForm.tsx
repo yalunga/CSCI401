@@ -60,7 +60,7 @@ class AdminRegistrationForm extends React.Component<AdminRegistrationProps, Admi
             phone: this.state.phone,
             password: this.state.password
         });
-        const response = await fetch(`http://${window.location.hostname}:8080/users/admin-registration`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/admin-registration`, {
             method: 'POST',
             body: data,
             headers: {

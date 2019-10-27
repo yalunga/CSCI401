@@ -15,8 +15,8 @@ import capstone.model.Project;
 public class Student extends User 
 {
 	public String uscid; // only valid if userType = Student
-	public int semester;
-	public int fallSpring;
+//	public int semester;
+//	public int fallSpring;
 	
 	@OneToOne(targetEntity=Project.class)
 	Project project;

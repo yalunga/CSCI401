@@ -25,7 +25,7 @@ class DeliverableList extends React.Component<DeliverableProps, DeliverableState
 
     constructor(props: DeliverableProps) {
         super(props);
-        
+
         this.state = {
             deliverables: [],
             isLoading: false
@@ -35,7 +35,7 @@ class DeliverableList extends React.Component<DeliverableProps, DeliverableState
     approveDeliverable(deliverableNumber: number) {
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/deliverables/' + this.props.projectId + '/' + deliverableNumber + '/approve');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/deliverables/` + this.props.projectId + '/' + deliverableNumber + '/approve');
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = JSON.stringify({
             status: 'Approved'
@@ -47,7 +47,7 @@ class DeliverableList extends React.Component<DeliverableProps, DeliverableState
     rejectDeliverable(deliverableNumber: number) {
         var request = new XMLHttpRequest();
         request.withCredentials = true;
-        request.open('POST', 'http://' + window.location.hostname + ':8080/deliverables/' + this.props.projectId + '/' + deliverableNumber + '/reject');
+        request.open('POST', `${process.env.REACT_APP_API_URL}/deliverables/` + this.props.projectId + '/' + deliverableNumber + '/reject');
         request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
         var data = JSON.stringify({
             status: 'Rejected'
@@ -57,20 +57,20 @@ class DeliverableList extends React.Component<DeliverableProps, DeliverableState
     }
 
     componentDidMount() {
-        this.setState({isLoading: true});
-        
-        fetch('http://' + window.location.hostname + ':8080/deliverables/' + this.props.projectId)
+        this.setState({ isLoading: true });
+
+        fetch(`${process.env.REACT_APP_API_URL}/deliverables/` + this.props.projectId)
             .then(response => response.json())
-            .then(data => this.setState({deliverables: data, isLoading: false}));
+            .then(data => this.setState({ deliverables: data, isLoading: false }));
     }
 
     render() {
-        const {deliverables, isLoading} = this.state;
-        
+        const { deliverables, isLoading } = this.state;
+
         if (isLoading) {
             return <p>Loading...</p>;
         }
-        return(
+        return (
             <Panel>
                 <Panel.Heading>
                     <Panel.Title componentClass="h3">Projects</Panel.Title>
