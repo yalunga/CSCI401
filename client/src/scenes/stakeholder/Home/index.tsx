@@ -89,7 +89,7 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                 <tr key={project.projectId}>
                                     <td>{project.projectName}</td>
                                     <td>{this.getStatus(project.statusId)}</td>
-                                    <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
+                                    <td>{project.semester} {project.fallSpring === 0 ? 'Spring' : 'Fall'}</td>
                                     <td>
                                         <LinkContainer to={{pathname: 'stakeholder/project/' + project.projectId}}>
                                         <img src={viewIcon}/>

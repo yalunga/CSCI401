@@ -118,7 +118,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     }
 
     handleChangeSelect(event: any) {
-        var val = event.target.value === '0' ? 0 : 2;
+        var val = event.target.value === '0' ? 0 : 1;
         this.setState({ fallSpringSum: val });
 
         nameSet.clear();
