@@ -80,7 +80,8 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                 <th>Project</th>
                                 <th>Status</th>
                                 <th>Semester</th>
-                                <th>View/Edit</th>
+                                <th>View</th>
+                                <th>Edit</th>
                                 <th>Duplicate</th>
                             </thead>
                             <tbody>
@@ -90,7 +91,12 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                         <td>{this.getStatus(project.statusId)}</td>
                                         <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
                                         <td>
-                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId }}>
+                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/view' }}>
+                                                <img src={viewIcon} />
+                                            </LinkContainer>
+                                        </td>
+                                        <td>
+                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/edit' }}>
                                                 <img src={viewIcon} />
                                             </LinkContainer>
                                         </td>

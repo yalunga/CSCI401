@@ -13,6 +13,7 @@ import { runInThisContext } from 'vm';
 
 interface ProjectProps {
     projectId: string;
+    entryType: string;
 }
 interface Project {
     projectId: number;
@@ -22,6 +23,7 @@ interface Project {
     technologies: string;
     background: string;
     description: string;
+    statusId: number;
 }
 interface ProjectState {
     students: Array<StudentInfo>;
@@ -48,22 +50,71 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 maxSize: 0,
                 technologies: '',
                 background: '',
-                description: ''
+                description: '',
+                statusId: 0,
             },
             isLoading: true
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.checkEntry = this.checkEntry.bind(this);
     }
 
     componentDidMount() {
+        // alert('entry type: ' + this.props.entryType);
         fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
             .then(response => response.json())
+            // .then(response => response.text())
             // .then((responseText) => alert(responseText));
             .then(data => this.setState({
                 project: data,
                 isLoading: false
-            }));
+            }))
+            .then(this.checkEntry);
+        
+        // alert('status id: ' + this.state.project.statusId + ' project id: ' + this.state.project.projectId);
+        // if (this.props.entryType === 'edit' && this.state.project.statusId !== 1) {
+        //     alert('Are you sure to proceed to edit and change project status back to pending ?');
+        // }
+    }
+
+    checkEntry() {
+        // alert('status id: ' + this.state.project.statusId + ' project id: ' + this.state.project.projectId);
+        if (this.props.entryType === 'edit' && this.state.project.statusId !== 1) {
+            var choice = confirm('Are you sure to proceed to edit and change project status back to pending ?');
+
+            if (choice) {
+                
+                var project = { ...this.state.project };
+                project.statusId = 1;
+                this.setState({
+                    project
+                });
+
+                fetch(`${process.env.REACT_APP_API_URL}/projects/dabao/`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        projectId: this.state.project.projectId,
+                        projectName: this.state.project.projectName,
+                        projectMin: this.state.project.minSize,
+                        projectMax: this.state.project.maxSize,
+                        technology: this.state.project.technologies,
+                        background: this.state.project.background,
+                        description: this.state.project.description,
+                        statusId: this.state.project.statusId
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then((res) => res.text())
+                    .then((responsetext => alert('dabao here: ' + responsetext)))
+                    // .then((res) => res.json())
+                    // .then((data) => nameSet.add(newProjectName))
+                    .catch((err) => alert('dabao error: ' + err));
+            }
+        }
+        // alert('in check entry');
     }
 
     handleChange(e: any) {
@@ -89,8 +140,8 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
             return;
         }
 
-        alert('project min: ' + this.state.project.minSize);
-        alert('project max: ' + this.state.project.maxSize);
+        // alert('project min: ' + this.state.project.minSize);
+        // alert('project max: ' + this.state.project.maxSize);
         fetch(`${process.env.REACT_APP_API_URL}/projects/dabao/`, {
             method: 'POST',
             body: JSON.stringify({
@@ -100,7 +151,8 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 projectMax: this.state.project.maxSize,
                 technology: this.state.project.technologies,
                 background: this.state.project.background,
-                description: this.state.project.description
+                description: this.state.project.description,
+                statusId: this.state.project.statusId
             }),
             headers: {
                 'Content-Type': 'application/json'
