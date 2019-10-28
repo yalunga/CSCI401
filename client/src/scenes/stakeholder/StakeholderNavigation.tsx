@@ -81,7 +81,7 @@ class StakeholderNavigation extends React.Component<StakeholderProps, Stakeholde
             <Route exact={true} path="/stakeholder" component={Home}/>
             <Route path="/stakeholder/profile" component={Profile}/>
             {/* <Route path="/stakeholder/proposals" component={ProjectProposal}/> */}
-            <Route path="/stakeholder/project/:projectId" handler={ProjectPage} component={ProjectPage}/>
+            <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage}/>
             <Route path="/stakeholder/proposals/:projectId?" handler={ProjectProposal} component={ProjectProposal}/>
           </div>
         </div>

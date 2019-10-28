@@ -81,7 +81,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             })
             // .then((responseText) => console.log(responseText))
             .catch((error) => {
-                alert('handle change select error: ' + error);
+                console.log('handle change select error: ' + error);
             });
     }
     // getProjectContent() {
@@ -114,11 +114,11 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             },
         }).then((res) => res.json())
             .then((data) => nameSet.add(newProjectName))
-            .catch((err) => alert('POST error: ' + err));
+            .catch((err) => console.log('POST error: ' + err));
     }
 
     handleChangeSelect(event: any) {
-        var val = event.target.value === '0' ? 0 : 2;
+        var val = event.target.value === '0' ? 0 : 1;
         this.setState({ fallSpringSum: val });
 
         nameSet.clear();
@@ -137,7 +137,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             })
             // .then((responseText) => console.log(responseText))
             .catch((error) => {
-                alert('handle change select error: ' + error);
+                console.log('handle change select error: ' + error);
             });
     }
 
