@@ -29,13 +29,13 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
         super(props);
         this.state = {
             projectName: '',
-            projectMin: 0,
-            projectMax: 0,
+            projectMin: 1,
+            projectMax: 1,
             technologies: '',
             background: '',
             description: '',
             fallSpringSum: 0,
-            semester: 2019
+            semester: this.showCurrentYear()
         };
         this.handleChange = this.handleChange.bind(this);
         this.submitProject = this.submitProject.bind(this);
@@ -105,8 +105,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                 technologies: this.state.technologies,
                 background: this.state.background,
                 description: this.state.description,
+                fallSpring: this.state.fallSpringSum,
                 semester: this.state.semester,
-                fallSpringSum: this.state.fallSpringSum,
             }),
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -118,7 +118,14 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     }
 
     handleChangeSelect(event: any) {
-        var val = event.target.value === '0' ? 0 : 2;
+        var val = event.target.value;
+        if (val === 0 ) {
+            this.setState({fallSpringSum: 0});
+        } else if ( val === 1 ) {
+            this.setState({ fallSpringSum: 1});
+        } else {
+            this.setState({fallSpringSum: 2});
+        }
         this.setState({ fallSpringSum: val });
 
         nameSet.clear();
@@ -146,10 +153,22 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
         this.setState({ semester: event.target.value });
     }
 
+    handleChangeMin(event: any) {
+        this.setState({ projectMin: event.target.value });
+    }
+
+    handleChangeMax(event: any) {
+        this.setState({ projectMax: event.target.value });
+    }
+
     handleChange(e: any) {
         // @ts-ignore
 
         this.setState({ [e.target.id]: e.target.value });
+    }
+
+    showCurrentYear() {
+        return new Date().getFullYear();
     }
 
     render() {
@@ -175,13 +194,28 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                         <b>Minimum Number of Students</b>
                     </Col>
                     <Col sm={8}>
-                        <FormControl
-                            type="text"
-                            id="projectMin"
-                            placeholder="Min Number of Students"
-                            onChange={e => this.handleChange(e)}
-                            value={this.state.projectMin}
-                        />
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeMin(e)}>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                        </select>
                     </Col>
                 </FormGroup>
 
@@ -190,13 +224,28 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                         <b>Maximum Number of Students</b>
                     </Col>
                     <Col sm={8}>
-                        <FormControl
-                            type="text"
-                            id="projectMax"
-                            placeholder="Max Number of Students"
-                            onChange={e => this.handleChange(e)}
-                            value={this.state.projectMax}
-                        />
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeMax(e)}>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                        </select>
                     </Col>
                 </FormGroup>
 
@@ -257,14 +306,16 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                             <option value="2">Summer</option>
                         </select>
                     </Col>
-                    <Col sm={4}>
-                        <FormControl
-                            type="text"
-                            id="year"
-                            value={this.state.semester}
-                            placeholder="Year"
-                            onChange={e => this.handleChangeText(e)}
-                        />
+                    <Col sm={3}>
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
+                            <option value="0" >Fall (September-December)</option>
+                            <option value="1" >Spring (January-April)</option>
+                            <option value="2" >Summer (May-August)</option>
+                        </select>
+                    </Col>
+                    
+                    <Col componentClass={ControlLabel} sm={0}>
+                        {this.showCurrentYear()}
                     </Col>
                 </FormGroup>
 
