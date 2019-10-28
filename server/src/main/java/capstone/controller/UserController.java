@@ -211,24 +211,36 @@ public class UserController
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
+		String org = info.get("organization");
+		
+		
+		
 		String semester = info.get(Constants.SEMESTER);
+		
+		System.out.println("semester = " + semester);
+		
 		String fall_spring = semester.substring(0, 1);
 		semester = semester.substring(1);
 		
 		
 		System.out.println("fallspring = " + fall_spring);
-		System.out.println("semester = " + semester);
+		
 
 		
-		System.out.println(info);
+		System.out.println("firstName: " + firstName);
 		
 
 
 		//GENERIC USER
 		User user = new User();
 		user = findUser(originalEmail);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
+		
+		if(!firstName.isEmpty()) {
+			user.setFirstName(firstName);
+		}
+		if(lastName != null) {
+			user.setLastName(lastName);
+		}
 		
 		if(!phone.isEmpty()) {
 			user.setPhone(phone);
@@ -236,9 +248,17 @@ public class UserController
 		if(!password.isEmpty()) {
 			user.setPassword(EncryptPassword.encryptPassword(password));
 		}
-		user.setUserType(userType);
-		user.semester = Integer.parseInt(semester);
-		user.fallSpring = Integer.parseInt(fall_spring);
+		//user.setUserType(userType);
+		if(!semester.isEmpty()) {
+			user.semester = Integer.parseInt(semester);
+		}
+		if(!fall_spring.isEmpty()) {
+			user.fallSpring = Integer.parseInt(fall_spring);
+		}
+		if(!org.isEmpty()) {
+			user.org = org;
+		}
+		
 		userService.saveUser(user);
 			
 		System.out.println("FOUNDUSER");
