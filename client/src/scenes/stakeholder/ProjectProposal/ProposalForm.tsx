@@ -35,7 +35,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             background: '',
             description: '',
             fallSpringSum: 0,
-            semester: 2019
+            semester: this.showCurrentYear()
         };
         this.handleChange = this.handleChange.bind(this);
         this.submitProject = this.submitProject.bind(this);
@@ -105,8 +105,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                 technologies: this.state.technologies,
                 background: this.state.background,
                 description: this.state.description,
+                fallSpring: this.state.fallSpringSum,
                 semester: this.state.semester,
-                fallSpringSum: this.state.fallSpringSum,
             }),
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -118,7 +118,15 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     }
 
     handleChangeSelect(event: any) {
-        var val = event.target.value === '0' ? 0 : 2;
+        var val = event.target.value;
+        // this.setState({ fallSpringS: val });
+        if (val === 0 ) {
+            this.setState({fallSpringSum: 0});
+        } else if ( val === 1 ) {
+            this.setState({ fallSpringSum: 1});
+        } else {
+            this.setState({fallSpringSum: 2});
+        }
         this.setState({ fallSpringSum: val });
 
         nameSet.clear();
@@ -150,6 +158,10 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
         // @ts-ignore
 
         this.setState({ [e.target.id]: e.target.value });
+    }
+    
+    showCurrentYear() {
+        return new Date().getFullYear();
     }
 
     render() {
@@ -250,21 +262,16 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                     <Col componentClass={ControlLabel} sm={3}>
                         <b>Semester</b>
                     </Col>
-                    <Col sm={1}>
-                        <select style={{ marginRight: '5px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
-                            <option value="0">Fall</option>
-                            <option value="1">Spring</option>
-                            <option value="2">Summer</option>
+                    <Col sm={3}>
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
+                            <option value="0" >Fall (September-December)</option>
+                            <option value="1" >Spring (January-April)</option>
+                            <option value="2" >Summer (May-August)</option>
                         </select>
                     </Col>
-                    <Col sm={4}>
-                        <FormControl
-                            type="text"
-                            id="year"
-                            value={this.state.semester}
-                            placeholder="Year"
-                            onChange={e => this.handleChangeText(e)}
-                        />
+                    
+                    <Col componentClass={ControlLabel} sm={0}>
+                        {this.showCurrentYear()}
                     </Col>
                 </FormGroup>
 
