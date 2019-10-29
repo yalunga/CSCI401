@@ -410,11 +410,13 @@ public class ProjectController
 		String technology = info.get("technology");
 		String background = info.get("background");
 		String descrip = info.get("description");
+		int status = Integer.parseInt(info.get("statusId"));
 		
-		System.out.print("id: " + projectId);
-		System.out.print("new name: " + name);
-		System.out.println("new t: " + technology);
-		System.out.println("descrip: " + descrip);
+		//System.out.print("id: " + projectId);
+		System.out.print("status: " + status);
+//		System.out.print("new name: " + name);
+//		System.out.println("new t: " + technology);
+//		System.out.println("descrip: " + descrip);
 		
 		project.setMinSize(min);
 		project.setMaxSize(max);
@@ -422,6 +424,7 @@ public class ProjectController
 		project.setBackground(background);
 		project.setDescription(descrip);
 		project.setProjectName(name);
+		project.setStatusId(status);
 		
 		System.out.println("after chage");
 		projectService.save(project);

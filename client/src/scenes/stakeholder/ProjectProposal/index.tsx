@@ -7,7 +7,6 @@ import {
 class StakeholderProjectProposal extends React.Component<RouteComponentProps<any>> {
     constructor(props: RouteComponentProps<any>) {
         super(props);
-        // alert('the props: ' + Object.keys(this.props.match.params));
     }
 
     render() {

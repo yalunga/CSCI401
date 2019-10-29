@@ -58,6 +58,16 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
             return 'Changes Requested';
         }
     }
+    
+    getFSS(fallSpring: number) {
+        if (fallSpring === 0) {
+            return 'Fall';
+        } else if (fallSpring === 1) {
+            return 'Spring';
+        } else {
+            return 'Summer';
+        }
+    }
 
     render() {
         const { projects, isLoading } = this.state;
@@ -70,7 +80,6 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
             <div style={style as any}>
 
                 <h3>Welcome back!</h3>
-
                 <Panel>
                     <Panel.Heading>
                         <Panel.Title componentClass="h3">Your Projects</Panel.Title>
@@ -81,7 +90,8 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                 <th>Project</th>
                                 <th>Status</th>
                                 <th>Semester</th>
-                                <th>View/Edit</th>
+                                <th>View</th>
+                                <th>Edit</th>
                                 <th>Duplicate</th>
                             </thead>
                             <tbody>
@@ -89,9 +99,14 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                     <tr key={project.projectId}>
                                         <td>{project.projectName}</td>
                                         <td>{this.getStatus(project.statusId)}</td>
-                                        <td>{project.semester} {project.fallSpring === 1 ? 'Spring' : 'Fall'}</td>
+                                        <td>{this.getFSS(project.fallSpring)} {project.semester}</td>
                                         <td>
-                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId }}>
+                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/view' }}>
+                                                <img src={viewIcon} />
+                                            </LinkContainer>
+                                        </td>
+                                        <td>
+                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/edit' }}>
                                                 <img src={viewIcon} />
                                             </LinkContainer>
                                         </td>
