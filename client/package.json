@@ -36,5 +36,8 @@
     "@types/react-dom": "^16.9.1",
     "@types/react-router-dom": "^4.3.5",
     "typescript": "^2.9.2"
+  },
+  "resolutions": {
+    "dfa": "1.1.0"
   }
 }
