@@ -211,7 +211,7 @@ public class UserController
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
-		String org = info.get("organization");
+		String organization = info.get("organization");
 		
 		
 		
@@ -235,6 +235,17 @@ public class UserController
 		User user = new User();
 		user = findUser(originalEmail);
 		
+		
+		if(user.getUserType().equals("Stakeholder")) {
+			//System.out.println("current user is a stakeholder");
+			Stakeholder stakeholder = (Stakeholder)user;
+			
+			if(!organization.isEmpty()) {
+				stakeholder.setOrganization(organization);
+			}
+		}
+		
+		
 		if(!firstName.isEmpty()) {
 			user.setFirstName(firstName);
 		}
@@ -254,9 +265,6 @@ public class UserController
 		}
 		if(!fall_spring.isEmpty()) {
 			user.fallSpring = Integer.parseInt(fall_spring);
-		}
-		if(!org.isEmpty()) {
-			user.org = org;
 		}
 		
 		userService.saveUser(user);
