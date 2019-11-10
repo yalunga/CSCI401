@@ -107,6 +107,8 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                     // .then((res) => res.json())
                     // .then((data) => nameSet.add(newProjectName))
                     .catch((err) => console.log('dabao error: ' + err));
+            } else {
+                window.location.href = '/stakeholder';
             }
         }
         // alert('in check entry');
