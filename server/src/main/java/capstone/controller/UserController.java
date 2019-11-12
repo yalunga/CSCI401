@@ -1,4 +1,6 @@
 package capstone.controller;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +13,7 @@ import java.util.Random;
 import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +40,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
-
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 @RestController
 @RequestMapping("/users")
 public class UserController 
@@ -50,6 +54,8 @@ public class UserController
 	private GlobalRepository globalRepo;
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private JavaMailSender javaMailSender;
 	
 	public UserController()
 	{
@@ -211,7 +217,7 @@ public class UserController
 		String firstName = info.get(Constants.FIRST_NAME);
 		String lastName = info.get(Constants.LAST_NAME);
 		String userType = info.get(Constants.USER_TYPE);
-		String org = info.get("organization");
+		String organization = info.get("organization");
 		
 		
 		
@@ -235,6 +241,17 @@ public class UserController
 		User user = new User();
 		user = findUser(originalEmail);
 		
+		
+		if(user.getUserType().equals("Stakeholder")) {
+			//System.out.println("current user is a stakeholder");
+			Stakeholder stakeholder = (Stakeholder)user;
+			
+			if(!organization.isEmpty()) {
+				stakeholder.setOrganization(organization);
+			}
+		}
+		
+		
 		if(!firstName.isEmpty()) {
 			user.setFirstName(firstName);
 		}
@@ -254,9 +271,6 @@ public class UserController
 		}
 		if(!fall_spring.isEmpty()) {
 			user.fallSpring = Integer.parseInt(fall_spring);
-		}
-		if(!org.isEmpty()) {
-			user.org = org;
 		}
 		
 		userService.saveUser(user);
@@ -390,6 +404,16 @@ public class UserController
 			s.setUserType(Constants.STAKEHOLDER);
 			userService.saveUser(s);
 			System.out.println("New stakeholder created");
+			
+			SimpleMailMessage msg = new SimpleMailMessage();
+	        msg.setTo(email);
+
+	        msg.setSubject("Welcome from CSCI401");
+	        msg.setText("Hi, " + name + " You just registered as a stakeholer in CSCI401 Capstone platform. Welcome!");
+
+	        javaMailSender.send(msg);
+			
+			
 			return Constants.SUCCESS;
 		}
 		return Constants.EMPTY;

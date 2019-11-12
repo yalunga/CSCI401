@@ -25,7 +25,7 @@ public class User
 	private String userType;
 	public int semester;
 	public int fallSpring;
-	public String org;
+	public String organization;
 	
 	public Long getUserId() {
 		return userId;

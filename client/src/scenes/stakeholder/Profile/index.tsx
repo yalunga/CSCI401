@@ -20,7 +20,7 @@ interface User {
     firstName: string;
     email: string;
     phone: string;
-    org: string;
+    organization: string;
     semester: number;
 }
 interface ProfileState {
@@ -36,7 +36,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                 firstName: '', 
                 email: '', 
                 phone: '', 
-                org: '' ,
+                organization: '' ,
                 semester: 0
             },
             isLoading: false,
@@ -76,7 +76,7 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                 firstName: this.state.user.firstName,
                 userType: '',
                 semester: this.state.user.semester,
-                organization: this.state.user.org
+                organization: this.state.user.organization
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -134,8 +134,8 @@ class StakeholderProfile extends React.Component<ProfileProps, ProfileState> {
                                 <Col sm={10}>
                                     <FormControl
                                         type="text"
-                                        id="org"
-                                        value={this.state.user.org}
+                                        id="organization"
+                                        value={this.state.user.organization}
                                         onChange={e => this.handleChange(e)}
                                     />
                                 </Col>
