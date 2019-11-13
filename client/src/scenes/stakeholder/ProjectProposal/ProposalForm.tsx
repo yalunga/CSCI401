@@ -7,6 +7,9 @@ import {
     Button,
     ControlLabel
 } from 'react-bootstrap';
+import {
+    LinkContainer
+} from 'react-router-bootstrap';
 
 interface ProjectProps {
     projectId: string;
@@ -313,7 +316,9 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
 
                 <FormGroup>
                     <Col smOffset={3} sm={9}>
-                        <Button type="submit" onClick={this.submitProject}>Submit</Button>
+                        <LinkContainer to={{ pathname: '/stakeholder'}}>
+                            <Button type="submit" onClick={this.submitProject}>Submit</Button>
+                        </LinkContainer>
                     </Col>
                 </FormGroup>
             </Form>
