@@ -149,8 +149,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     }
 
     handleChangeText(event: any) {
-        console.log(event.target.value);
-        this.setState({ semester: event.target.value });
+        var val = event.target.value === '0' ? 0 : 1;
+        this.setState({ semester: val });
     }
 
     handleChangeMin(event: any) {
@@ -299,15 +299,18 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                     <Col componentClass={ControlLabel} sm={3}>
                         <b>Semester</b>
                     </Col>
-                    <Col sm={1}>
-                        <select style={{ marginRight: '5px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
-                            <option value="0">Fall</option>
-                            <option value="1">Spring</option>
-                            <option value="2">Summer</option>
+                    <Col sm={3}>
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeSelect(e)}>
+                            <option value="0" >Fall (September-December)</option>
+                            <option value="1" >Spring (January-April)</option>
+                            <option value="2" >Summer (May-August)</option>
                         </select>
                     </Col>
-                    <Col componentClass={ControlLabel} sm={0}>
-                        {this.showCurrentYear()}
+                    <Col sm={3}>
+                        <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeText(e)}>
+                            <option value="0" >{this.showCurrentYear()}</option>
+                            <option value="1" >{this.showCurrentYear() + 1}</option>
+                        </select>
                     </Col>
                 </FormGroup>
 

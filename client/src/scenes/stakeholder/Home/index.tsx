@@ -69,6 +69,18 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
         }
     }
 
+    showCurrentYear() {
+        return new Date().getFullYear();
+    }
+
+    getSem(semester: number) {
+        if (semester === 1) {
+            return this.showCurrentYear() + 1;
+        } else {
+            return this.showCurrentYear();
+        }
+    }
+
     render() {
         const { projects, isLoading } = this.state;
 
@@ -99,7 +111,7 @@ class StakeholderHome extends React.Component<HomeProps, HomeState> {
                                     <tr key={project.projectId}>
                                         <td>{project.projectName}</td>
                                         <td>{this.getStatus(project.statusId)}</td>
-                                        <td>{this.getFSS(project.fallSpring)} {project.semester}</td>
+                                        <td>{this.getFSS(project.fallSpring)} {this.getSem(project.semester)}</td>
                                         <td>
                                             <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/view' }}>
                                                 <img src={viewIcon} />
