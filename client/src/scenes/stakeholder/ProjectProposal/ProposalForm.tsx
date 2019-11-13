@@ -289,6 +289,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                     <Col sm={8}>
                         <FormControl
                             componentClass="textarea"
+                            style={{ height: 300 }}
                             type="text"
                             id="description"
                             value={this.state.description}
