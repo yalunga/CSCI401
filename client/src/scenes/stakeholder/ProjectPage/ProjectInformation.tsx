@@ -337,6 +337,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                                 <Col sm={8}>
                                     <FormControl
                                         componentClass="textarea"
+                                        style={{ height: 200 }}
                                         type="text"
                                         id="description"
                                         value={this.state.project.description}
