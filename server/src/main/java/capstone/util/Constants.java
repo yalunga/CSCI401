@@ -33,4 +33,7 @@ public class Constants {
 	public static String PROJECTS = "projects";
 	public static String PROJECT_NAME = "projectName";
 	public static String PROJECT_ID = "projectId";
+
+	/* Environment Var */
+	public static String APP_URL = "http://localhost:3000";
 }

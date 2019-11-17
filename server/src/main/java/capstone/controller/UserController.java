@@ -436,7 +436,7 @@ public class UserController
 			// Save the email to registered student email table
 			regRepo.save(new RegisteredStudentEmail(e, fallSpring, semester));
 			// Send an email invitation
-			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \nhttp://localhost:3000/register/student", e);
+			emailService.sendEmail("401 Platform Invite", "Congratulations! \nPlease sign up using the following link. \n \n" + Constants.APP_URL + "/register/student", e);
 			System.out.println("Sent invite to: " + e);
 		}
 	}
@@ -451,7 +451,7 @@ public class UserController
 		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
 		int fallSpring = Integer.parseInt(emailsData.get("fallSpring"));
 		int semester = Integer.parseInt(emailsData.get("year"));
-		String url = "http://localhost:3000/register/admin";
+		String url = Constants.App_URL + "/register/admin";
 		
 		for(String e : emailsArray)
 		{
