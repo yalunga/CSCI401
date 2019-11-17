@@ -246,30 +246,30 @@ public class UserController
 			//System.out.println("current user is a stakeholder");
 			Stakeholder stakeholder = (Stakeholder)user;
 			
-			if(!organization.isEmpty()) {
+			if(organization != null && !organization.isEmpty()) {
 				stakeholder.setOrganization(organization);
 			}
 		}
 		
 		
-		if(!firstName.isEmpty()) {
+		if(firstName != null && !firstName.isEmpty()) {
 			user.setFirstName(firstName);
 		}
 		if(lastName != null) {
 			user.setLastName(lastName);
 		}
 		
-		if(!phone.isEmpty()) {
+		if(phone != null && !phone.isEmpty()) {
 			user.setPhone(phone);
 		}
-		if(!password.isEmpty()) {
+		if(phone != null && !password.isEmpty()) {
 			user.setPassword(EncryptPassword.encryptPassword(password));
 		}
 		//user.setUserType(userType);
-		if(!semester.isEmpty()) {
+		if(semester != null && !semester.isEmpty()) {
 			user.semester = Integer.parseInt(semester);
 		}
-		if(!fall_spring.isEmpty()) {
+		if(fall_spring != null && !fall_spring.isEmpty()) {
 			user.fallSpring = Integer.parseInt(fall_spring);
 		}
 		
@@ -451,7 +451,7 @@ public class UserController
 		String[] emailsArray = emailsData.get(Constants.EMAILS).split("\n");
 		int fallSpring = Integer.parseInt(emailsData.get("fallSpring"));
 		int semester = Integer.parseInt(emailsData.get("year"));
-		String url = Constants.App_URL + "/register/admin";
+		String url = Constants.APP_URL + "/register/admin";
 		
 		for(String e : emailsArray)
 		{

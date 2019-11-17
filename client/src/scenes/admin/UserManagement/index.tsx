@@ -146,6 +146,7 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
   }
 
   editUser(index: number, user: User) {
+    console.log(user);
     this.setState({
       userIndexToEdit: index,
       userToEdit: user,
