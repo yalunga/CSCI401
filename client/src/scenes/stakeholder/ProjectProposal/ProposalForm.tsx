@@ -306,14 +306,12 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
                             <option value="2" >Summer (May-August)</option>
                         </select>
                     </Col>
-                    
                     <Col sm={3}>
                         <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeText(e)}>
                             <option value="0" >{this.showCurrentYear()}</option>
                             <option value="1" >{this.showCurrentYear() + 1}</option>
                         </select>
                     </Col>
-                    
                 </FormGroup>
 
                 <FormGroup>
