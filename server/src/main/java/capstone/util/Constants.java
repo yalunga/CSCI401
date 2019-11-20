@@ -35,5 +35,5 @@ public class Constants {
 	public static String PROJECT_ID = "projectId";
 
 	/* Environment Var */
-	public static String APP_URL = "http://localhost:3000";
+	public static String APP_URL = "http://cscapstone.usc.edu";
 }
