@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -54,7 +55,10 @@ public class Project implements Comparable<Object> {
 		int semester;
 		int maxSize;
 		int minSize;
+		
+		@Column(columnDefinition= "TEXT")
 		String description;
+		
 		String background;
 		String technologies;
 		String adminComments = "";
