@@ -1,3 +1,5 @@
 /.metadata/
 
 server/src/main/resources/application.properties
+
+client/.env
