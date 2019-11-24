@@ -318,7 +318,7 @@ public class ProjectController
 	// Save a new project and attach a stakeholder to that project
 	@PostMapping("/save/{email:.+}")
 	@CrossOrigin
-	public @ResponseBody Project saveData(@PathVariable("email") String email, 
+	public @ResponseBody String saveData(@PathVariable("email") String email, 
 			@RequestBody Project project)
 	{
 		System.out.println("Received HTTP POST");
@@ -330,7 +330,8 @@ public class ProjectController
 		User user = userService.findUserByEmail(email);
 	    projectService.save(project);
 	    userService.saveProject(user, project);
-		return project;
+		System.out.println("Project has been saved");
+		return Constants.SUCCESS;
 	}
 	
 	@PostMapping("/pending/{projectId}")

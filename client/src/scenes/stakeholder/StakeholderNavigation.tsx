@@ -38,7 +38,7 @@ class StakeholderNavigation extends React.Component<StakeholderProps, Stakeholde
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('userType');
     sessionStorage.clear();
-    window.location.href = '/';  
+    window.location.href = '/';
   }
 
   render() {
@@ -50,12 +50,12 @@ class StakeholderNavigation extends React.Component<StakeholderProps, Stakeholde
               <Navbar.Brand>
                 <img src={logo} className="App-logo" alt="logo" />
               </Navbar.Brand>
-              
+
               <Navbar.Brand>
                 <LinkContainer to="/stakeholder">
-                  <a>CSCI 401</a>
+                  <a>Home</a>
                 </LinkContainer>
-              </Navbar.Brand> 
+              </Navbar.Brand>
             </Navbar.Header>
             <Nav>
               <LinkContainer to="/stakeholder/profile">
@@ -63,7 +63,7 @@ class StakeholderNavigation extends React.Component<StakeholderProps, Stakeholde
                   Profile
                 </NavItem>
               </LinkContainer>
-              
+
               <LinkContainer to="/stakeholder/proposals">
                 <NavItem eventKey={2}>
                   Project Proposal
@@ -73,16 +73,16 @@ class StakeholderNavigation extends React.Component<StakeholderProps, Stakeholde
               <NavItem eventKey={6}>
                 <FormGroup>
                   <Button type="submit" onClick={this.logOutClicked}>Log Out</Button>
-              </FormGroup>
+                </FormGroup>
               </NavItem>
             </Nav>
           </Navbar>
           <div className="content">
-            <Route exact={true} path="/stakeholder" component={Home}/>
-            <Route path="/stakeholder/profile" component={Profile}/>
+            <Route exact={true} path="/stakeholder" component={Home} />
+            <Route path="/stakeholder/profile" component={Profile} />
             {/* <Route path="/stakeholder/proposals" component={ProjectProposal}/> */}
-            <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage}/>
-            <Route path="/stakeholder/proposals/:projectId?" handler={ProjectProposal} component={ProjectProposal}/>
+            <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage} />
+            <Route path="/stakeholder/proposals/:projectId?" handler={ProjectProposal} component={ProjectProposal} />
           </div>
         </div>
       </BrowserRouter>
