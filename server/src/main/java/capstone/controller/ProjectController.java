@@ -81,6 +81,7 @@ public class ProjectController
 	public @ResponseBody List<Project> getProjectsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
 	{
 		System.out.println("in the get projects from semester");
+		System.out.println("semester: " + semester + " value: " + fallspring);
 		// Global g = globalRepo.findAll().get(0);
 		int targetSemester = semester;
 		int targetFallSpring = fallspring;

@@ -58,7 +58,6 @@ public class Project implements Comparable<Object> {
 		
 		@Column(columnDefinition= "TEXT")
 		String description;
-		
 		String background;
 		String technologies;
 		String adminComments = "";
