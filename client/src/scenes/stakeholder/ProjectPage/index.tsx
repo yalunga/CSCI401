@@ -21,7 +21,7 @@ class ProjectPage extends React.Component<RouteComponentProps<any>> {
             <div style={style as any}>
             <h2>Project</h2>
             <ProjectInformation projectId={this.props.match.params.projectId} entryType={this.props.match.params.entry} />
-            <DeliverableList projectId={this.props.match.params.projectId}/>
+            {/* <DeliverableList projectId={this.props.match.params.projectId}/> */}
             </div>
         );
     }

@@ -146,10 +146,17 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                 'Content-Type': 'application/json'
             },
         })
-            .then((res) => res.text())
-            .then((responsetext => console.log('dabao here: ' + responsetext)))
+            // .then((res) => res.text())
+            // .then((responsetext => console.log('dabao here: ' + responsetext)))
             // .then((res) => res.json())
             // .then((data) => nameSet.add(newProjectName))
+            .then((response) => {
+                if (response.ok) {
+                    alert('Project updated successfully');
+                } else {
+                    alert('Something went wrong. Please try again!');
+                }
+            })
             .catch((err) => console.log('dabao error: ' + err));
     }
     
@@ -219,7 +226,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             </FormGroup>
                         </Form>
                     </Panel.Body>
-                    <Panel>
+                    {/* <Panel>
                         <Panel.Heading>
                             Team Contact Information
                         </Panel.Heading>
@@ -246,7 +253,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                                 </Table>
                             </div>
                         </Panel.Body>
-                    </Panel>
+                    </Panel> */}
                 </Panel>
             );
         } else {
@@ -354,7 +361,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                             </FormGroup>
                         </Form>
                     </Panel.Body>
-                    <Panel>
+                    {/* <Panel>
                         <Panel.Heading>
                             Team Contact Information
                         </Panel.Heading>
@@ -381,7 +388,7 @@ class ProjectInformation extends React.Component<ProjectProps, ProjectState> {
                                 </Table>
                             </div>
                         </Panel.Body>
-                    </Panel>
+                    </Panel> */}
                 </Panel>
     
             );
