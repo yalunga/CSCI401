@@ -20,6 +20,7 @@ interface ProjectState {
   description: string;
   fallSpringSum: number;
   semester: number;
+  errorMsg: string;
 }
 
 var nameSet = new Set();
@@ -35,7 +36,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
       background: '',
       description: '',
       fallSpringSum: 0,
-      semester: this.showCurrentYear()
+      semester: this.showCurrentYear(),
+      errorMsg: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitProject = this.submitProject.bind(this);
@@ -93,8 +95,23 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     // alert('set size: ' + nameSet.size);
     var newProjectName = this.state.projectName;
     if (nameSet.has(newProjectName)) {
-      alert('project name already exists');
-      return;
+      // alert('project name already exists');
+      return this.setState({errorMsg: 'This project name already exists. Please input a different name.'});
+    }
+    if (!this.state.projectName) {
+      return this.setState({ errorMsg: 'A project name is required.'});
+    }
+    if (!this.state.technologies) {
+      return this.setState({ errorMsg: 'Technologies are required.' });
+    }
+    if (!this.state.background) {
+      return this.setState({ errorMsg: 'Background is required.' });
+    }
+    if (!this.state.description) {
+      return this.setState({ errorMsg: 'Description is required.' });
+    }
+    if (this.state.projectMax < this.state.projectMin) {
+      return this.setState({errorMsg: 'Maximum number of students must be larger than minimum number of students.'});
     }
     const res = await fetch(`${process.env.REACT_APP_API_URL}/projects/save/${sessionStorage.getItem('email')}`, {
       method: 'POST',
@@ -185,6 +202,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
               value={this.state.projectName}
               onChange={e => this.handleChange(e)}
               placeholder="Project Name"
+              onFocus={() => this.setState({ errorMsg: '' })}
             />
           </Col>
         </FormGroup>
@@ -260,6 +278,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
               value={this.state.technologies}
               placeholder="Technologies expected"
               onChange={e => this.handleChange(e)}
+              onFocus={() => this.setState({ errorMsg: '' })}
             />
           </Col>
         </FormGroup>
@@ -275,6 +294,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
               value={this.state.background}
               placeholder="Background requested"
               onChange={e => this.handleChange(e)}
+              onFocus={() => this.setState({ errorMsg: '' })}
             />
           </Col>
         </FormGroup>
@@ -292,6 +312,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
               value={this.state.description}
               placeholder="Description"
               onChange={e => this.handleChange(e)}
+              onFocus={() => this.setState({ errorMsg: '' })}
             />
           </Col>
         </FormGroup>
@@ -314,6 +335,14 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
             </select>
           </Col>
         </FormGroup>
+
+        {this.state.errorMsg && (
+            <FormGroup>
+              <Col smOffset={2} sm={10}>
+                <span style={{ color: 'red' }}>{this.state.errorMsg}</span>
+              </Col>
+            </FormGroup>
+          )}
 
         <FormGroup>
           <Col smOffset={3} sm={9}>
