@@ -96,10 +96,10 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
     var newProjectName = this.state.projectName;
     if (nameSet.has(newProjectName)) {
       // alert('project name already exists');
-      return this.setState({errorMsg: 'This project name already exists. Please input a different name.'});
+      return this.setState({ errorMsg: 'This project name already exists. Please input a different name.' });
     }
     if (!this.state.projectName) {
-      return this.setState({ errorMsg: 'A project name is required.'});
+      return this.setState({ errorMsg: 'A project name is required.' });
     }
     if (!this.state.technologies) {
       return this.setState({ errorMsg: 'Technologies are required.' });
@@ -111,7 +111,7 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
       return this.setState({ errorMsg: 'Description is required.' });
     }
     if (this.state.projectMax < this.state.projectMin) {
-      return this.setState({errorMsg: 'Maximum number of students must be larger than minimum number of students.'});
+      return this.setState({ errorMsg: 'Maximum number of students must be larger than minimum number of students.' });
     }
     const res = await fetch(`${process.env.REACT_APP_API_URL}/projects/save/${sessionStorage.getItem('email')}`, {
       method: 'POST',
@@ -166,7 +166,8 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
   }
 
   handleChangeText(event: any) {
-    var val = event.target.value === '0' ? 0 : 1;
+    var val = event.target.value;
+    console.log(val);
     this.setState({ semester: val });
   }
 
@@ -330,19 +331,19 @@ class ProposalForm extends React.Component<ProjectProps, ProjectState> {
           </Col>
           <Col sm={3}>
             <select style={{ marginRight: '3px', marginTop: '7px' }} onChange={e => this.handleChangeText(e)}>
-              <option value="0" >{this.showCurrentYear()}</option>
-              <option value="1" >{this.showCurrentYear() + 1}</option>
+              <option value={this.showCurrentYear()} >{this.showCurrentYear()}</option>
+              <option value={this.showCurrentYear() + 1} >{this.showCurrentYear() + 1}</option>
             </select>
           </Col>
         </FormGroup>
 
         {this.state.errorMsg && (
-            <FormGroup>
-              <Col smOffset={2} sm={10}>
-                <span style={{ color: 'red' }}>{this.state.errorMsg}</span>
-              </Col>
-            </FormGroup>
-          )}
+          <FormGroup>
+            <Col smOffset={2} sm={10}>
+              <span style={{ color: 'red' }}>{this.state.errorMsg}</span>
+            </Col>
+          </FormGroup>
+        )}
 
         <FormGroup>
           <Col smOffset={3} sm={9}>
