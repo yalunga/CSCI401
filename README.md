@@ -3,6 +3,7 @@ CSCI 401 Project Platform
 
 ## Current Authors
 - Rebecca Karol
-- Chris Lam
-- Sophie Wang
+- Hope Kim
+- Grace O'Rourke
 - Andrew Yalung
+- Wayne Yu
