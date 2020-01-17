@@ -1,56 +1,41 @@
 import * as React from 'react';
-import Cleave from 'cleave.js/react';
+import { Route, BrowserRouter } from 'react-router-dom';
+import { Box, Image, Anchor, Select, Text, Stack } from 'grommet';
 
-import {
-  Route,
-  BrowserRouter,
-  Redirect
-} from 'react-router-dom';
-import {
-  Navbar,
-  Nav,
-  NavItem,
-  FormGroup,
-  Button
-} from 'react-bootstrap';
-import {
-  LinkContainer
-} from 'react-router-bootstrap';
-import AdminHome from './Home/index';
 import UserManagement from './UserManagement/index';
-import ProjectProposals from './ProjectProposals/index';
-import ClassOverview from './ClassOverview/index';
-import ProjectMatching from './ProjectMatching/index';
-const logo = require('../../svg/logo.svg');
+import ProjectProposals from './ProjectProposals';
 
-interface SemesterStateProps {
-}
-
-interface SemesterState {
-  fallOrSpring: number;
-  fallOrSpringText: string;
+interface AdminNavigationProps { }
+interface AdminNavigationState {
+  fallOrSpring: {
+    label: string;
+    value: string;
+  },
   year: number;
-  isLoading: boolean;
 }
 
-class AdminNavigation extends React.Component<SemesterStateProps, SemesterState> {
-  constructor(props: SemesterStateProps) {
+export default class AdminNavigation extends React.Component<AdminNavigationProps, AdminNavigationState> {
+  constructor(props: AdminNavigationProps) {
     super(props);
-    this.state = { fallOrSpringText: 'Unselected', fallOrSpring: 0, year: 0, isLoading: false };
-    this.submitClicked = this.submitClicked.bind(this);
+    this.state = {
+      fallOrSpring: {
+        label: 'Fall',
+        value: '0'
+      },
+      year: 2020
+    };
+    this.onChangeFallSpring = this.onChangeFallSpring.bind(this);
+    this.onChangeYear = this.onChangeYear.bind(this);
   }
 
   componentDidMount() {
-    this.setState({ isLoading: true });
-
-    let displayYear = 2019;
+    let displayYear = 2020;
     let displaySemester = '0';
     let sessionYear = sessionStorage.getItem('viewingYear');
     let sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
-    console.log(sessionYear);
-    console.log(sessionFallSpring);
+
     if (sessionYear === null) {
-      sessionStorage.setItem('viewingYear', '2019');
+      sessionStorage.setItem('viewingYear', '2020');
     } else {
       displayYear = Number(sessionYear);
     }
@@ -59,128 +44,117 @@ class AdminNavigation extends React.Component<SemesterStateProps, SemesterState>
     } else {
       displaySemester = sessionFallSpring;
     }
-    this.setState({ year: Number(displayYear), fallOrSpring: Number(displaySemester) });
     let fallSpringText = 'Spring';
-    if (this.state.fallOrSpring === 0) {
+    if (displaySemester === '0') {
       fallSpringText = 'Fall';
     }
-    this.setState({ fallOrSpringText: fallSpringText, isLoading: false });
+    this.setState({ year: displayYear, fallOrSpring: { label: fallSpringText, value: displaySemester } });
   }
 
-  logOutClicked() {
+  onChangeFallSpring({ option }: any) {
+    sessionStorage.setItem('viewingFallSpring', option.value);
+    this.setState({
+      fallOrSpring: {
+        label: option.label,
+        value: option.value
+      }
+    });
+  }
+
+  onChangeYear({ option }: any) {
+    sessionStorage.setItem('viewingYear', option);
+    this.setState({ year: option });
+  }
+
+  renderOptionsFallSpring(option: any) {
+    return (
+      <Box pad='small'>
+        <Text weight='bold' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+          {option.label}
+        </Text>
+      </Box>
+    );
+  }
+  renderOptionsYear(year: any) {
+    return (
+      <Box pad='small'>
+        <Text weight='bold' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+          {year}
+        </Text>
+      </Box>
+    );
+  }
+
+  logout() {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('userType');
     window.location.href = '/';
   }
 
-  handleChange(event: any) {
-    // var val = event.target.value === '0' ? 0 : 1;
-    var val = event.target.value;
-
-    console.log('Set local form value for fallspring');
-    console.log(val);
-    this.setState({ fallOrSpring: val });
-    if (val === 0) {
-      this.setState({ fallOrSpringText: 'Fall' });
-    } else if (val === 1) {
-      this.setState({ fallOrSpringText: 'Spring' });
-    } else {
-      this.setState({ fallOrSpringText: 'Summer' });
-    }
-  }
-
-  handleChangeText(event: any) {
-    console.log(event.target.value);
-    this.setState({ year: event.target.value });
-  }
-
-  submitClicked(event: any) {
-    console.log('submitted semester change');
-    console.log(this.state.year);
-    console.log(this.state.fallOrSpring);
-    sessionStorage.setItem('viewingYear', this.state.year.toString());
-    sessionStorage.setItem('viewingFallSpring', this.state.fallOrSpring.toString());
-    window.location.reload();
-  }
-
   render() {
-    if (this.state.isLoading) {
-      return <p>Loading...</p>;
-    }
+    const { fallOrSpring, year } = this.state;
     return (
-      <BrowserRouter>
-        <div>
-          <Navbar>
-            <Navbar.Header>
-              <Navbar.Brand>
-                <img src={logo} className="App-logo" alt="logo" />
-              </Navbar.Brand>
-
-              <Navbar.Brand>
-                <LinkContainer to="/admin">
-                  <a>CSCI 401</a>
-                </LinkContainer>
-              </Navbar.Brand>
-
-            </Navbar.Header>
-            <Nav>
-              <LinkContainer to="/admin/users">
-                <NavItem eventKey={1}>
-                  User Management
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to="/admin/proposals">
-                <NavItem eventKey={2}>
-                  Project Proposals
-                </NavItem>
-              </LinkContainer>
-              {/* <LinkContainer to="/admin/class">
-                <NavItem eventKey={3}>
-                  Class Overview
-                </NavItem>
-              </LinkContainer> */}
-              <LinkContainer to="/admin/matching">
-                <NavItem eventKey={5}>
-                  Project Matching
-              </NavItem>
-              </LinkContainer>
-              <NavItem eventKey={6}>
-                <FormGroup>
-                  <Button type="submit" onClick={this.logOutClicked}>Log Out</Button>
-                </FormGroup>
-              </NavItem>
-            </Nav>
-            <div>
-              <select style={{ marginRight: '15px' }} onChange={e => this.handleChange(e)}>
-                <option value="0" selected={this.state.fallOrSpring === 0}>Fall</option>
-                <option value="1" selected={this.state.fallOrSpring === 1}>Spring</option>
-                <option value="2" selected={this.state.fallOrSpring === 2}>Summer</option>
-              </select>
-              <Cleave
-                value={this.state.year}
-                onChange={e => this.handleChangeText(e)}
-                name="year"
-                options={{
-                  date: true,
-                  datePattern: ['Y']
-                }}
-              />
-              <br />
-
-              <button type="submit" onClick={this.submitClicked}>Change Viewing Semester</button>
-            </div>
-          </Navbar>
-          <div className="content">
-            <Route exact={true} path="/admin" component={AdminHome} />
-            <Route path="/admin/users" component={UserManagement} />
-            <Route path="/admin/proposals" component={ProjectProposals} />
-            <Route path="/admin/class" component={ClassOverview} />
-            <Route path="/admin/matching" component={ProjectMatching} />
-          </div>
-        </div>
-      </BrowserRouter>
+      <Box height='full' width='full' background='#FAFBFD'>
+        <Stack anchor='top-right'>
+          <Box width='full' pad={{ horizontal: 'small' }} elevation='xsmall' background='white' direction='row'>
+            <Box width='small'>
+              <Image fit='contain' src='https://16mhpx3atvadrnpip2kwi9or-wpengine.netdna-ssl.com/wp-content/uploads/2016/10/USC-Shield.png' />
+            </Box>
+            <Box width='full' align='center' justify='start' pad={{ horizontal: 'medium' }} gap='medium' direction='row'>
+              <Anchor href='/admin/users' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                User Management
+            </Anchor>
+              <Anchor href='/admin/proposals' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Project Proposals
+            </Anchor>
+              <Anchor href='/admin/matching' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Project Matching
+            </Anchor>
+              <Box gap='xsmall' direction='row'>
+                <Select
+                  size='small'
+                  children={this.renderOptionsFallSpring}
+                  options={[
+                    { label: 'Fall', value: 0 },
+                    { label: 'Spring', value: 1 },
+                    { label: 'Summer', value: 2 }
+                  ]}
+                  value={
+                    <Box pad='small'>
+                      <Text weight='bold' size='xsmall' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                        {fallOrSpring.label}
+                      </Text>
+                    </Box>
+                  }
+                  onChange={this.onChangeFallSpring}
+                />
+                <Select
+                  size='small'
+                  children={this.renderOptionsYear}
+                  options={['2020', '2021']}
+                  value={
+                    <Box pad='small'>
+                      <Text weight='bold' size='xsmall' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                        {year}
+                      </Text>
+                    </Box>
+                  }
+                  onChange={this.onChangeYear}
+                />
+              </Box>
+            </Box>
+          </Box>
+          <Box pad='small' onClick={this.logout} style={{ cursor: 'pointer' }}>
+            <Text size='xsmall' color='dark-5' weight='bold' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+              Logout
+            </Text>
+          </Box>
+        </Stack>
+        <BrowserRouter>
+          <Route path="/admin/users" component={UserManagement} />
+          <Route path="/admin/proposals" component={ProjectProposals} />
+        </BrowserRouter>
+      </Box>
     );
   }
 }
-
-export default AdminNavigation;

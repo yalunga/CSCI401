@@ -1,39 +1,32 @@
 import * as React from 'react';
 import {
-    Panel,
-    Col,
-    Row
-} from 'react-bootstrap';
+  Box,
+  Text,
+  Image,
+  Anchor
+} from 'grommet';
+
 import LoginForm from './Form';
 
-const style = {
-    width: 600,
-    float: 'none',
-    margin: 'auto',
-};
-
-class Login extends React.Component {
-    render() {
-        return (
-            <div style={style as any}>
-                <h3> Welcome to CSCI 401</h3>
-                <Row>
-                    <Col>
-                        <Panel>
-                            <LoginForm/>
-                        </Panel>
-                    </Col>
-                </Row>
-
-                <Row>
-                    <Col>
-                        Interested in being a stakeholder for a project?
-                        <a href="/register/stakeholder"> Register here. </a>
-                    </Col>
-                </Row>
-            </div>
-        );
-    }
+export default class Login extends React.Component {
+  render() {
+    return (
+      <Box width='full' height='full'>
+        <Box width='full' pad={{ horizontal: 'small' }} elevation='xsmall' background='white' direction='row'>
+          <Box width='small'>
+            <Image fit='contain' src='https://16mhpx3atvadrnpip2kwi9or-wpengine.netdna-ssl.com/wp-content/uploads/2016/10/USC-Shield.png' />
+          </Box>
+        </Box>
+        <Box width='full' align='center' justify='center' gap='medium'>
+          <Box width='medium' pad='small' elevation='small' round='xsmall' margin={{ top: 'large' }}>
+            <LoginForm />
+          </Box>
+          <Text size='small'>
+            Interested in being a stakeholder for a project?
+            <Anchor href='/register/stakeholder'> Register here.</Anchor>
+          </Text>
+        </Box>
+      </Box>
+    )
+  }
 }
-
-export default Login;

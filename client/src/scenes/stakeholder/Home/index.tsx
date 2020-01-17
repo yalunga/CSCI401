@@ -1,136 +1,112 @@
 import * as React from 'react';
-import {
-    Panel,
-    Table,
-    Alert,
-    Button
-} from 'react-bootstrap';
-import {
-    LinkContainer
-} from 'react-router-bootstrap';
-const viewIcon = require('../../../svg/viewIcon.svg');
-const style = {
-    width: 1000,
-    float: 'none',
-    margin: 'auto'
-};
-const cursorStyle = {
-    cursor: 'pointer'
-};
-interface Project {
-    projectId: number;
-    projectName: string;
-    statusId: number;
-    semester: number;
-    fallSpring: number;
-}
+import { Box, Text, DataTable } from 'grommet'
+import TableHeader from '../../TableHelpers/TableHeaders';
 
 interface HomeState {
-    projects: Array<{}>;
-    isLoading: Boolean;
+  projects: Array<{}>;
+  isLoading: Boolean;
 }
 
-interface HomeProps {
+interface HomeProps { }
+
+export default class StakeholderHome extends React.Component<HomeProps, HomeState> {
+  constructor(props: HomeProps) {
+    super(props);
+    this.state = {
+      projects: [],
+      isLoading: true
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+
+    fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email'))
+      .then(response => response.json())
+      .then(data => this.setState({ projects: data, isLoading: false }));
+  }
+
+  getStatus(statusId: number) {
+    if (statusId === 1) {
+      return 'Pending Approval';
+    } else if (statusId === 2) {
+      return 'Approved';
+    } else if (statusId === 3) {
+      return 'Rejected';
+    } else {
+      return 'Changes Requested';
+    }
+  }
+
+  getFSS(fallSpring: number) {
+    if (fallSpring === 0) {
+      return 'Fall';
+    } else if (fallSpring === 1) {
+      return 'Spring';
+    } else {
+      return 'Summer';
+    }
+  }
+
+  render() {
+    const columns = [
+      {
+        property: 'projectName',
+        header: <TableHeader>Project</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.projectName}</Text>
+        ),
+      },
+      {
+        property: 'projectStatus',
+        header: <TableHeader>Status</TableHeader>,
+        render: (datum: any) => (
+          <Text>{this.getStatus(datum.statusId)}</Text>
+        ),
+      },
+      {
+        property: 'technologies',
+        header: <TableHeader>Semester</TableHeader>,
+        render: (datum: any) => (
+          <Text>{this.getFSS(datum.fallSpring)} {datum.semester}</Text>
+        ),
+      },
+      {
+        property: 'minSize',
+        header: <TableHeader>View</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.email}</Text>
+        ),
+      },
+      {
+        property: 'maxSize',
+        header: <TableHeader>Edit</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.email}</Text>
+        ),
+      },
+      {
+        property: 'description',
+        header: <TableHeader>Duplicate</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.email}</Text>
+        ),
+      }
+    ];
+    const { projects } = this.state;
+    return (
+      <Box pad='medium'>
+        <Box background='white' elevation='xsmall' round='xxsmall' pad='small'>
+          {projects.length !== 0 ?
+            <DataTable
+              columns={columns}
+              data={[]}
+            />
+            :
+            <Text>You currently have no projects.</Text>
+          }
+        </Box>
+      </Box>
+    )
+  }
 }
-
-class StakeholderHome extends React.Component<HomeProps, HomeState> {
-    constructor(props: HomeProps) {
-        super(props);
-        this.state = {
-            projects: [],
-            isLoading: true
-        };
-    }
-
-    componentDidMount() {
-        this.setState({ isLoading: true });
-
-        fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email'))
-            .then(response => response.json())
-            .then(data => this.setState({ projects: data, isLoading: false }));
-    }
-
-    getStatus(statusId: number) {
-        if (statusId === 1) {
-            return 'Pending Approval';
-        } else if (statusId === 2) {
-            return 'Approved';
-        } else if (statusId === 3) {
-            return 'Rejected';
-        } else {
-            return 'Changes Requested';
-        }
-    }
-
-    getFSS(fallSpring: number) {
-        if (fallSpring === 0) {
-            return 'Fall';
-        } else if (fallSpring === 1) {
-            return 'Spring';
-        } else {
-            return 'Summer';
-        }
-    }
-
-    showCurrentYear() {
-        return new Date().getFullYear();
-    }
-
-    render() {
-        const { projects, isLoading } = this.state;
-
-        if (isLoading) {
-            return <p>Loading...</p>;
-        }
-
-        return (
-            <div style={style as any}>
-
-                <h3>Welcome back!</h3>
-                <Panel>
-                    <Panel.Heading>
-                        <Panel.Title componentClass="h3">Your Projects</Panel.Title>
-                    </Panel.Heading>
-                    <Panel.Body>
-                        <Table>
-                            <thead>
-                                <th>Project</th>
-                                <th>Status</th>
-                                <th>Semester</th>
-                                <th>View</th>
-                                <th>Edit</th>
-                                <th>Duplicate</th>
-                            </thead>
-                            <tbody>
-                                {projects.map((project: Project, index: number) =>
-                                    <tr key={project.projectId}>
-                                        <td>{project.projectName}</td>
-                                        <td>{this.getStatus(project.statusId)}</td>
-                                        <td>{this.getFSS(project.fallSpring)} {project.semester}</td>
-                                        <td>
-                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/view' }} style={cursorStyle}>
-                                                <img src={viewIcon} />
-                                            </LinkContainer>
-                                        </td>
-                                        <td>
-                                            <LinkContainer to={{ pathname: 'stakeholder/project/' + project.projectId + '/edit' }} style={cursorStyle}>
-                                                <img src={viewIcon} />
-                                            </LinkContainer>
-                                        </td>
-                                        <td>
-                                            <LinkContainer to={{ pathname: 'stakeholder/proposals/' + project.projectId }} style={cursorStyle}>
-                                                <img src={viewIcon} />
-                                            </LinkContainer>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </Table>
-                    </Panel.Body>
-                </Panel>
-            </div>
-        );
-    }
-}
-
-export default StakeholderHome;

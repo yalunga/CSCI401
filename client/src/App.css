@@ -1,26 +1,8 @@
-.App {
-  text-align: left;
+a:hover {
+  color: #990000;
+  text-decoration: none !important;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 85px;
-}
-
-.App-header {
-  background-color: #bd2031;
-  height: 100px;
-  padding: 20px;
-  color: #BD2031;
-}
-
-.App-title {
-  font-size: 2.5em;
-  color: #BD2031;
-}
-
-.App-intro {
-  font-size: 42px;
-  color: #BD2031;
-  
+.pointer:hover {
+  cursor: pointer;
 }
