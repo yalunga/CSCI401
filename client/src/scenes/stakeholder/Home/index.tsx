@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Box, Text, DataTable } from 'grommet'
 import TableHeader from '../../TableHelpers/TableHeaders';
+import { Edit, Duplicate, View } from 'grommet-icons'
 
 interface HomeState {
   projects: Array<{}>;
@@ -54,7 +55,7 @@ export default class StakeholderHome extends React.Component<HomeProps, HomeStat
         property: 'projectName',
         header: <TableHeader>Project</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.projectName}</Text>
+          <Text weight='bold'>{datum.projectName}</Text>
         ),
       },
       {
@@ -75,21 +76,21 @@ export default class StakeholderHome extends React.Component<HomeProps, HomeStat
         property: 'minSize',
         header: <TableHeader>View</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.email}</Text>
+          <View className='pointer' />
         ),
       },
       {
         property: 'maxSize',
         header: <TableHeader>Edit</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.email}</Text>
+          <Edit className='pointer' />
         ),
       },
       {
         property: 'description',
         header: <TableHeader>Duplicate</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.email}</Text>
+          <Duplicate className='pointer' />
         ),
       }
     ];
@@ -100,7 +101,7 @@ export default class StakeholderHome extends React.Component<HomeProps, HomeStat
           {projects.length !== 0 ?
             <DataTable
               columns={columns}
-              data={[]}
+              data={projects}
             />
             :
             <Text>You currently have no projects.</Text>

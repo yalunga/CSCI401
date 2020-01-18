@@ -19,7 +19,7 @@ const theme = {
       brand: '#990000'
     },
     font: {
-      family: 'Helvetica,sans-serif'
+      family: 'Nunito, sans-serif'
     },
     input: {
       weight: 400
@@ -94,7 +94,7 @@ const StakeholderPrivateRoute = ({ component: Component, ...rest }: any) => (
 
 const App: React.FC = () => {
   return (
-    <Grommet full theme={theme}>
+    <Grommet style={{ minHeight: '100vh' }} theme={theme}>
       <BrowserRouter>
         <Switch>
           <Route exact path='/' component={LandingPage} />

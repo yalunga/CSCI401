@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { Box, Text, TextInput } from 'grommet';
+import { Box, Text, TextArea } from 'grommet';
 
 export default (props: any) => (
   <Box gap='xxxsmall'>
     <Text size='small' color='dark-4' weight='bold'>{props.title}</Text>
     <Box border='bottom'>
-      <TextInput
+      <TextArea
         plain
-        style={{ padding: 1 }}
-        name={props.name}
         onChange={props.onChange}
+        name={props.name}
         value={props.value}
-        onFocus={props.onFocus}
+        resize={props.resize}
       />
     </Box>
   </Box>
-);
+)

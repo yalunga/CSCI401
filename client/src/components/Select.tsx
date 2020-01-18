@@ -3,7 +3,7 @@ import { Box, Text, Select } from 'grommet';
 
 export default (props: any) => (
   <Box border='bottom' round='xxsmall' width='medium'>
-    <Text></Text>
-    <Select options={['Admin', 'Student', 'Stakeholder']} plain name='editUserType' />
+    <Text size='small' color='dark-4' weight='bold'>{props.title}</Text>
+    <Select plain {...props} />
   </Box>
 );

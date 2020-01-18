@@ -59,11 +59,13 @@ export default class AdminNavigation extends React.Component<AdminNavigationProp
         value: option.value
       }
     });
+    window.location.reload();
   }
 
   onChangeYear({ option }: any) {
     sessionStorage.setItem('viewingYear', option);
     this.setState({ year: option });
+    window.location.reload();
   }
 
   renderOptionsFallSpring(option: any) {

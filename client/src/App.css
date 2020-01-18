@@ -6,3 +6,7 @@ a:hover {
 .pointer:hover {
   cursor: pointer;
 }
+
+body {
+  background-color: #FAFBFD;
+}
