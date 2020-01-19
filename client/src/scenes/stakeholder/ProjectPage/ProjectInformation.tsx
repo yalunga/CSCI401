@@ -18,6 +18,7 @@ interface Project {
   background: string;
   description: string;
   statusId: number;
+  adminComments?: string;
 }
 interface ProjectState {
   students: Array<StudentInfo>;
@@ -157,6 +158,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
 
   }
   render() {
+    console.log(this.state.project);
     return (
       <Box width='large' elevation='xsmall' round='xxsmall' background='white' pad='small' gap='medium'>
         <Text weight='bold' size='large'>Project Information</Text>
@@ -213,6 +215,14 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
             <Text>Submit</Text>
           </Box>
         }
+        {(this.props.entryType === 'view' && this.state.project.adminComments) && (
+          <TextArea
+            title='Admin Comments'
+            name='adminComments'
+            value={this.state.project.adminComments}
+            disabled
+          />
+        )}
         {this.state.alert && (
           <Alert text={`${this.state.project.projectName} updated.`} />
         )}
