@@ -4,6 +4,7 @@ import { Box, Image, Anchor, Text, Stack } from 'grommet';
 import Home from './Home';
 import Profile from './Profile';
 import ProjectProposals from './ProjectProposals';
+import ProjectPage from './ProjectPage';
 
 
 interface StakeholderNavigationProps { }
@@ -122,7 +123,8 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
         <BrowserRouter>
           <Route exact={true} path="/stakeholder" component={Home} />
           <Route exact={true} path='/stakeholder/profile' component={Profile} />
-          <Route exact={true} path='/stakeholder/proposals' component={ProjectProposals} />
+          <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage} />
+          <Route exact={true} path='/stakeholder/proposals/:projectId?' handler={ProjectProposals} component={ProjectProposals} />
         </BrowserRouter>
       </Box>
     );

@@ -6,6 +6,7 @@ export default (props: any) => (
     <Text size='small' color='dark-4' weight='bold'>{props.title}</Text>
     <Box border='bottom'>
       <TextInput
+        {...props}
         plain
         style={{ padding: 1 }}
         name={props.name}

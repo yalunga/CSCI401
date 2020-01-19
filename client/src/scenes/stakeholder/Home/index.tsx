@@ -76,21 +76,27 @@ export default class StakeholderHome extends React.Component<HomeProps, HomeStat
         property: 'minSize',
         header: <TableHeader>View</TableHeader>,
         render: (datum: any) => (
-          <View className='pointer' />
+          <a href={'stakeholder/project/' + datum.projectId + '/view'}>
+            <View className='pointer' />
+          </a>
         ),
       },
       {
         property: 'maxSize',
         header: <TableHeader>Edit</TableHeader>,
         render: (datum: any) => (
-          <Edit className='pointer' />
+          <a href={'stakeholder/project/' + datum.projectId + '/edit'}>
+            <Edit className='pointer' />
+          </a>
         ),
       },
       {
         property: 'description',
         header: <TableHeader>Duplicate</TableHeader>,
         render: (datum: any) => (
-          <Duplicate className='pointer' />
+          <a href={'stakeholder/proposals/' + datum.projectId}>
+            <Duplicate className='pointer' />
+          </a>
         ),
       }
     ];

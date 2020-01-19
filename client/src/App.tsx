@@ -5,7 +5,7 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom';
-import { Grommet } from 'grommet'
+import { Grommet, ThemeType } from 'grommet'
 
 import './App.css';
 import LandingPage from './scenes/login/index';
@@ -13,7 +13,7 @@ import AdminHome from './scenes/admin/AdminNavigation';
 import Register from './scenes/register';
 import StakeholderHome from './scenes/stakeholder/StakeholderNavigation';
 
-const theme = {
+const theme: ThemeType = {
   global: {
     colors: {
       brand: '#990000'
@@ -27,6 +27,11 @@ const theme = {
     focus: {
       border: {
         color: 'none'
+      }
+    },
+    control: {
+      disabled: {
+        opacity: 1
       }
     }
   },

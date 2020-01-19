@@ -6,6 +6,11 @@ import TextArea from '../../../components/TextArea';
 
 interface ProjectProps {
   projectId: string;
+  match: {
+    params: {
+      projectId: string;
+    }
+  }
 }
 interface ProjectState {
   projectName: string;
@@ -47,8 +52,9 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
   }
 
   componentDidMount() {
-    if (this.props.projectId !== undefined) {
-      fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
+    const projectId = this.props.match.params.projectId;
+    if (projectId !== undefined) {
+      fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + projectId)
         .then(response => response.json())
         .then((data) => this.setState({
           projectName: data.projectName,
