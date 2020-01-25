@@ -244,7 +244,7 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
                 title='Year'
                 options={[this.showCurrentYear(), this.showCurrentYear() + 1]}
                 children={this.renderOptionsYear}
-                onChange={this.onChangeFallSpring}
+                onChange={this.onChangeYear}
                 value={
                   <Box pad='small'>
                     <Text weight='bold' size='xsmall' color='dark-4' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
