@@ -7,3 +7,4 @@ CSCI 401 Project Platform
 - Grace O'Rourke
 - Andrew Yalung
 - Wayne Yu
+- PJ Hernandez
