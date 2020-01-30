@@ -12,6 +12,7 @@ import LandingPage from './scenes/login/index';
 import AdminHome from './scenes/admin/AdminNavigation';
 import Register from './scenes/register';
 import StakeholderHome from './scenes/stakeholder/StakeholderNavigation';
+import StudentHome from './scenes/student/StudentNavigation';
 
 const theme: ThemeType = {
   global: {
@@ -106,6 +107,7 @@ const App: React.FC = () => {
           <Route path='/register' component={Register} />
           <AdminPrivateRoute path='/admin' component={AdminHome} />
           <StakeholderPrivateRoute path='/stakeholder' component={StakeholderHome} />
+          <StudentPrivateRoute path='/student' component={StudentHome} />
         </Switch>
       </BrowserRouter>
     </Grommet>
