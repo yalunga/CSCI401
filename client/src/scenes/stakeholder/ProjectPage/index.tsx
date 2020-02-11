@@ -1,30 +1,18 @@
 import * as React from 'react';
-import DeliverableList from './DeliverableList';
+import { Box, Text } from 'grommet';
 import ProjectInformation from './ProjectInformation';
 import {
-    RouteComponentProps
+  RouteComponentProps
 } from 'react-router';
 
-const style = {
-    width: 1000,
-    float: 'none',
-    margin: 'auto'
-};
-
-class ProjectPage extends React.Component<RouteComponentProps<any>> {
-    constructor(props: RouteComponentProps<any>) {
-        super(props);
-    }
-    
-    render() {
-        return (
-            <div style={style as any}>
-            <h2>Project</h2>
-            <ProjectInformation projectId={this.props.match.params.projectId} entryType={this.props.match.params.entry} />
-            {/* <DeliverableList projectId={this.props.match.params.projectId}/> */}
-            </div>
-        );
-    }
+export default class ProjectPage extends React.Component<RouteComponentProps<any>> {
+  render() {
+    return (
+      <Box>
+        <Box width='full' align='center' pad='medium'>
+          <ProjectInformation projectId={this.props.match.params.projectId} entryType={this.props.match.params.entry} />
+        </Box>
+      </Box>
+    )
+  }
 }
-
-export default ProjectPage;

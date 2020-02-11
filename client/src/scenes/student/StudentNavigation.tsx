@@ -1,93 +1,95 @@
 import * as React from 'react';
-import {
-  Route,
-  BrowserRouter
-} from 'react-router-dom';
-import {
-  Navbar,
-  Nav,
-  NavItem,
-  FormGroup,
-  Button
-} from 'react-bootstrap';
-import {
-  LinkContainer
-} from 'react-router-bootstrap';
-import Home from './Home/index';
-import Profile from './Profile/index';
-import ProjectRanking from './ProjectRanking/index';
-import YourProject from './YourProject/index';
-import FinalPresentationReviews from './FinalPresentationReviews/index';
-import WeeklyReportForm from './WeeklyReportForm/index';
-import PeerReviewForm from './PeerReviewForm/index';
-const logo = require('../../svg/logo.svg');
+import { Route, BrowserRouter } from 'react-router-dom';
+import { Box, Image, Anchor, Text, Stack } from 'grommet';
 
-class StudentNavigation extends React.Component {
-  logOutClicked() {
+interface StakeholderNavigationProps { }
+interface StakeholderNavigationState {
+  fallOrSpring: {
+    label: string;
+    value: string;
+  },
+  year: number;
+}
+
+export default class StakeholderNavigation extends React.Component<StakeholderNavigationProps, StakeholderNavigationState> {
+  constructor(props: StakeholderNavigationProps) {
+    super(props);
+    this.state = {
+      fallOrSpring: {
+        label: 'Fall',
+        value: '0'
+      },
+      year: 2020
+    };
+  }
+
+  componentDidMount() {
+    let displayYear = 2020;
+    let displaySemester = '0';
+    let sessionYear = sessionStorage.getItem('viewingYear');
+    let sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
+
+    if (sessionYear === null) {
+      sessionStorage.setItem('viewingYear', '2020');
+    } else {
+      displayYear = Number(sessionYear);
+    }
+    if (sessionFallSpring === null) {
+      sessionStorage.setItem('viewingFallSpring', '0');
+    } else {
+      displaySemester = sessionFallSpring;
+    }
+    let fallSpringText = 'Spring';
+    if (displaySemester === '0') {
+      fallSpringText = 'Fall';
+    }
+    this.setState({ year: displayYear, fallOrSpring: { label: fallSpringText, value: displaySemester } });
+  }
+
+
+
+  logout() {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('userType');
-    window.location.href = '/';  
+    window.location.href = '/';
   }
-  
+
   render() {
     return (
-      <BrowserRouter>
-        <div>
-            <Navbar>
-              <Navbar.Header>
-                <Navbar.Brand>
-                  <img src={logo} className="App-logo" alt="logo" />
-                </Navbar.Brand>
-                
-                <Navbar.Brand>
-                  <LinkContainer to="/student">
-                    <a>CSCI 401</a>
-                  </LinkContainer>
-                </Navbar.Brand> 
-              </Navbar.Header>
-              <Nav>
-                <LinkContainer to="/student/profile">
-                  <NavItem eventKey={1}>
-                    Profile
-                  </NavItem>
-                </LinkContainer>
-                
-                <LinkContainer to="/student/ranking">
-                  <NavItem eventKey={2}>
-                    Project Ranking
-                  </NavItem>
-                </LinkContainer>
-                <LinkContainer to="/student/project">
-                  <NavItem eventKey={3}>
-                    Your Project
-                  </NavItem>
-                </LinkContainer>
-                <LinkContainer to="/student/reviews">
-                  <NavItem eventKey={4}>
-                    Final Presentation Reviews
-                  </NavItem>
-                </LinkContainer>
-
-                <NavItem eventKey={6}>
-                <FormGroup>
-                  <Button type="submit" onClick={this.logOutClicked}>Log Out</Button>
-              </FormGroup>
-              </NavItem>
-              </Nav>
-            </Navbar>
-            <div className="content">
-              <Route exact={true} path="/student" component={Home}/>
-              <Route path="/student/profile" component={Profile}/>
-              <Route path="/student/ranking" component={ProjectRanking}/>
-              <Route path="/student/project" component={YourProject}/>
-              <Route path="/student/reviews" component={FinalPresentationReviews}/>
-              <Route path="/student/weeklyreport/" component={WeeklyReportForm}/>
-              <Route path="/student/peerreview/" component={PeerReviewForm}/>
-            </div>
-        </div>
-      </BrowserRouter>
+      <Box height='full' width='full' background='#FAFBFD'>
+        <Stack anchor='top-right'>
+          <Box width='full' pad={{ horizontal: 'small' }} elevation='xsmall' background='white' direction='row'>
+            <Box width='small'>
+              <Image fit='contain' src='https://16mhpx3atvadrnpip2kwi9or-wpengine.netdna-ssl.com/wp-content/uploads/2016/10/USC-Shield.png' />
+            </Box>
+            <Box width='full' align='center' justify='start' pad={{ horizontal: 'medium' }} gap='medium' direction='row'>
+              <Anchor href='/student' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Profile
+            </Anchor>
+              <Anchor href='/student/ranking' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Project Ranking
+              </Anchor>
+              <Anchor href='/student/project' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Your Project
+              </Anchor>
+              <Anchor href='/student/review' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Final Presentation Reviews
+              </Anchor>
+            </Box>
+          </Box>
+          <Box pad='small' onClick={this.logout} style={{ cursor: 'pointer' }}>
+            <Text size='xsmall' color='dark-5' weight='bold' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+              Logout
+            </Text>
+          </Box>
+        </Stack>
+        <BrowserRouter>
+          <Route exact={true} path="/student" />
+          <Route path="/student/ranking" />
+          <Route exact={true} path='/student/project' />
+          <Route exact={true} path='/student/review' />
+        </BrowserRouter>
+      </Box>
     );
   }
 }
-
-export default StudentNavigation;

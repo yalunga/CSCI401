@@ -28,6 +28,7 @@ import capstone.model.users.User;
 import capstone.repository.GlobalRepository;
 import capstone.service.ProjectService;
 import capstone.service.UserService;
+import capstone.service.EmailService;
 import capstone.util.Constants;
 import capstone.util.EncryptPassword;
 
@@ -41,6 +42,8 @@ public class ProjectController
 	private UserService userService;
 	@Autowired
 	private GlobalRepository globalRepo;
+  @Autowired
+  private EmailService emailService;
 	
 	public ProjectController()
 	{
@@ -352,6 +355,17 @@ public class ProjectController
 		project.setStatusId(2);
 		project.setAdminComments("");
 		projectService.save(project);
+    Stakeholder stakeholder = new Stakeholder();
+     List<Stakeholder> stakeholders = (List<Stakeholder>) userService.getStakeholders();
+      for (Stakeholder s : stakeholders) {
+        for (Project p : s.getProjectIds()) {
+          if (p.getProjectId() == projectId) {
+            stakeholder = s;
+          }
+        }
+      }
+    String email = stakeholder.getEmail();
+    emailService.sendEmail("Project Proposal Approved", "Your project proposal has been approved!", email);
 		return Constants.SUCCESS;
 	}
 	
@@ -362,6 +376,17 @@ public class ProjectController
 		project.setAdminComments("");
 		project.setStatusId(3);
 		projectService.save(project);
+    Stakeholder stakeholder = new Stakeholder();
+     List<Stakeholder> stakeholders = (List<Stakeholder>) userService.getStakeholders();
+      for (Stakeholder s : stakeholders) {
+        for (Project p : s.getProjectIds()) {
+          if (p.getProjectId() == projectId) {
+            stakeholder = s;
+          }
+        }
+      }
+    String email = stakeholder.getEmail();
+    emailService.sendEmail("Project Proposal Rejected", "Your project proposal has been rejected. Please feel free to reach out regarding any questions.", email);
 		return Constants.SUCCESS;
 	}
 	
@@ -452,6 +477,17 @@ public class ProjectController
 		project.setStatusId(4);
 		project.setAdminComments(adminComments);
 		projectService.save(project);
+    Stakeholder stakeholder = new Stakeholder();
+     List<Stakeholder> stakeholders = (List<Stakeholder>) userService.getStakeholders();
+      for (Stakeholder s : stakeholders) {
+        for (Project p : s.getProjectIds()) {
+          if (p.getProjectId() == projectId) {
+            stakeholder = s;
+          }
+        }
+      }
+    String email = stakeholder.getEmail();
+    emailService.sendEmail("Requested Changes On Project Proposal","There has been changes requested on your project proposal: <strong>" + adminComments +"</strong>", email);
 		return Constants.SUCCESS;
 	}
 	

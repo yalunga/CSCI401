@@ -1,22 +1,16 @@
 import * as React from 'react';
-import {
-  Form,
-  FormGroup,
-  Col,
-  FormControl,
-  Button,
-  ControlLabel
-} from 'react-bootstrap';
 
-interface LoginProps {
-}
+import { Box, TextInput, Text } from 'grommet';
+
+interface LoginProps { }
 interface LoginState {
   email: string;
   password: string;
   token: string;
   errorMsg: string;
 }
-class LoginForm extends React.Component<LoginProps, LoginState> {
+
+export default class LoginForm extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
     super(props);
     this.state = {
@@ -25,26 +19,9 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
       token: '',
       errorMsg: ''
     };
-    this.submitClicked = this.submitClicked.bind(this);
+    this.getToken = this.getToken.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.resetPassword = this.resetPassword.bind(this);
-  }
-  submitClicked() {
-    this.getToken();
-  }
-
-  resetPassword() {
-    var request = new XMLHttpRequest();
-    var hostname = window.location.hostname;
-    request.withCredentials = true;
-    request.open('POST', `${process.env.REACT_APP_API_URL}/users/password-reset`);
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    var data = JSON.stringify({
-      email: this.state.email,
-    });
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(data);
-    alert('Password reset email sent.');
+    this.clearErrorMessage = this.clearErrorMessage.bind(this);
   }
 
   async getToken() {
@@ -54,8 +31,7 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
     if (!this.state.password) {
       return this.setState({ errorMsg: 'Password is required.' });
     }
-    var hostname = window.location.hostname;
-    var data = JSON.stringify({
+    let data = JSON.stringify({
       email: this.state.email,
       password: this.state.password
     });
@@ -93,69 +69,49 @@ class LoginForm extends React.Component<LoginProps, LoginState> {
 
   handleChange(e: any) {
     // @ts-ignore
-    this.setState({ [e.target.id]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  clearErrorMessage() {
+    this.setState({ errorMsg: '' });
   }
 
   render() {
+    const { email, password, errorMsg } = this.state;
     return (
-      <div>
-        <Form horizontal={true} >
-          <FormGroup controlId="formHorizontalEmail">
-            <Col componentClass={ControlLabel} sm={2}>
-              Email
-                </Col>
-            <Col sm={10}>
-              <FormControl
-                type="text"
-                id="email"
-                value={this.state.email}
-                placeholder="Email"
-                onChange={e => this.handleChange(e)}
-                onFocus={() => this.setState({ errorMsg: '' })}
-              />
-            </Col>
-          </FormGroup>
-
-          <FormGroup controlId="formHorizontalPassword">
-            <Col componentClass={ControlLabel} sm={2}>
-              Password
-                </Col>
-            <Col sm={10}>
-              <FormControl
-                type="password"
-                placeholder="Password"
-                id="password"
-                value={this.state.password}
-                onChange={e => this.handleChange(e)}
-                onFocus={() => this.setState({ errorMsg: '' })}
-              />
-            </Col>
-          </FormGroup>
-
-          {this.state.errorMsg && (
-            <FormGroup>
-              <Col smOffset={2} sm={10}>
-                <span style={{ color: 'red' }}>{this.state.errorMsg}</span>
-              </Col>
-            </FormGroup>
-          )}
-
-          <FormGroup>
-            <Col smOffset={2} sm={10}>
-              <Button type="reset" onClick={this.submitClicked}>Sign in</Button>
-            </Col>
-          </FormGroup>
-
-          <FormGroup>
-            <Col smOffset={2} sm={10}>
-              <Button type="reset" onClick={this.resetPassword}>Reset Password</Button>
-            </Col>
-          </FormGroup>
-
-        </Form>
-      </div>
+      <Box gap="medium">
+        <Box border='all' round='xxsmall'>
+          <TextInput
+            type='email'
+            placeholder='Email'
+            size='small'
+            plain
+            name='email'
+            onChange={this.handleChange}
+            onFocus={this.clearErrorMessage}
+            value={email}
+          />
+        </Box>
+        <Box border='all' round='xxsmall'>
+          <TextInput
+            type='password'
+            placeholder='Password'
+            size='small'
+            plain
+            name='password'
+            onChange={this.handleChange}
+            onFocus={this.clearErrorMessage}
+            value={password}
+          />
+        </Box>
+        {errorMsg && <Text size='small' weight='bold' color='status-error'>{errorMsg}</Text>}
+        <Box gap='small'>
+          <Box background='brand' width='small' pad='xsmall' align='center' round='xxsmall' alignSelf='center' onClick={this.getToken}>
+            <Text>Login</Text>
+          </Box>
+          <Text textAlign='center' size='small' color='dark-5'>Forgot Password?</Text>
+        </Box>
+      </Box>
     );
   }
 }
-
-export default LoginForm;
