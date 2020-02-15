@@ -8,8 +8,8 @@ import javax.persistence.Id;
 public class ProjectRanking {
 	@Id
 	@GeneratedValue
-	private Long id;
-	private Long studentId;
-	private Long projectId;
-	private Integer rank;
+	private int id;
+	private int studentId;
+	private int projectId;
+	private int rank;
 }

@@ -301,18 +301,17 @@ public class ProjectController
 	//@PostMapping("/rankingsSubmitAttempt/{email:.+}")
 	@PostMapping("/{email:.+}/submit-ranking")
 	@CrossOrigin
-	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Integer> projects) {
+	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Ranking> projects) {
 		User user = userService.findUserByEmail(email);
 		List<Ranking> rankings = projectService.rankRepo.findAll();
 		for (Ranking rank : rankings) {
 			Student student = null;
-				if (user.getUserId() == rank.getStudentId()) {
-					projectService.rankRepo.delete(rank.getRankingId());
-				}
-			}
-		for (int rank = 1; rank <= 5; rank++) {
-			projectService.saveRanking(projects.get(rank-1), user.getUserId(), rank);
+      if (user.getUserId() == rank.getStudentId()) {
+        projectService.rankRepo.delete(rank.getRankingId());
+      }
 		}
+		projectService.saveRanking(projects);
+	
 		return Constants.SUCCESS;
 	}
 	
@@ -328,6 +327,7 @@ public class ProjectController
 		System.out.println("Received HTTP POST");
 		System.out.println(project);
 		System.out.println(project.getProjectName());
+    System.out.println("Company: " + project.getStakeholderCompany());
 		project.setStatusId(1);
 //		project.setSemester(globalRepo.findAll().get(0).getSemester());
 //		project.setFallSpring(globalRepo.findAll().get(0).getFallSpring());

@@ -54,12 +54,14 @@ public class Project implements Comparable<Object> {
 		int semester;
 		int maxSize;
 		int minSize;
+    int stakeholderId;
 		
 		@Column(columnDefinition= "TEXT")
 		String description;
 		String background;
 		String technologies;
 		String adminComments = "";
+    String stakeholderCompany;
 		
 		public double getSum_p() {
 			return sum_p;
@@ -225,6 +227,22 @@ public class Project implements Comparable<Object> {
 		public void setAdminComments(String adminComments) {
 			this.adminComments = adminComments;
 		}
+
+    public void setStakeholderId(int stakeholderId) {
+      this.stakeholderId = stakeholderId;
+    }
+
+    public int getStakeholderId() {
+      return this.stakeholderId;
+    }
+
+    public void setStakerholderCompany(String stakeholderCompany) {
+      this.stakeholderCompany = stakeholderCompany;
+    }
+
+    public String getStakeholderCompany() {
+      return this.stakeholderCompany;
+    }
 		
 		// RANKING ALGORITHM FUNCTIONALITY:
 
@@ -260,6 +278,8 @@ public class Project implements Comparable<Object> {
 			this.maxSize = orig.maxSize;
 			this.fallSpring = orig.fallSpring;
 			this.semester = orig.semester;
+      this.stakeholderId = orig.stakeholderId;
+      this.stakeholderCompany = orig.stakeholderCompany;
 		}
 		
 		public double returnProjSatScore() {

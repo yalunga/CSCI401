@@ -199,6 +199,13 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
         ),
       },
       {
+        property: 'stakeholderCompany',
+        header: <TableHeader>Organization</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.stakeholderCompany}</Text>
+        )
+      },
+      {
         property: 'projectStatus',
         header: <TableHeader>Project Status</TableHeader>,
         render: (datum: any) => (
