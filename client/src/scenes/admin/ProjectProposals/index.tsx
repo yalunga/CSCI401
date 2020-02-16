@@ -237,7 +237,7 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
         property: 'description',
         header: <TableHeader>Description</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.description}</Text>
+          <Text style={{ whiteSpace: 'pre-line' }}>{datum.description}</Text>
         ),
       }
     ];

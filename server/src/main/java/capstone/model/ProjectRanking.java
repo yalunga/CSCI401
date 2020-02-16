@@ -11,5 +11,5 @@ public class ProjectRanking {
 	private int id;
 	private int studentId;
 	private int projectId;
-	private int rank;
+	private int ranking;
 }
