@@ -51,7 +51,7 @@ const Card: React.FC<CardProps> = ({
           position='left'
           full='vertical'
         >
-          <Box pad='medium' width='medium' gap='small'>
+          <Box pad='medium' width='large' gap='medium' overflow={{ vertical: 'scroll' }}>
             <Box>
               <Text weight='bold' size='large'>{name}</Text>
               <Text size='small'>{stakeholderCompany}</Text>
@@ -76,7 +76,7 @@ const Card: React.FC<CardProps> = ({
             </Box>
             <Box>
               <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Description</Text>
-              <Text>{description}</Text>
+              <Text style={{ whiteSpace: 'pre-line' }}>{description}</Text>
             </Box>
           </Box>
         </Layer>

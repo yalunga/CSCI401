@@ -104,9 +104,9 @@ public class ProjectController
 		return validProjects;
 	}
 	
-	@GetMapping("/{email:.+}/rankOrdered")
+	@GetMapping("/{email:.+}/rankings")
 	@CrossOrigin
-	public List<Project> getRankOrderedProjects(@PathVariable("email") String email)
+	public List<Ranking> getRankOrderedProjects(@PathVariable("email") String email)
 	{
 		//Global g = globalRepo.findAll().get(0);
 		Student student = (Student) userService.findUserByEmail(email);
@@ -115,7 +115,7 @@ public class ProjectController
 	
 		List<Project> projects = projectService.findAll();
 		List<Ranking> rankings = projectService.rankRepo.findAll();
-		List<Project> orderedProjects = new ArrayList<Project>(5);
+		List<Ranking> studentRankings = new ArrayList<Ranking>(5);
 		
 		if(!rankings.isEmpty())
 		{
@@ -127,55 +127,13 @@ public class ProjectController
 				long userID = userService.findUserByEmail(email).getUserId();
 				if(studentID == userID)
 				{
-					hasStudent = true;
-					break;
+					studentRankings.add(ranking);
 				}
 			}
 			
-			if(hasStudent)
-			{
-				if(projects.size() >= 5)
-				{
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-				}
-				else
-				{
-					for(int i = 0; i < projects.size(); i++)
-					{
-						orderedProjects.add(null);
-					}
-				}
-			}
-		}
-
-		for(Ranking ranking : rankings)
-		{
-			long studentID = ranking.getStudentId();
-			long userID = userService.findUserByEmail(email).getUserId();
-			if(studentID == userID)
-			{
-				int index = ranking.getRank() - 1;
-				orderedProjects.set(index, projectService.findByProjectId(ranking.getProjectId()));
-			}
-		}
+    }
 		
-		for(Project project : projects)
-		{
-			boolean isInList = orderedProjects.contains(project);
-			if(!isInList)
-			{
-				if(project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
-				{
-					orderedProjects.add(project);
-				}
-			}
-		}
-		
-		return orderedProjects;
+		return studentRankings;
 	}
 	
 	// Get all projects that a stakeholder owns
@@ -302,7 +260,7 @@ public class ProjectController
 	@PostMapping("/{email:.+}/submit-ranking")
 	@CrossOrigin
 	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Ranking> projects) {
-		User user = userService.findUserByEmail(email);
+    User user = userService.findUserByEmail(email);
 		List<Ranking> rankings = projectService.rankRepo.findAll();
 		for (Ranking rank : rankings) {
 			Student student = null;
@@ -310,8 +268,16 @@ public class ProjectController
         projectService.rankRepo.delete(rank.getRankingId());
       }
 		}
-		projectService.saveRanking(projects);
-	
+    for(Ranking newRank: projects) {
+      newRank.setStudentId(user.getUserId());
+      newRank.setRank(projects.indexOf(newRank));
+      try {
+        projectService.saveRanking(newRank);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
 		return Constants.SUCCESS;
 	}
 	

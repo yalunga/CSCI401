@@ -236,8 +236,8 @@ public class ProjectService {
 		return (List<Project>) repository.findAll();
 	}
 
-	public void saveRanking(List<Ranking> rankings) {
-		rankRepo.save(rankings);
+	public void saveRanking(Ranking ranking) {
+		rankRepo.save(ranking);
 	}
 
 	public Project findByProjectId(int projectId) {

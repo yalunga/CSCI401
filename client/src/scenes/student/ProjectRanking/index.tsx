@@ -1,6 +1,6 @@
 import * as React from 'react';
 import update from 'immutability-helper';
-import { Box, Text } from 'grommet';
+import { Box, Text, RangeInput } from 'grommet';
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import ProjectCard from './ProjectCard';
@@ -56,25 +56,45 @@ export default class ProjectRankingPage extends React.Component<Props, State> {
         acceptedProjects.push(project);
       }
     }
-    this.setState({ projectCards: acceptedProjects, isLoading: false });
+    const rankingsResponse = await fetch(`${process.env.REACT_APP_API_URL}/projects/${sessionStorage.getItem('email')}/rankings`);
+    const rankings = await rankingsResponse.json();
+    const rankedProjects = Array.from(Array(5));
+    for (const ranking of rankings) {
+      for (const project of acceptedProjects) {
+        if (project.projectId === ranking.projectId) {
+          rankedProjects[ranking.rank] = project;
+          acceptedProjects.splice(acceptedProjects.indexOf(project), 1);
+        }
+      }
+    }
+    this.setState({ projectCards: acceptedProjects, isLoading: false, rankings: rankedProjects });
+  }
+
+  rankingsIsFull() {
+    for (let i = 0; i < this.state.rankings.length; i++) {
+      if (!this.state.rankings[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   submitClicked() {
-    var request = new XMLHttpRequest();
-    request.withCredentials = true;
-    // yo this ain't submit. it's save
-    request.open('POST', `${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/submit-ranking');
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    this.state.projectCards.map((project: Project) => (
-      this.state.rankings.push(project)
-    ));
-    var data = JSON.stringify(
-      this.state.rankings
-    );
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(data);
+    if (!this.rankingsIsFull()) {
+      alert('You must rank 5 projects.');
+      return;
+    }
+    fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/submit-ranking', {
+      method: 'POST',
+      body: JSON.stringify(this.state.rankings.map((rank, index) => ({
+        projectId: rank.projectId,
+        ranking: index
+      }))) as any,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     alert('project rankings have been saved!');
-    this.setState({ submitted: true });
   }
 
   moveCard(index: number, rankingIndex: number) {
@@ -152,7 +172,16 @@ export default class ProjectRankingPage extends React.Component<Props, State> {
                   })}
                 </Box>
               </Box>
-              <Box alignSelf='end' pad='small' background='brand' elevation='small' round='xsmall' width='small' style={{ cursor: 'pointer' }}>
+              <Box
+                alignSelf='end'
+                pad='small'
+                background='brand'
+                elevation='small'
+                round='xsmall'
+                width='small'
+                style={{ cursor: 'pointer' }}
+                onClick={this.submitClicked}
+              >
                 <Text textAlign='center'>Submit Rankings</Text>
               </Box>
             </Box>

@@ -9,14 +9,14 @@ public class Ranking {
 	@Id @GeneratedValue Long rankingId;
 	Long studentId;
 	int projectId;
-	int rank;
+	int ranking;
 	
 	public Ranking() {
 	}
-	public Ranking(Long studentId, int projectId, int rank) {
+	public Ranking(Long studentId, int projectId, int ranking) {
 		this.studentId = studentId;
 		this.projectId = projectId;
-		this.rank = rank;
+		this.ranking = ranking;
 	}
 	
 	public Long getRankingId() {
@@ -44,10 +44,10 @@ public class Ranking {
 	}
 
 	public int getRank() {
-		return rank;
+		return ranking;
 	}
 
-	public void setRank(int rank) {
-		this.rank = rank;
+	public void setRank(int ranking) {
+		this.ranking = ranking;
 	}
 }
