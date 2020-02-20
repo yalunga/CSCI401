@@ -3,6 +3,8 @@ import { useDrag } from 'react-dnd'
 import { Box, Stack, Layer, Text } from 'grommet';
 import { View } from 'grommet-icons';
 
+import ProjectDescriptionLayer from '../../../components/ProjectDescriptionLayer';
+
 interface CardProps {
   isDragging?: boolean;
   isRanked: boolean;
@@ -45,41 +47,16 @@ const Card: React.FC<CardProps> = ({
         </Box>
       </Stack>
       {show &&
-        <Layer
-          onEsc={() => setShow(false)}
-          onClickOutside={() => setShow(false)}
-          position='left'
-          full='vertical'
-        >
-          <Box pad='medium' width='large' gap='medium' overflow={{ vertical: 'scroll' }}>
-            <Box>
-              <Text weight='bold' size='large'>{name}</Text>
-              <Text size='small'>{stakeholderCompany}</Text>
-            </Box>
-            <Box direction='row' gap='small'>
-              <Box>
-                <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Min Size</Text>
-                <Text>{minSize}</Text>
-              </Box>
-              <Box>
-                <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Max Size</Text>
-                <Text>{maxSize}</Text>
-              </Box>
-            </Box>
-            <Box>
-              <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Background Requested</Text>
-              <Text>{background}</Text>
-            </Box>
-            <Box>
-              <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Technologies</Text>
-              <Text>{technologies}</Text>
-            </Box>
-            <Box>
-              <Text size='small' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Description</Text>
-              <Text style={{ whiteSpace: 'pre-line' }}>{description}</Text>
-            </Box>
-          </Box>
-        </Layer>
+        <ProjectDescriptionLayer
+          name={name}
+          stakeholderCompany={stakeholderCompany}
+          minSize={minSize}
+          maxSize={maxSize}
+          background={background}
+          description={description}
+          technologies={technologies}
+          setShow={setShow}
+        />
       }
     </Box>
   )

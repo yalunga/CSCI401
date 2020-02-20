@@ -5,6 +5,7 @@ import Input from '../../../components/Input';
 import Select from '../../../components/Select';
 import TextArea from '../../../components/TextArea';
 import Alert from '../../../components/Alert';
+import ProjectDescriptionLayer from '../../../components/ProjectDescriptionLayer';
 
 interface ProjectListProps { }
 
@@ -19,6 +20,8 @@ interface ProjectListState {
   editMinSize: number;
   editMaxSize: number;
   alert: boolean;
+  show: boolean;
+  selectedProject: Project | null;
 }
 
 interface Project {
@@ -31,6 +34,7 @@ interface Project {
   technologies: string;
   background: string;
   description: string;
+  stakeholderCompany: string;
 }
 
 export default class ProjectProposals extends React.Component<ProjectListProps, ProjectListState> {
@@ -45,7 +49,9 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
       editMaxSize: 0,
       isLoading: false,
       selected: false,
-      alert: false
+      alert: false,
+      show: false,
+      selectedProject: null
     };
     this.editProject = this.editProject.bind(this);
     this.cancelEdit = this.cancelEdit.bind(this);
@@ -54,6 +60,7 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
     this.handleChange = this.handleChange.bind(this);
     this.submitClicked = this.submitClicked.bind(this);
     this.getProjects = this.getProjects.bind(this);
+    this.setShow = this.setShow.bind(this);
   }
 
 
@@ -170,6 +177,13 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
     });
   }
 
+  setShow(show: boolean) {
+    this.setState({
+      show,
+      selectedProject: null
+    });
+  }
+
   render() {
     const columns = [
       {
@@ -237,7 +251,9 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
         property: 'description',
         header: <TableHeader>Description</TableHeader>,
         render: (datum: any) => (
-          <Text style={{ whiteSpace: 'pre-line' }}>{datum.description}</Text>
+          <Box onClick={() => this.setState({ show: true, selectedProject: datum })} pad='xsmall' background='brand' elevation='small' round='xxsmall' align='center'>
+            <Text>View</Text>
+          </Box>
         ),
       }
     ];
@@ -307,6 +323,18 @@ export default class ProjectProposals extends React.Component<ProjectListProps, 
         </Box>
         {modal}
         {this.state.alert && <Alert text='Changed Project State' />}
+        {(this.state.show && this.state.selectedProject) &&
+          <ProjectDescriptionLayer
+            name={this.state.selectedProject.projectName}
+            stakeholderCompany={this.state.selectedProject.stakeholderCompany}
+            minSize={this.state.selectedProject.minSize}
+            maxSize={this.state.selectedProject.maxSize}
+            technologies={this.state.selectedProject.technologies}
+            description={this.state.selectedProject.description}
+            setShow={this.setShow}
+            background={this.state.selectedProject.background}
+          />
+        }
       </Box>
     )
   }
