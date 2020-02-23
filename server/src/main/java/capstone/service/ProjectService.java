@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import capstone.model.Global;
@@ -25,6 +26,7 @@ import capstone.repository.RankingRepository;
 import capstone.util.EncryptPassword;
 import capstone.util.ProjectAssignment;
 
+@Scope("prototype")
 @Service
 public class ProjectService {
 	@Autowired
@@ -44,53 +46,67 @@ public class ProjectService {
 	public static Map<Double, ProjectAssignment> algorithms = new HashMap<>();
 	public static Map<Double, Integer> iterations = new HashMap<>();
 	private List<Project> savedProjects = new ArrayList<Project>();
-	
+	Vector<Project> projectsVector = new Vector<>();
+	Vector<Student> studentsVector = new Vector<>();
+	List<Ranking> rankings = new ArrayList<Ranking>();
 	public List<Project> runAlgorithm() {
-		
-		for (int iteration = 0; iteration < 30; iteration++) {
-			Global g = globalRepo.findAll().get(0);
-			int targetSemester = g.getSemester();
-			int targetFallSpring = g.getFallSpring();
-			ArrayList<Project> projects = new ArrayList<>();
-			ArrayList<Student> students = new ArrayList<>();
-			for (Project p : findAll()) {
-				if (p.getSemester() == targetSemester && p.getFallSpring() == targetFallSpring)
-				{
-					projects.add(new Project(p));
-				}
-			}
-			for (Student s : userService.getStudents()) {
-				if (s.semester == targetSemester && s.fallSpring == targetFallSpring)
-				{
-					students.add(new Student(s));
-				}
-			}
+		System.out.println("RUNNING ALGORITHM");
+		for (int iteration = 0; iteration < 2; iteration++) {
+			System.out.println("iteration " + iteration + "!");
+			//Global g = globalRepo.findAll().get(0);
 			
-			List<Ranking> rankings = rankRepo.findAll();
+			int targetSemester = 2020;
+			System.out.println("target semester: " + targetSemester);
+			
+			int targetFallSpring = 0;
+			System.out.println("targetFallSpring: " + targetFallSpring);
+			ArrayList<Project> projects = new ArrayList<>(projectsVector);
+			ArrayList<Student> students = new ArrayList<>(studentsVector);
+//			for (Project p : findAll()) {
+//				if (p.getSemester() == targetSemester && p.getFallSpring() == targetFallSpring)
+//				{
+//					projects.add(new Project(p));
+//				}
+//			}
+//			for (Student s : userService.getStudents()) {
+//				if (s.semester == targetSemester && s.fallSpring == targetFallSpring)
+//				{
+//					students.add(new Student(s));
+//				}
+//			}
+			
+			
 			for (Ranking rank : rankings) {
+				//System.out.print("ranking! ");
+			
 				Student student = null;
 				for (Student s : students) {
 					if (s.getUserId() == rank.getStudentId()) {
 						student = s;
+						
 					}
-				}
 				
-				Project project = null;
-				for (Project p : projects) {
-					if (p.getProjectId() == rank.getProjectId()) {
-						project = p;
+				
+					Project project = null;
+					for (Project p : projects) {
+						if (p.getProjectId() == rank.getProjectId()) {
+							project = p;
+							if (project != null && student != null) {
+								//String projectName = project.getProjectName();
+							//System.out.println("student: " + student.getLastName() + "projectName:" + projectName);
+					            //student.rankings.put(projectName, rank.getRank());
+					            //student.orderedRankings.add(projectName);
+								
+								Integer ip = ProjectAssignment.getStudentSatScore(rank.getRank());
+					            project.incSum_p(ip);
+					            project.incN();
+							}
+						}
 					}
-				}
-				
-				if (project != null && student != null) {
-					String projectName = project.getProjectName();
-		            student.rankings.put(projectName, rank.getRank());
-		            student.orderedRankings.add(projectName);
 					
-					Integer p = ProjectAssignment.getStudentSatScore(rank.getRank());
-		            project.incSum_p(p);
-		            project.incN();
-				}	
+				}
+				
+					
 			}
 			
 			ProjectAssignment algorithm = new ProjectAssignment(projects, students);
@@ -106,30 +122,32 @@ public class ProjectService {
 		Integer maxIteration = iterations.get(maxScore);
 		System.out.println("maxScore: " + maxScore + ". maxIteration: " + maxIteration);
 		
-		System.out.println(maxAlgorithm.JSONOutputWeb());
+		//System.out.println(maxAlgorithm.JSONOutputWeb());
 		savedProjects = maxAlgorithm.assignedProjects();
 		return savedProjects;
 	}
 	
 	public void initTables() {
-		Vector<Project> projects = new Vector<>();
-		Vector<Student> students = new Vector<>();
+		System.out.println("INIT TABLES");
 		String line = null;
         try {
             BufferedReader projectsBR = new BufferedReader(new FileReader(folder_name + "/projects.txt"));
-
+            
             while((line = projectsBR.readLine()) != null) {                
                 String[] elements = line.split(" ");
                 
+                
                 Project newProject = new Project(ProjectAssignment.getStudentSatScore(1));
                 newProject.setProjectName(elements[0]);
-                //newProject.setProjectId(projects.size()); // TODO: MAKE THIS DYNAMIC WITH AUTOINCREMENT
+                
+                //System.out.println("projectIdString" + Integer.parseInt(elements[0].substring(11)));
+                newProject.setProjectId(Integer.parseInt(elements[0].substring(11))); // TODO: MAKE THIS DYNAMIC WITH AUTOINCREMENT
                 newProject.setMinSize(Integer.parseInt(elements[1]));
                 newProject.setMaxSize(Integer.parseInt(elements[2]));
-                projects.addElement(newProject);
+                projectsVector.addElement(newProject);
                 
                 System.out.println("Saving project: " + newProject.getProjectName());
-                save(newProject);
+                //save(newProject);
                 
                 //writer.println(newProject);
             }
@@ -154,25 +172,26 @@ public class ProjectService {
                 newStudent.setLastName(last);
                 newStudent.setEmail(elements[0] + "@usc.edu");
                 newStudent.setPassword(EncryptPassword.encryptPassword("student"));
-                //newStudent.setStudentId(students.size());
+                newStudent.setUserId(Long.parseLong(last));
                 //newStudent.setUserId(students.size());
                 
                 for (int i = 1; i <= NUM_RANKED; i++) { // for the student's Top 5 projects...
             			int projectId = Integer.parseInt(elements[i]);
-            			Project rankedProject = projects.elementAt(projectId - 1); // !!! SUBTRACT 1, as the ranking's indices skip 0 for readability
+            			Project rankedProject = projectsVector.elementAt(projectId - 1); // !!! SUBTRACT 1, as the ranking's indices skip 0 for readability
                 		
                 		// add rankedProject to the Student data structure:
                     String projectName = rankedProject.getProjectName();
                     newStudent.rankings.put(projectName, i);
-                    //newStudent.orderedRankings.add(projectName);
+                    newStudent.orderedRankings.add(projectName);
                     
                     // popularity metrics:
                     //Integer p = ProjectAssignment.getStudentSatScore(i);
                     //rankedProject.incSum_p(p);
                     //rankedProject.incN();
                 }
-                userService.saveUser(newStudent);
-                students.addElement(newStudent);
+                //userService.saveUser(newStudent);
+                System.out.println("Saving student " + newStudent.getLastName());
+                studentsVector.addElement(newStudent);
                 //writer.println(newStudent);
             }
             
@@ -183,13 +202,17 @@ public class ProjectService {
             e.printStackTrace();
         }
         
-        for(Student s: students) {
+        for(Student s: studentsVector) {
+        	System.out.println("student name: " + s.getLastName());
 			for (Map.Entry<String, Integer> entry : s.rankings.entrySet()) {
-				Project p  = GetProjectWithName(projects, entry.getKey());
+				Project p  = GetProjectWithName(projectsVector, entry.getKey());
 				int projectId = p.getProjectId();
+				System.out.println("projectId: " + projectId + ", Ranking: " + entry.getValue());
 				Long studentId = s.getUserId();
+				System.out.println("studentId: " + studentId);
 				
-				rankRepo.save(new Ranking(studentId, projectId, entry.getValue()));
+				rankings.add(new Ranking(studentId, projectId, entry.getValue()));
+				s.orderedRankings.add(p.getProjectName());
 			}
 		}
 	}
