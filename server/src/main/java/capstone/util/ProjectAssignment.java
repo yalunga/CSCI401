@@ -328,7 +328,7 @@ public class ProjectAssignment {
 			return false;
 		for (int i=0; i<s.orderedRankings.size(); i++) {
 			Project p = GetProjectWithName(s.orderedRankings.get(i));
-			if (p!=null && p.members.size() < p.getMaxSize()) { //found a spot for them
+			if (p!=null && p.members.size() < p.getMaxSize() && !p.members.contains(s)) { //found a spot for them
 				System.out.println("ADDING NEW MEMBER IN BUMPHELPER");
 				p.members.add(s);
 				return true;
