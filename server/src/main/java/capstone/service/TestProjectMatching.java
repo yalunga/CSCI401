@@ -1,5 +1,6 @@
 package capstone.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -12,6 +13,7 @@ import capstone.model.users.Student;
 public class TestProjectMatching {
 	@Autowired
 	ProjectService ps;
+	UserService us;
 	
 	@Test
 	public void testAlgorithm() {
@@ -19,6 +21,7 @@ public class TestProjectMatching {
 		ps = new ProjectService();
 		ps.initTables();
 		List<Project> alg = ps.runAlgorithm();
+		Collections.sort(alg);
 		for (Project p : alg) {
 			System.out.println("Project " + p.getProjectId());
 			System.out.print("Students:");
@@ -30,4 +33,10 @@ public class TestProjectMatching {
 		
 		System.out.println("Succcessful Algorithm");
 	}
+//	@Test
+//	public void testUserService() {
+//		System.out.println("TESTING USER SERVICE");
+//		us = new UserService();
+//		System.out.println("us: ");
+//	}
 }

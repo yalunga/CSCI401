@@ -51,7 +51,7 @@ public class ProjectService {
 	List<Ranking> rankings = new ArrayList<Ranking>();
 	public List<Project> runAlgorithm() {
 		System.out.println("RUNNING ALGORITHM");
-		for (int iteration = 0; iteration < 30; iteration++) {
+		for (int iteration = 0; iteration < 3; iteration++) {
 			System.out.println("iteration " + iteration + "!");
 			//Global g = globalRepo.findAll().get(0);
 			
@@ -176,6 +176,7 @@ public class ProjectService {
                 //newStudent.setUserId(students.size());
                 
                 for (int i = 1; i <= NUM_RANKED; i++) { // for the student's Top 5 projects...
+                		//System.out.println("elements[i] " +  elements[i]);
             			int projectId = Integer.parseInt(elements[i]);
             			Project rankedProject = projectsVector.elementAt(projectId - 1); // !!! SUBTRACT 1, as the ranking's indices skip 0 for readability
                 		

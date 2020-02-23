@@ -324,7 +324,7 @@ public class ProjectAssignment {
 	}
 	
 	boolean BumpHelper(Student s, int level) {
-		if (level>30)
+		if (level>3)
 			return false;
 		for (int i=0; i<s.orderedRankings.size(); i++) {
 			Project p = GetProjectWithName(s.orderedRankings.get(i));
