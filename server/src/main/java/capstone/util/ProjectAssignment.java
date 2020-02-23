@@ -47,6 +47,7 @@ public class ProjectAssignment {
                 String[] elements = line.split(" ");
                 
                 Project newProject = new Project(getStudentSatScore(1));
+                System.out.println("new project student sat score: " + getStudentSatScore(1));
                 newProject.setProjectName(elements[0]);
                 newProject.setProjectId(projects.size()); // TODO: MAKE THIS DYNAMIC WITH AUTOINCREMENT
                 newProject.setMinSize(Integer.parseInt(elements[1]));
@@ -120,9 +121,9 @@ public class ProjectAssignment {
         // projects
 		//projects = driver.getProjectsTable();
 		
-		for(Project p : projects) {
+		//for(Project p : projects) {
 			//writer.print(p);
-		}
+		//}
 		//writer.println("");
         
         // rankings
@@ -130,9 +131,9 @@ public class ProjectAssignment {
 		//int num_students = (driver.getRankingsTableCount()/5); // TODO: figure out more intuitive way to configure this
 		//students = driver.getUsersWithRankings(projects, num_students);
 		
-		for(Student s : students) {
+		//for(Student s : students) {
 			//writer.print(s);
-		}
+		//}
 		//writer.println("");
 
 		// calculate popularity metrics:
@@ -163,6 +164,7 @@ public class ProjectAssignment {
 	public void run(int iteration, int _NUM_RANKED, String _folder_name) {
 		System.out.println("projects.size(): " + projects.size());
 		NUM_RANKED = _NUM_RANKED;
+		System.out.println("p_max:" + getStudentSatScore(1));
 		if (projects.size() < NUM_RANKED) {
 			NUM_RANKED = projects.size();
 			System.out.println(NUM_RANKED);
@@ -211,9 +213,13 @@ public class ProjectAssignment {
 		// calculate this iteration's overall sat score:
 		double totalProjSatScores = 0;
 		for (Project p : projects) {
+			System.out.println("for loop");
+			System.out.println("returnProjSatScore: " + p.returnProjSatScore());
 			totalProjSatScores += p.returnProjSatScore();
 		}
-		algoSatScore = totalProjSatScores / projects.size();		
+		System.out.println("totalProjSatScores: " + totalProjSatScores);
+		algoSatScore = totalProjSatScores / projects.size();	
+		System.out.println("projects.size(): " + projects.size());
 		System.out.print("Satisfaction: " + algoSatScore);
 		//writer.close();
 

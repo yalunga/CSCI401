@@ -263,15 +263,20 @@ public class Project implements Comparable<Object> {
 		}
 		
 		public double returnProjSatScore() {
-			double maxScore = p_max * maxSize; // max score possible
+			double maxScore = ProjectAssignment.getStudentSatScore(1) * maxSize; // max score possible
+			System.out.println("p_max: " + p_max);
+			System.out.println("maxSize: " + maxSize);
+			System.out.println("maxScore: " + maxScore);
 			
 			double totalScore = 0;
 			for (Student student : members) {
 				int ranking = student.getRankings().get(this.projectName);
+				System.out.println("ranking: " + ranking);
 				totalScore += ProjectAssignment.getStudentSatScore(ranking);
 			}
 			
 			this.projSatScore = totalScore / maxScore;
+			System.out.println("this. project sat score: " + this.projSatScore);
 			return this.projSatScore;
 		}
 		

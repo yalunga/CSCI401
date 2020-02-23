@@ -51,7 +51,7 @@ public class ProjectService {
 	List<Ranking> rankings = new ArrayList<Ranking>();
 	public List<Project> runAlgorithm() {
 		System.out.println("RUNNING ALGORITHM");
-		for (int iteration = 0; iteration < 2; iteration++) {
+		for (int iteration = 0; iteration < 30; iteration++) {
 			System.out.println("iteration " + iteration + "!");
 			//Global g = globalRepo.findAll().get(0);
 			
