@@ -117,7 +117,10 @@ public class ProjectAssignment {
 	
 	// populates vectors from SQL DB
 	public void importDataFromDatabase() {
-
+		unassignedStudents.clear();
+		for(Project p : projects) {
+			p.members.clear();
+		}
         // projects
 		//projects = driver.getProjectsTable();
 		
@@ -275,7 +278,10 @@ public class ProjectAssignment {
 			unassignedStudents.add(s);
 		}
 		Collections.shuffle(unassignedStudents);
-		
+		ArrayList<Student> unassignedStudentsCopy = new ArrayList<Student>();
+		for (int i = 0; i < unassignedStudents.size(); i++) {
+			unassignedStudentsCopy.add(unassignedStudents.get(i));
+		}
 		for (int choice = 0; choice < NUM_RANKED; choice++) {
 			
 			for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
@@ -289,11 +295,17 @@ public class ProjectAssignment {
 						System.out.println("ADDING NEW MEMBER");
 						System.out.println(s.getLastName());
 						(p.members).add(s);
-						it.remove();
+						unassignedStudentsCopy.remove(s);
 					}
 				}
 			}
+			unassignedStudents.clear();
+			System.out.println("unassignedStudentsCopy.size(): " + unassignedStudentsCopy.size());
+			for (int i = 0; i < unassignedStudentsCopy.size(); i++) {
+				unassignedStudents.add(unassignedStudentsCopy.get(i));
+			}
 		}
+		
 		if (unassignedStudents.isEmpty()) System.out.println("UNASSIGNED STUDENTS IS EMPTY");
 	}
 	
