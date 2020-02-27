@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useDrag } from 'react-dnd'
-import { Box, Stack, Layer, Text } from 'grommet';
+import { Box, Stack } from 'grommet';
 import { View } from 'grommet-icons';
 
 import ProjectDescriptionLayer from '../../../components/ProjectDescriptionLayer';
