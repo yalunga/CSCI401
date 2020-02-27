@@ -22,7 +22,7 @@ import capstone.util.ProjectAssignment;
 
 @Entity
 public class Project implements Comparable<Object> {
-	// popularity metrics:
+	  // popularity metrics:
 		double sum_p = 0; // sum of all students' satisfaction scores
 		double p_max; // maximum satisfaction score for a single student (if NUM_RANKED = 3, this is 4)
 		double n; // number of students interested in this project

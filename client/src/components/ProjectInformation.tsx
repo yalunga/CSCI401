@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Box, Text } from 'grommet';
-import Input from '../../../components/Input';
-import Select from '../../../components/Select';
-import TextArea from '../../../components/TextArea';
-import Alert from '../../../components/Alert';
+import Input from './Input';
+import Select from './Select';
+import TextArea from './TextArea';
+import Alert from './Alert';
 
 interface ProjectProps {
   projectId: string;
@@ -59,7 +59,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     this.onChangeMax = this.onChangeMax.bind(this);
   }
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
+    fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
       .then(response => response.json())
       .then(data => this.setState({
         project: data,

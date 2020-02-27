@@ -166,7 +166,13 @@ public class ProjectController
 		}
 		return null;
 	}
-	
+
+  @GetMapping("/id/{projectId}")
+  @CrossOrigin
+  public Project getProjectById(@PathVariable("projectId") int projectId) {
+    Project project = projectService.findByProjectId(projectId);
+    return project;
+  }
 	// Get a student's project
 	@GetMapping("/student/{email:.+}")
 	@CrossOrigin
