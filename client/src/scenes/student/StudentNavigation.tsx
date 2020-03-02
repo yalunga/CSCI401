@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Route, BrowserRouter } from 'react-router-dom';
 import { Box, Image, Anchor, Text, Stack } from 'grommet';
 
+import WeeklyReviews from './WeeklyReviews/index';
+import FinalPresentationReview from './FinalPresentationReviews/index';
+
 interface StakeholderNavigationProps { }
 interface StakeholderNavigationState {
   fallOrSpring: {
@@ -72,6 +75,9 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
               <Anchor href='/student/project' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Your Project
               </Anchor>
+              <Anchor href='/student/weekly_status' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                 Weekly Status Reviews
+              </Anchor>
               <Anchor href='/student/review' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Final Presentation Reviews
               </Anchor>
@@ -87,7 +93,8 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
           <Route exact={true} path="/student" />
           <Route path="/student/ranking" />
           <Route exact={true} path='/student/project' />
-          <Route exact={true} path='/student/review' />
+          <Route exact={true} path='/student/weekly_status' component={WeeklyReviews}/>
+          <Route exact={true} path='/student/review' component={FinalPresentationReview} />
         </BrowserRouter>
       </Box>
     );
