@@ -264,14 +264,14 @@ public class Project implements Comparable<Object> {
 		
 		public double returnProjSatScore() {
 			double maxScore = ProjectAssignment.getStudentSatScore(1) * maxSize; // max score possible
-			System.out.println("p_max: " + p_max);
-			System.out.println("maxSize: " + maxSize);
-			System.out.println("maxScore: " + maxScore);
+//			System.out.println("p_max: " + p_max);
+//			System.out.println("maxSize: " + maxSize);
+//			System.out.println("maxScore: " + maxScore);
 			
 			double totalScore = 0;
 			for (Student student : members) {
 				int ranking = student.getRankings().get(this.projectName);
-				System.out.println("ranking: " + ranking);
+				//System.out.println("ranking: " + ranking);
 				totalScore += ProjectAssignment.getStudentSatScore(ranking);
 			}
 			
