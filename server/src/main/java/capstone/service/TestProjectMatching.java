@@ -1,20 +1,20 @@
-package capstone.service;
+// package capstone.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.junit.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
 
-import capstone.model.Project;
-import capstone.model.users.Student;
+// import capstone.model.Project;
+// import capstone.model.users.Student;
 
 
-public class TestProjectMatching {
-	@Autowired
-	ProjectService ps;
-	UserService us;
+// public class TestProjectMatching {
+// 	@Autowired
+// 	ProjectService ps;
+// 	UserService us;
 	
 	@Test
 	public void testAlgorithm() {

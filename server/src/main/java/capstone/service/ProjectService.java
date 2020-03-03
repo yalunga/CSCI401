@@ -23,6 +23,7 @@ import capstone.repository.AdminConfigurationRepository;
 import capstone.repository.GlobalRepository;
 import capstone.repository.ProjectsRepository;
 import capstone.repository.RankingRepository;
+import capstone.repository.StudentRepository;
 import capstone.util.EncryptPassword;
 import capstone.util.ProjectAssignment;
 
@@ -39,6 +40,8 @@ public class ProjectService {
 	AdminConfigurationRepository configRepo;
 	@Autowired
 	GlobalRepository globalRepo;
+  @Autowired
+  StudentRepository studentRepo;
 	
 	private ProjectAssignment maxAlgorithm;
 	private static String folder_name = "src/main/java/capstone/algorithm/real_data";
@@ -54,60 +57,31 @@ public class ProjectService {
 		for (int iteration = 0; iteration < 30; iteration++) {
 			
 			System.out.println("iteration " + iteration + "!");
-			//Global g = globalRepo.findAll().get(0);
 			
 			int targetSemester = 2020;
 			System.out.println("target semester: " + targetSemester);
 			
 			int targetFallSpring = 0;
 			System.out.println("targetFallSpring: " + targetFallSpring);
-			ArrayList<Project> projects = new ArrayList<>(projectsVector);
-			ArrayList<Student> students = new ArrayList<>(studentsVector);
-//			for (Project p : findAll()) {
-//				if (p.getSemester() == targetSemester && p.getFallSpring() == targetFallSpring)
-//				{
-//					projects.add(new Project(p));
-//				}
-//			}
-//			for (Student s : userService.getStudents()) {
-//				if (s.semester == targetSemester && s.fallSpring == targetFallSpring)
-//				{
-//					students.add(new Student(s));
-//				}
-//			}
-			
+			ArrayList<Student> students = studentRepo.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
+      System.out.println("did we get here");
+      ArrayList<Project> projects = repository.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
+      rankings = rankRepo.findAll();
 			
 			for (Ranking rank : rankings) {
-				//System.out.print("ranking! ");
-			
-				Student student = null;
-				for (Student s : students) {
-					if (s.getUserId() == rank.getStudentId()) {
-						student = s;
-						
-					}
-				
-				
-					Project project = null;
-					for (Project p : projects) {
-						if (p.getProjectId() == rank.getProjectId()) {
-							project = p;
-							if (project != null && student != null) {
-								//String projectName = project.getProjectName();
-							//System.out.println("student: " + student.getLastName() + "projectName:" + projectName);
-					            //student.rankings.put(projectName, rank.getRank());
-					            //student.orderedRankings.add(projectName);
-								
-								Integer ip = ProjectAssignment.getStudentSatScore(rank.getRank());
-					            project.incSum_p(ip);
-					            project.incN();
-							}
-						}
-					}
-					
-				}
-				
-					
+				System.out.print("ranking! ");
+				Student student = studentRepo.findByUserId(rank.getStudentId());
+        Project project = null;
+        project = repository.findByProjectId(rank.getProjectId());
+        if (project != null && student != null) {
+          //String projectName = project.getProjectName();
+          //System.out.println("student: " + student.getLastName() + "projectName:" + projectName);
+              //student.rankings.put(projectName, rank.getRank());
+              //student.orderedRankings.add(projectName);
+          Integer ip = ProjectAssignment.getStudentSatScore(rank.getRank());
+                project.incSum_p(ip);
+                project.incN();
+        }		
 			}
 			
 			ProjectAssignment algorithm = new ProjectAssignment(projects, students);
