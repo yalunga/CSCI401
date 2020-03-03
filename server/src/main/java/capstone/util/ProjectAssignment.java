@@ -218,6 +218,8 @@ public class ProjectAssignment {
 		// writer.close();
 
 		PlaceUnassignedStudents();
+		
+		// Clean up duplicate assignments
 		PrintProjects();
 	}
 
@@ -271,8 +273,15 @@ public class ProjectAssignment {
 		}
 		for (int choice = 0; choice < NUM_RANKED; choice++) {
 
-			for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
-				Student s = it.next();
+			for (int i = 0; i < unassignedStudents.size(); i++) {
+				Student s = unassignedStudents.get(i);
+				 
+				Student sCopy = null;
+				for (int j = 0; j < unassignedStudentsCopy.size(); j++) {
+					if (s.getLastName() == unassignedStudentsCopy.get(j).getLastName()) {
+						sCopy = unassignedStudentsCopy.get(j);
+					}
+				}
 				if (s.orderedRankings.size() > choice) {
 					Integer proj = s.rankings.get(choice);
 					String projname = s.orderedRankings.get(choice);
@@ -283,13 +292,14 @@ public class ProjectAssignment {
 						System.out.println("ADDING NEW MEMBER");
 						System.out.println(s.getLastName());
 						(p.members).add(s);
-						unassignedStudentsCopy.remove(s);
+						unassignedStudentsCopy.remove(sCopy);
 					}
 				}
 			}
 			unassignedStudents.clear();
 			System.out.println("unassignedStudentsCopy.size(): " + unassignedStudentsCopy.size());
 			for (int i = 0; i < unassignedStudentsCopy.size(); i++) {
+				System.out.println(unassignedStudentsCopy.get(i).getLastName() + " " + unassignedStudentsCopy.get(i));
 				unassignedStudents.add(unassignedStudentsCopy.get(i));
 			}
 		}
@@ -305,6 +315,7 @@ public class ProjectAssignment {
 				System.out.println("Eliminated " + p.getProjectName());
 				for (Student s : p.members) {
 					if (!unassignedStudents.contains(s)) {
+						System.out.println(s.getLastName() + " " + s);
 						unassignedStudents.add(s);
 					}
 				}
@@ -319,20 +330,23 @@ public class ProjectAssignment {
 		for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
 			System.out.println("BUMPING UNASSIGNED STUDENT");
 			Student s = it.next();
-			if (BumpHelper(s, 0))
+			if (BumpHelper(s, 0, null, -1)) {
 				it.remove();
+			}
 		}
 	}
 
-	boolean BumpHelper(Student s, int level) {
-		if (level > 3)
+	boolean BumpHelper(Student s, int level, Project displacedProj, int indexOfDisplaced) {
+		if (level > 2)
 			return false;
 		for (int i = 0; i < s.orderedRankings.size(); i++) {
 			Project p = GetProjectWithName(s.orderedRankings.get(i));
-			if (p != null && p.members.size() < p.getMaxSize() && !p.members.contains(s)) { // found a spot for them
-				System.out.println("ADDING NEW MEMBER IN BUMPHELPER");
+			if (p != null && p.members.size() < p.getMaxSize() && !p.members.contains(s) && p != displacedProj && p.members.size()+1 >= p.getMinSize()) { // found a spot for them
+				System.out.println("ADDING " + s.getLastName() + " to project " + p.getProjectId());
+				if (displacedProj != null) System.out.println("REMOVING " + displacedProj.members.get(indexOfDisplaced).getLastName() + " from project " + displacedProj.getProjectId());
+			
 				p.members.add(s);
-				
+				if (displacedProj != null) displacedProj.members.remove(indexOfDisplaced);
 				return true;
 			}
 		}
@@ -350,16 +364,18 @@ public class ProjectAssignment {
 		Random rand = new Random();
 		int index = rand.nextInt(p.members.size());
 		Student displaced = (p.members).get(index);
-		if (BumpHelper(displaced, level + 1)) {
+		
+		if (p.members.size()-1 >=  p.getMinSize() && !p.members.contains(s) && BumpHelper(displaced, level + 1, p, index)) {
 			System.out.println("BUMP HELPER IF STATEMENT");
 			//if (!p.members.contains(s)) {
-				p.members.remove(displaced);
-				//p.members.add(s);
+				//p.members.remove(displaced);
+				System.out.println("ADDED " + s.getLastName() + " to project " + p.getProjectId());
+				p.members.add(s);
 			//}
-
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	Project GetProjectWithName(String projname) {

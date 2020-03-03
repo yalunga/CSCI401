@@ -34,11 +34,32 @@ public class TestProjectMatching {
 			System.out.println("");
 		}
 		System.out.println("LIST OF STUDENTS: ");
+		int j = 1;
 		Collections.sort(listOfStudents);
+		ArrayList<Integer> unassignedStudents = new ArrayList<Integer>();
+		ArrayList<Integer> duplicates = new ArrayList<Integer>();
 		for (Integer i : listOfStudents) {
+			if (i != j) {
+				unassignedStudents.add(j);
+				j++;
+				
+			}
+			if (duplicates.contains(i)) {
+				System.out.println("DUPLICATE");
+			}
 			System.out.print(i + " ");
+			if (!duplicates.contains(i)) duplicates.add(i);
+			
+			j++;
 		}
+		System.out.println("");
 		
+		System.out.println("UNASSIGNED STUDENTS: ");
+		for (Integer i : unassignedStudents) {
+			
+			System.out.print(i + " ");
+			
+		}
 		System.out.println("Succcessful Algorithm");
 	}
 //	@Test
