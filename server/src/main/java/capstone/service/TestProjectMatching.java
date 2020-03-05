@@ -25,6 +25,7 @@ public class TestProjectMatching {
 		Collections.sort(alg);
 		ArrayList<Integer> listOfStudents = new ArrayList<Integer>();
 		for (Project p : alg) {
+			if (p.members.size() == 0) continue;
 			System.out.println("Project " + p.getProjectId());
 			System.out.print("Students:");
 			for (Student s: p.getMembers()) {
