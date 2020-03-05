@@ -309,6 +309,12 @@ public class ProjectAssignment {
 	}
 
 	void EliminateProjects() {
+		
+		
+		
+		
+		
+		
 		for (int i = projects.size() - 1; i > 0; i--) {
 			Project p = projects.get(i);
 			if (p.members.size() < p.getMinSize() && (GetTotalMaxSpots() - p.getMaxSize()) >= students.size()) {
@@ -319,7 +325,10 @@ public class ProjectAssignment {
 						unassignedStudents.add(s);
 					}
 				}
+				p.members.clear();
+				
 				projects.remove(i);
+				
 			}
 		}
 		// writer.println("");
@@ -337,7 +346,7 @@ public class ProjectAssignment {
 	}
 
 	boolean BumpHelper(Student s, int level, Project displacedProj, int indexOfDisplaced) {
-		if (level > 2)
+		if (level > 3)
 			return false;
 		for (int i = 0; i < s.orderedRankings.size(); i++) {
 			Project p = GetProjectWithName(s.orderedRankings.get(i));

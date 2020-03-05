@@ -54,12 +54,12 @@ public class TestProjectMatching {
 		}
 		System.out.println("");
 		
-		System.out.println("UNASSIGNED STUDENTS: ");
-		for (Integer i : unassignedStudents) {
-			
-			System.out.print(i + " ");
-			
-		}
+//		System.out.println("UNASSIGNED STUDENTS: ");
+//		for (Integer i : unassignedStudents) {
+//			
+//			System.out.print(i + " ");
+//			
+//		}
 		System.out.println("Succcessful Algorithm");
 	}
 //	@Test
