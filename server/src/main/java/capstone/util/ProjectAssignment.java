@@ -316,7 +316,8 @@ public class ProjectAssignment {
 	
 		for (int i = projects.size() - 1; i >= 0; i--) {
 			Project p = projects.get(i);
-			if (p.members.size() < p.getMinSize() && unassignedStudents.size() >= GetTotalMaxSpots()) {
+			// && unassignedStudents.size() >= GetTotalMaxSpots()
+			if (p.members.size() < p.getMinSize() ) {
 				System.out.println("Eliminated " + p.getProjectName());
 				for (Student s : p.members) {
 					if (!unassignedStudents.contains(s)) {
@@ -389,18 +390,37 @@ public class ProjectAssignment {
 	void assignLeftoverStudents() {
 		Collections.shuffle(unassignedStudents);
 		System.out.println("number of unassignedStudents: " + unassignedStudents.size());
-		for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
-			System.out.println("ASSIGNING UNASSIGNED STUDENT");
-			Student s = it.next();
-			for (Project p: projects) {
-				if (p.members.size() < p.getMinSize() ) {
-					p.members.add(s);
-					if (!projects.contains(p)) projects.add(p);
-					break;
-				}
+		ArrayList<Project> unassignedProjects = new ArrayList<Project> ();
+		for (Project p: projects) {
+			if (p.members.size() < p.getMinSize()) {
+				unassignedProjects.add(p);
 			}
-			
 		}
+		
+			
+			for (Project p: unassignedProjects) {
+				ArrayList<Student> unassignedStudentsCopy = new ArrayList<Student>();
+				for (int i = 0; i < unassignedStudents.size(); i++) {
+					unassignedStudentsCopy.add(unassignedStudents.get(i));
+				}
+				for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
+					
+					Student s = it.next();
+					System.out.println("ASSIGNING UNASSIGNED STUDENT" + s.getLastName());
+					if (p.members.size() < p.getMaxSize()) {
+						p.members.add(s);
+						unassignedStudentsCopy.remove(s);
+					} else {
+						break;
+					}
+				}
+				unassignedStudents.clear();
+				for (int i = 0; i < unassignedStudentsCopy.size(); i++) {
+					unassignedStudents.add(unassignedStudentsCopy.get(i));
+				}
+				unassignedStudentsCopy.clear();
+				
+			}
 	}
 
 	Project GetProjectWithName(String projname) {
