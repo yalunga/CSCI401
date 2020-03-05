@@ -104,9 +104,9 @@ public class ProjectController
 		return validProjects;
 	}
 	
-	@GetMapping("/{email:.+}/rankOrdered")
+	@GetMapping("/{email:.+}/rankings")
 	@CrossOrigin
-	public List<Project> getRankOrderedProjects(@PathVariable("email") String email)
+	public List<Ranking> getRankOrderedProjects(@PathVariable("email") String email)
 	{
 		//Global g = globalRepo.findAll().get(0);
 		Student student = (Student) userService.findUserByEmail(email);
@@ -115,7 +115,7 @@ public class ProjectController
 	
 		List<Project> projects = projectService.findAll();
 		List<Ranking> rankings = projectService.rankRepo.findAll();
-		List<Project> orderedProjects = new ArrayList<Project>(5);
+		List<Ranking> studentRankings = new ArrayList<Ranking>(5);
 		
 		if(!rankings.isEmpty())
 		{
@@ -127,55 +127,13 @@ public class ProjectController
 				long userID = userService.findUserByEmail(email).getUserId();
 				if(studentID == userID)
 				{
-					hasStudent = true;
-					break;
+					studentRankings.add(ranking);
 				}
 			}
 			
-			if(hasStudent)
-			{
-				if(projects.size() >= 5)
-				{
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-					orderedProjects.add(null);
-				}
-				else
-				{
-					for(int i = 0; i < projects.size(); i++)
-					{
-						orderedProjects.add(null);
-					}
-				}
-			}
-		}
-
-		for(Ranking ranking : rankings)
-		{
-			long studentID = ranking.getStudentId();
-			long userID = userService.findUserByEmail(email).getUserId();
-			if(studentID == userID)
-			{
-				int index = ranking.getRank() - 1;
-				orderedProjects.set(index, projectService.findByProjectId(ranking.getProjectId()));
-			}
-		}
+    }
 		
-		for(Project project : projects)
-		{
-			boolean isInList = orderedProjects.contains(project);
-			if(!isInList)
-			{
-				if(project.getSemester() == targetSemester && project.getFallSpring() == targetFallSpring)
-				{
-					orderedProjects.add(project);
-				}
-			}
-		}
-		
-		return orderedProjects;
+		return studentRankings;
 	}
 	
 	// Get all projects that a stakeholder owns
@@ -208,7 +166,13 @@ public class ProjectController
 		}
 		return null;
 	}
-	
+
+  @GetMapping("/id/{projectId}")
+  @CrossOrigin
+  public Project getProjectById(@PathVariable("projectId") int projectId) {
+    Project project = projectService.findByProjectId(projectId);
+    return project;
+  }
 	// Get a student's project
 	@GetMapping("/student/{email:.+}")
 	@CrossOrigin
@@ -301,18 +265,25 @@ public class ProjectController
 	//@PostMapping("/rankingsSubmitAttempt/{email:.+}")
 	@PostMapping("/{email:.+}/submit-ranking")
 	@CrossOrigin
-	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Integer> projects) {
-		User user = userService.findUserByEmail(email);
+	public @ResponseBody String projectRankingsSubmission(@PathVariable("email") String email, @RequestBody List<Ranking> projects) {
+    User user = userService.findUserByEmail(email);
 		List<Ranking> rankings = projectService.rankRepo.findAll();
 		for (Ranking rank : rankings) {
 			Student student = null;
-				if (user.getUserId() == rank.getStudentId()) {
-					projectService.rankRepo.delete(rank.getRankingId());
-				}
-			}
-		for (int rank = 1; rank <= 5; rank++) {
-			projectService.saveRanking(projects.get(rank-1), user.getUserId(), rank);
+      if (user.getUserId() == rank.getStudentId()) {
+        projectService.rankRepo.delete(rank.getRankingId());
+      }
 		}
+    for(Ranking newRank: projects) {
+      newRank.setStudentId(user.getUserId());
+      newRank.setRank(projects.indexOf(newRank));
+      try {
+        projectService.saveRanking(newRank);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
 		return Constants.SUCCESS;
 	}
 	
@@ -328,6 +299,7 @@ public class ProjectController
 		System.out.println("Received HTTP POST");
 		System.out.println(project);
 		System.out.println(project.getProjectName());
+    System.out.println("Company: " + project.getStakeholderCompany());
 		project.setStatusId(1);
 //		project.setSemester(globalRepo.findAll().get(0).getSemester());
 //		project.setFallSpring(globalRepo.findAll().get(0).getFallSpring());
