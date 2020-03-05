@@ -144,6 +144,7 @@ public class ProjectService {
                 //System.out.println("projectIdString" + Integer.parseInt(elements[0].substring(11)));
                 newProject.setProjectId(Integer.parseInt(elements[0].substring(11))); // TODO: MAKE THIS DYNAMIC WITH AUTOINCREMENT
                 newProject.setMinSize(Integer.parseInt(elements[1]));
+                //System.out.println("minSIZE: " + newProject.getMinSize());
                 newProject.setMaxSize(Integer.parseInt(elements[2]));
                 projectsVector.addElement(newProject);
                 
