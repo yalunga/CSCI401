@@ -60,8 +60,8 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     this.onChangeMax = this.onChangeMax.bind(this);
   }
   componentDidMount() {
-    //fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
-    fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
+    //fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
       .then(response => response.json())
       .then(data => this.setState({
         project: data,
