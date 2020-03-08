@@ -48,8 +48,8 @@ public class Global
 				
 	public Global()
 	{
-		this.semester = 2019;
-		this.fallSpring = 1;
+		this.semester = 2020;
+		this.fallSpring = 0;
 	}
 			
 	public String toString() 

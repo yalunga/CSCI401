@@ -39,13 +39,6 @@ public class Project implements Comparable<Object> {
 		int projectId;
 		String projectName;
 		int statusId;
-		public List<Student> getMembers() {
-			return members;
-		}
-
-		public void setMembers(List<Student> members) {
-			this.members = members;
-		}
 		
 		@JsonIgnore
 		@Transient
@@ -62,6 +55,14 @@ public class Project implements Comparable<Object> {
 		String technologies;
 		String adminComments = "";
     String stakeholderCompany;
+
+    public List<Student> getMembers() {
+			return members;
+		}
+
+		public void setMembers(List<Student> members) {
+			this.members = members;
+		}
 		
 		public double getSum_p() {
 			return sum_p;
@@ -283,15 +284,22 @@ public class Project implements Comparable<Object> {
 		}
 		
 		public double returnProjSatScore() {
-			double maxScore = p_max * maxSize; // max score possible
-			
+			double maxScore = ProjectAssignment.getStudentSatScore(1) * maxSize; // max score possible
+//			System.out.println("p_max: " + p_max);
+//			System.out.println("maxSize: " + maxSize);
+//			System.out.println("maxScore: " + maxScore);
+			System.out.println("proj id:" + getProjectId());
 			double totalScore = 0;
+			if (!members.isEmpty()) {
 			for (Student student : members) {
 				int ranking = student.getRankings().get(this.projectName);
+				//System.out.println("ranking: " + ranking);
 				totalScore += ProjectAssignment.getStudentSatScore(ranking);
+			}
 			}
 			
 			this.projSatScore = totalScore / maxScore;
+			System.out.println("this. project sat score: " + this.projSatScore);
 			return this.projSatScore;
 		}
 		
