@@ -66,7 +66,7 @@ public class ProjectService {
       System.out.println("did we get here");
       ArrayList<Project> projects = repository.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
       rankings = rankRepo.findAll();
-      for (int iteration = 0; iteration < 30; iteration++) {
+      for (int iteration = 0; iteration < 2; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
           System.out.print("ranking! ");
@@ -132,10 +132,12 @@ public class ProjectService {
         newProject.setMinSize(Integer.parseInt(elements[1]));
         // System.out.println("minSIZE: " + newProject.getMinSize());
         newProject.setMaxSize(Integer.parseInt(elements[2]));
+        newProject.setStatusId(2);
+        newProject.setSemester(2020);
         projectsVector.addElement(newProject);
 
         System.out.println("Saving project: " + newProject.getProjectName());
-        // save(newProject);
+        save(newProject);
 
         // writer.println(newProject);
       }
@@ -172,13 +174,14 @@ public class ProjectService {
           String projectName = rankedProject.getProjectName();
           newStudent.rankings.put(projectName, i);
           newStudent.orderedRankings.add(projectName);
+          newStudent.semester = 2020;
 
           // popularity metrics:
           // Integer p = ProjectAssignment.getStudentSatScore(i);
           // rankedProject.incSum_p(p);
           // rankedProject.incN();
         }
-        // userService.saveUser(newStudent);
+        userService.saveUser(newStudent);
         System.out.println("Saving student " + newStudent.getLastName());
         studentsVector.addElement(newStudent);
         // writer.println(newStudent);
@@ -199,7 +202,7 @@ public class ProjectService {
         Long studentId = s.getUserId();
         System.out.println("studentId: " + studentId);
 
-        rankings.add(new Ranking(studentId, projectId, entry.getValue()));
+        rankRepo.save(new Ranking(studentId, projectId, entry.getValue()));
         s.orderedRankings.add(p.getProjectName());
       }
     }
