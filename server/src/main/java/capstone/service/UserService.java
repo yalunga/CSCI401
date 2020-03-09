@@ -27,6 +27,10 @@ public class UserService {
 	@Autowired
 	private AdminRepository adminRepo;
 	
+	public UserService() {
+		System.out.println("IN USER SERVICE CONSTRUCTOR");
+	}
+	
 	public Collection<User> getUsers() {
 		Collection<User> users = new Vector<>();
 		users.addAll((Collection<? extends User>) studentRepo.findAll());

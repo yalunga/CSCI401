@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, TextInput, Text, Stack } from 'grommet';
+import { Box, TextInput, Text, Stack, Anchor } from 'grommet';
 import { ClipLoader } from "react-spinners";
 
 
@@ -42,6 +42,10 @@ export default class Stakeholder extends React.Component<StakeholderRegistration
     if (this.state.firstName !== '' && this.state.lastName !== '' && this.state.email !== '' && this.state.phone !== '' && this.state.confirm !== '' && this.state.password !== '' && this.state.password !== this.state.confirm) {
       this.setState({ loading: false });
       return alert('Your passwords do not match. Please try again.');
+    }
+    if(this.state.phone.length !== 10 && this.state.phone.length !== 12){
+      this.setState({ loading: false });
+      return alert('Please enter a valid phone number.');
     }
     var data = JSON.stringify({
       firstName: this.state.firstName,
@@ -186,6 +190,12 @@ export default class Stakeholder extends React.Component<StakeholderRegistration
               </Box>
             }
           </Box>
+        </Box>
+        <Box align='center'>
+          <Text size='small'>
+            Already Registered?
+            <Anchor href='/'> Back to Login Page.</Anchor>
+          </Text>
         </Box>
       </Box>
     )

@@ -26,7 +26,7 @@ export default () => {
     const json = await response.json();
     console.log(json);
   }
-
+  console.log(approvedProjects);
   return (
     <Box width='full' pad='medium' gap='small'>
       <Box direction='row' justify='between' align='center'>
@@ -39,7 +39,12 @@ export default () => {
         {approvedProjects.length > 0 ? approvedProjects.map((project: any, index: number) => (
           <Anchor href={`/admin/project/${project.projectId}/view`}>
             <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round={index === approvedProjects.length - 1 ? 'xsmall' : 'none'} style={{ cursor: 'pointer' }}>
-              <Text>{project.projectName}</Text>
+              <Box direction='row' gap='xsmall' align='center'>
+                <Text>{project.projectName}</Text>
+                {project.members.map((student: any) => (
+                  <Text>{student.firstName} {student.lastName}</Text>
+                ))}
+              </Box>
               <Text size='small' color='dark-4'>{project.stakeholderCompany}</Text>
             </Box>
           </Anchor>
