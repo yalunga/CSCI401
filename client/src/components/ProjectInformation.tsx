@@ -169,6 +169,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     }
     return 'Changes Requested';
   }
+
   async submitClicked(projectId: number, type: number) {
     if (type === 1) {
       await fetch(`${process.env.REACT_APP_API_URL}/deliverables/pending/` + projectId, {
@@ -192,6 +193,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     }, 2000));
     //this.getProjects();
   }
+
   render() {
     console.log(this.state.project);
     const columnsD = [
@@ -382,6 +384,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
                       }))}
                       />
               </Box>  
+              </Box>
             </Tab>
             <Tab title = "Deliverables">
               <Box margin="small" pad="large">
@@ -417,6 +420,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
           value={this.state.project.projectName}
           onChange={this.handleChange}
           disabled={this.props.entryType === 'view' ? true : false}
+
           />
         }
         {this.props.entryType !== 'view' &&
@@ -447,7 +451,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
           name='technologies'
           value={this.state.project.technologies}
           onChange={this.handleChange}
-          disabled={this.props.entryType === 'view' ? true : false}
+          disabled={this.props.entryType === 'view'}
         />
       }
       {this.props.entryType !== 'view' &&
@@ -465,7 +469,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
           name='description'
           value={this.state.project.description}
           onChange={this.handleChange}
-          disabled={this.props.entryType === 'view' ? true : false}
+          disabled={this.props.entryType === 'view'}
         />
       }
         {this.props.entryType !== 'view' &&
