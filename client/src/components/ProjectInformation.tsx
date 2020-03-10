@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Text, TableHeader, grommet, Grommet, Tabs, Tab, DataTable } from 'grommet';
+import { Box, Text, TableHeader, Grommet, Tabs, Tab, DataTable, grommet } from 'grommet';
 import Input from './Input';
 import Select from './Select';
 import TextArea from './TextArea';
@@ -383,8 +383,8 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
                       ...column,
                       }))}
                       />
+              </Box>  
               </Box>
-             
             </Tab>
             <Tab title = "Deliverables">
               <Box margin="small" pad="large">
@@ -419,7 +419,8 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
           name='projectName'
           value={this.state.project.projectName}
           onChange={this.handleChange}
-          disabled={this.props.entryType === 'view'}
+          disabled={this.props.entryType === 'view' ? true : false}
+
           />
         }
         {this.props.entryType !== 'view' &&
@@ -459,7 +460,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
           name='background'
           value={this.state.project.background}
           onChange={this.handleChange}
-          disabled={this.props.entryType === 'view'}
+          disabled={this.props.entryType === 'view' ? true : false} 
         />
     }
     {this.props.entryType !== 'view' &&
