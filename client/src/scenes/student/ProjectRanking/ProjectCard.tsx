@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null)
 
-  const [show, setShow] = React.useState();
+  const [show, setShow] = React.useState(false);
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: 'card', id, index, isRanked },
