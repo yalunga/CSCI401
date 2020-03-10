@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Box, Anchor } from 'grommet';
+import { ClipLoader } from "react-spinners";
+
 
 export default () => {
-
-
+  const [loading, setLoading]: any = useState(false);
   const [approvedProjects, setApprovedProjects]: any = useState([]);
 
   useEffect((): any => {
@@ -22,17 +23,23 @@ export default () => {
   }, []);
 
   const assignProject = async () => {
+    setLoading(true);
     const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/assignment`);
     const json = await response.json();
-    console.log(json);
+    setApprovedProjects(json);
+    setLoading(false);
+    console.log('hi', json);
   }
   console.log(approvedProjects);
   return (
     <Box width='full' pad='medium' gap='small'>
       <Box direction='row' justify='between' align='center'>
         <Text weight='bold' size='large'>Projects</Text>
-        <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
-          <Text>Assign Projects</Text>
+        <Box direction='row' gap='small'>
+          {loading && <ClipLoader size={50} color='#990000' />}
+          <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
+            <Text>Assign Projects</Text>
+          </Box>
         </Box>
       </Box>
       <Box width='full' background='white' elevation='small' round='xsmall'>
@@ -42,7 +49,7 @@ export default () => {
               <Box direction='row' gap='xsmall' align='center'>
                 <Text>{project.projectName}</Text>
                 {project.members.map((student: any) => (
-                  <Text>{student.firstName} {student.lastName}</Text>
+                  <Text size='small' color='dark-4' weight='normal'>{student.firstName} {student.lastName}</Text>
                 ))}
               </Box>
               <Text size='small' color='dark-4'>{project.stakeholderCompany}</Text>
