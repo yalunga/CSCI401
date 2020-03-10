@@ -383,8 +383,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
                       ...column,
                       }))}
                       />
-              </Box>  
-              </Box>
+              </Box> 
             </Tab>
             <Tab title = "Deliverables">
               <Box margin="small" pad="large">
