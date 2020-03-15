@@ -66,10 +66,9 @@ public class ProjectService {
       System.out.println("did we get here");
       ArrayList<Project> projects = repository.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
       rankings = rankRepo.findAll();
-      for (int iteration = 0; iteration < 2; iteration++) {
+      for (int iteration = 0; iteration < 30; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
-          System.out.print("ranking! ");
           // Student student = studentRepo.findByUserId(rank.getStudentId());
           Student student = null;
           for (Student s : studentRepo.findAll()) {
@@ -91,7 +90,7 @@ public class ProjectService {
           }
         }
 
-        ProjectAssignment algorithm = new ProjectAssignment(projects, students);
+        ProjectAssignment algorithm = new ProjectAssignment(projects, students, rankings);
         algorithm.run(iteration, NUM_RANKED, folder_name);
         double groupSatScore = algorithm.algoSatScore;
         algorithms.put(groupSatScore, algorithm);
@@ -273,5 +272,9 @@ public class ProjectService {
       }
     }
     return currentProjects;
+  }
+
+  public Project getProjectById(int id) {
+    return repository.findByProjectId(id);
   }
 }
