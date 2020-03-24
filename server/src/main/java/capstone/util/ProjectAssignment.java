@@ -316,8 +316,8 @@ public class ProjectAssignment {
 	
 		for (int i = projects.size() - 1; i >= 0; i--) {
 			Project p = projects.get(i);
-			// && unassignedStudents.size() >= GetTotalMaxSpots()
-			if (p.members.size() < p.getMinSize() ) {
+			// && GetTotalMaxSpots()-p.getMaxSize() >= students.size()
+			if (p.members.size() < p.getMinSize()) {
 				System.out.println("Eliminated " + p.getProjectName());
 				for (Student s : p.members) {
 					if (!unassignedStudents.contains(s)) {
@@ -434,7 +434,7 @@ public class ProjectAssignment {
 	int GetTotalMaxSpots() {
 		int maxspots = 0;
 		for (Project p : projects)
-			maxspots += p.getMaxSize()-p.members.size();
+			maxspots += p.getMaxSize();
 		return maxspots;
 	}
 
