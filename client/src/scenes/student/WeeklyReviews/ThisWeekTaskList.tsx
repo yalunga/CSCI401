@@ -17,22 +17,22 @@ const ThisWeekTaskList = (props: any) => {
           </TableHeader>
           <TableBody>{
             props.taskList.map((val: any, idx: number) => {
-              let hours = `hours-${idx}`, description = `description-${idx}`;
               return (
                 <TableRow key={val.index}>
                 <TableCell size="xsmall" scope="row">
-                  <TextInput name="hours" data-id={idx} id={hours}></TextInput>
+                  <TextInput name="hours" id={`${idx}`} onChange={ e => props.onChange(e)}></TextInput>
                 </TableCell>
                 <TableCell scope="row">
                 <Box border='all' round='xxsmall'>
                     <TextArea 
                     data-id={idx}
-                    id={description}
+                    id={`${idx}`}
                     name='description'
                     resize={false}
                     size='large'
                     plain
                     placeholder='Enter description'
+                    onChange={ e => props.onChange(e)}
                     />
                   </Box>
                 </TableCell>

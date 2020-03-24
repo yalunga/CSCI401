@@ -3,7 +3,7 @@ import { Route, BrowserRouter } from 'react-router-dom';
 import { Box, Image, Anchor, Text, Stack } from 'grommet';
 
 import WeeklyReviews from './WeeklyReviews/index';
-import FinalPresentationReview from './FinalPresentationReviews/index';
+//import FinalPresentationReview from './FinalPresentationReviews/index';
 
 interface StakeholderNavigationProps { }
 interface StakeholderNavigationState {
@@ -94,7 +94,7 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
           <Route path="/student/ranking" />
           <Route exact={true} path='/student/project' />
           <Route exact={true} path='/student/weekly_status' component={WeeklyReviews}/>
-          <Route exact={true} path='/student/review' component={FinalPresentationReview} />
+          {/* <Route exact={true} path='/student/review' component={FinalPresentationReview} /> */}
         </BrowserRouter>
       </Box>
     );
