@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Box, Anchor } from 'grommet';
 import { ClipLoader } from "react-spinners";
+import EditUserModal from '../../../components/EditUserModal';
 
 
 export default () => {
   const [loading, setLoading]: any = useState(false);
   const [approvedProjects, setApprovedProjects]: any = useState([]);
+  const [editUser, setEditUser]: any = useState(null);
 
   useEffect((): any => {
     const getProjects = async () => {
@@ -44,24 +46,35 @@ export default () => {
       </Box>
       <Box width='full' background='white' elevation='small' round='xsmall'>
         {approvedProjects.length > 0 ? approvedProjects.map((project: any, index: number) => (
-          <Anchor href={`/admin/project/${project.projectId}/view`}>
-            <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round={index === approvedProjects.length - 1 ? 'xsmall' : 'none'} style={{ cursor: 'pointer' }}>
-              <Box direction='row' gap='xsmall' align='center'>
+          <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round={index === approvedProjects.length - 1 ? 'xsmall' : 'none'}>
+            <Box direction='row' gap='xsmall' align='center'>
+              <Anchor href={`/admin/project/${project.projectId}/view`}>
                 <Text>{project.projectName}</Text>
-                {project.members.map((student: any) => (
-                  <Text size='small' color='dark-4' weight='normal'>{student.firstName} {student.lastName}</Text>
-                ))}
-              </Box>
-              <Text size='small' color='dark-4'>{project.stakeholderCompany}</Text>
+              </Anchor>
+              {project.members.map((student: any) => (
+                <Text size='small' color='dark-4' weight='normal' style={{ cursor: 'pointer' }} onClick={() => setEditUser(student)}>
+                  {student.firstName} {student.lastName}
+                </Text>
+              ))}
             </Box>
-          </Anchor>
+            <Text size='small' color='dark-4'>{project.stakeholderCompany}</Text>
+          </Box>
         ))
           :
           <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round='xsmall'>
-            There are no approved projects.
+            Assign projects when ready.
           </Box>
         }
       </Box>
+      {editUser &&
+        <EditUserModal
+          editFirstName={editUser.firstName}
+          editLastName={editUser.lastName}
+          editEmail={editUser.email}
+          editUserType={editUser.userType}
+          closeModal={() => setEditUser(null)}
+        />
+      }
     </Box>
   )
 }
