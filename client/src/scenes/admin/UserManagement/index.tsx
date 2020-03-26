@@ -1,30 +1,19 @@
 import * as React from 'react';
 
 import {
-  Table,
-  Button,
-  ButtonGroup,
-  Modal,
-  Form,
-  FormGroup,
-  Col,
-  FormControl,
-  ControlLabel,
-  ButtonToolbar,
-  ToggleButtonGroup,
-  ToggleButton
+  Box,
+  Text,
+  TextInput,
+  Layer,
+  DataTable,
+  Heading,
+  Select
+} from 'grommet';
+import EmailForms from './EmailForms';
+import TableHeader from '../../TableHelpers/TableHeaders';
+import EditUserModal from '../../../components/EditUserModal';
 
-} from 'react-bootstrap';
-import StudentRegistrationForm from './StudentRegistrationForm';
-
-const style = {
-  width: 1000,
-  float: 'none',
-  margin: 'auto',
-};
-
-interface UserListProps {
-}
+interface UserListProps { }
 
 interface UserListState {
   allUsers: Array<{}>;
@@ -51,27 +40,28 @@ interface User {
   email: string;
 }
 
-class UserManagement extends React.Component<UserListProps, UserListState> {
+export default class UserManagement extends React.Component<UserListProps, UserListState> {
   constructor(props: UserListProps) {
     super(props);
-
     this.state = {
       allUsers: [],
       usersToDisplay: [],
       userIndexToEdit: -1,
       isLoading: false,
     };
+    this.editUser = this.editUser.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     this.setState({ isLoading: true });
 
     if (sessionStorage.getItem('viewingYear') === null) {
-      console.log('Set year to default (2019)');
-      sessionStorage.setItem('viewingYear', '2019');
+      sessionStorage.setItem('viewingYear', '2020');
     }
     if (sessionStorage.getItem('viewingFallSpring') === null) {
-      console.log('Set fallspring to default (spring)');
       sessionStorage.setItem('viewingFallSpring', '1');
     }
     fetch(`${process.env.REACT_APP_API_URL}/users/getusersfromsemester/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
@@ -84,71 +74,8 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
       .then(data => this.setState({ allUsers: data, usersToDisplay: data, isLoading: false }));
   }
 
-  cancelEdit = () => {
-    this.setState({ userIndexToEdit: -1 });
-  }
-
-  submitEdit = () => {
-    var request = new XMLHttpRequest();
-    request.withCredentials = true;
-    request.open('POST', `${process.env.REACT_APP_API_URL}/users/update-info`);
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    var data = JSON.stringify({
-      firstName: this.state.editFirstName,
-      lastName: this.state.editLastName,
-      userType: this.state.editUserType,
-      semester: this.state.editSemester,
-      email: this.state.editEmail,
-      originalEmail: this.state.originalEmail
-    });
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(data);
-    alert('User has been updated succesfully!');
-    window.location.reload();
-    this.setState({ userIndexToEdit: -1 });
-  }
-
-  handleChange(e: any) {
-    // @ts-ignore
-    this.setState({ [e.target.id]: e.target.value });
-  }
-
-  handleUserFilterChange = (e: any) => {
-    var _usersToDisplay: User[] = [];
-    const { allUsers } = this.state;
-    var userFilterType = '';
-    if (e === 1) {
-      userFilterType = 'All';
-    } else if (e === 2) {
-      userFilterType = 'Student';
-    } else if (e === 3) {
-      userFilterType = 'Stakeholder';
-    } else if (e === 4) {
-      userFilterType = 'Admin';
-    }
-
-    // sessionStorage.setItem('semester', '2019');
-    // sessionStorage.setItem('fallspring', '0');
-    // var targetSemester = Number(sessionStorage.getItem('semester'));
-    // var targetFallSpring = Number(sessionStorage.getItem('fallspring'));
-    // console.log(targetSemester);
-    // console.log(targetFallSpring);
-
-    allUsers.forEach((user: User) => {
-      if (user.userType === userFilterType) {
-        _usersToDisplay.push(user);
-      } else if (userFilterType === 'All') {
-        _usersToDisplay.push(user);
-      }
-    });
-
-    this.setState({ usersToDisplay: _usersToDisplay });
-  }
-
-  editUser(index: number, user: User) {
-    console.log(user);
+  editUser(user: User) {
     this.setState({
-      userIndexToEdit: index,
       userToEdit: user,
       editFirstName: user.firstName,
       editLastName: user.lastName,
@@ -159,186 +86,115 @@ class UserManagement extends React.Component<UserListProps, UserListState> {
     });
   }
 
-  deleteUser(index: number, user: User) {
-    const name = user.firstName;
-    var submit = confirm('Are you sure you want to delete ' + name + '?');
-    if (submit) {
-      this.setState({ userToDelete: user });
-      var request = new XMLHttpRequest();
-      request.withCredentials = true;
-      request.open('POST', `${process.env.REACT_APP_API_URL}/users/delete-info`);
-      request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-      var data = JSON.stringify({
-        email: user.email
-      });
-      request.setRequestHeader('Cache-Control', 'no-cache');
-      request.send(data);
-    }
-  }
-
-  setOriginalEmail(email: string) {
+  closeModal() {
     this.setState({
-      originalEmail: email
-    });
+      userToEdit: undefined,
+      editFirstName: undefined,
+      editLastName: undefined,
+      editUserType: undefined,
+      editSemester: undefined,
+      editEmail: undefined,
+      originalEmail: undefined
+    })
   }
+
+  handleChange(e: any) {
+    // @ts-ignore
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+
+  deleteUser(user: User) {
+    this.setState({ userToDelete: user });
+    var request = new XMLHttpRequest();
+    request.withCredentials = true;
+    request.open('POST', `${process.env.REACT_APP_API_URL}/users/delete-info`);
+    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    var data = JSON.stringify({
+      email: user.email
+    });
+    request.setRequestHeader('Cache-Control', 'no-cache');
+    request.send(data);
+    window.location.reload();
+  }
+
+
   render() {
-    const { allUsers, usersToDisplay, isLoading, userIndexToEdit, userToEdit } = this.state;
-
-    if (isLoading) {
-      return <p>Loading...</p>;
-    }
-
-    var modalEditUser = <div />;
-    if (typeof userToEdit !== 'undefined') {
-      modalEditUser = (
-        <Modal bsSize="lg" dialogClassName="modal-90w" show={userIndexToEdit !== -1} onHide={this.cancelEdit}>
-          <Modal.Header closeButton={true}>
-            <Modal.Title>Edit User</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form horizontal={true} >
-              <FormGroup controlId="formHorizontalFirstName">
-                <Col componentClass={ControlLabel} sm={3}>
-                  First Name
-                                </Col>
-                <Col sm={9}>
-                  <FormControl
-                    type="text"
-                    id="editFirstName"
-                    value={this.state.editFirstName}
-                    placeholder="First Name"
-                    onChange={e => this.handleChange(e)}
-                  />
-                </Col>
-              </FormGroup>
-              <FormGroup controlId="formHorizontalLastName">
-                <Col componentClass={ControlLabel} sm={3}>
-                  Last Name
-                                </Col>
-                <Col sm={9}>
-                  <FormControl
-                    type="text"
-                    id="editLastName"
-                    value={this.state.editLastName}
-                    placeholder="Last Name"
-                    onChange={e => this.handleChange(e)}
-                  />
-                </Col>
-              </FormGroup>
-              <FormGroup controlId="formHorizontalEmail">
-                <Col componentClass={ControlLabel} sm={3}>
-                  Email
-                                </Col>
-                <Col sm={9}>
-                  <FormControl
-                    type="text"
-                    placeholder="Email"
-                    id="editEmail"
-                    value={this.state.editEmail}
-                    onChange={e => this.handleChange(e)}
-                  />
-                </Col>
-              </FormGroup>
-              <FormGroup controlId="formHorizontalUserType">
-                <Col componentClass={ControlLabel} sm={3}>
-                  User Type
-                                </Col>
-                <Col sm={9}>
-                  <FormControl componentClass="select" placeholder="select" id="editUserType" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
-                    <option value="Student">Student</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Stakeholder">Stakeholder</option>
-                  </FormControl>
-                </Col>
-              </FormGroup>
-              <FormGroup controlId="formHorizontalUserType">
-                <Col componentClass={ControlLabel} sm={3}>
-                  Project Assignment
-                                </Col>
-                <Col sm={9}>
-                  <FormControl componentClass="select" placeholder="select" id="editProjectAssignment" value={this.state.editUserType} onChange={e => this.handleChange(e)}>
-                    <option value="CSCI 401 Project Platform">CSCI 401 Project Platform</option>
-                  </FormControl>
-                </Col>
-              </FormGroup>
-              {this.state.editUserType === 'Student' ? (
-                <FormGroup controlId="formHorizontalYear">
-                  <Col componentClass={ControlLabel} sm={3}>
-                    Year
-                                </Col>
-                  <Col sm={9}>
-                    <FormControl type="text" componentClass="select" placeholder="Semester" id="editSemester" value={this.state.editSemester} onChange={e => this.handleChange(e)}>
-                      <option value="02019">Fall 2019</option>
-                      <option value="12019">Spring 2019</option>
-                      <option value="22019">Summer 2019</option>
-                      <option value="02020">Fall 2020</option>
-                      <option value="12020">Spring 2020</option>
-                    </FormControl>
-                  </Col>
-                </FormGroup>
-              ) : (
-                  ''
-                )}
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.cancelEdit}>Cancel</Button>
-            <Button onClick={this.submitEdit} bsStyle="primary">Save</Button>
-          </Modal.Footer>
-        </Modal>
+    const columns = [
+      {
+        property: 'firstName',
+        header: <TableHeader>First Name</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.firstName}</Text>
+        )
+      },
+      {
+        property: 'lastName',
+        header: <TableHeader>Last Name</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.lastName}</Text>
+        ),
+      },
+      {
+        property: 'userType',
+        header: <TableHeader>User Type</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.userType}</Text>
+        ),
+      },
+      {
+        property: 'email',
+        header: <TableHeader>Email</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.email}</Text>
+        ),
+      },
+      {
+        property: 'editDelete',
+        header: <TableHeader>Edit/Delete</TableHeader>,
+        render: (datum: any) => {
+          return (
+            <Box direction='row' gap='xsmall'>
+              <Box width='xsmall' elevation='xsmall' background='#FFCB02' pad='xsmall' align='center' round='xxsmall' className='pointer' onClick={() => this.editUser(datum)}>
+                <Text>Edit</Text>
+              </Box>
+              <Box width='xsmall' elevation='xsmall' background='status-error' pad='xsmall' align='center' round='xxsmall' className='pointer' onClick={() => this.deleteUser(datum)}>
+                <Text>Delete</Text>
+              </Box>
+            </Box>
+          )
+        },
+      }
+    ];
+    const { allUsers, userToEdit } = this.state;
+    let modal = <div></div>;
+    if (userToEdit !== undefined) {
+      modal = (
+        <EditUserModal
+          editFirstName={this.state.editFirstName}
+          editLastName={this.state.editLastName}
+          editEmail={this.state.editEmail}
+          editUserType={this.state.editUserType}
+          editSemester={this.state.editSemester}
+          closeModal={this.closeModal}
+        />
       );
     }
-
     return (
-      <div style={style as any}>
-        <h2>User Management</h2>
-
-        <div>
-          <StudentRegistrationForm />
-          <ButtonToolbar>
-            <ToggleButtonGroup
-              onChange={this.handleUserFilterChange}
-              type="radio"
-              name="userFilter"
-              defaultValue={1}
-            >
-              <ToggleButton value={1}>All</ToggleButton>
-              <ToggleButton value={2}>Student</ToggleButton>
-              <ToggleButton value={3}>Stakeholder</ToggleButton>
-              <ToggleButton value={4}>Admin</ToggleButton>
-            </ToggleButtonGroup>
-          </ButtonToolbar>
-        </div>
-
-        <Table bordered={true} condensed={true}>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>User Type</th>
-              <th>Email</th>
-              <th>Edit/Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usersToDisplay.map((user: User, index: number) =>
-              <tr key={user.userId}>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.userType}</td>
-                <td>{user.email}</td>
-                <td>
-                  <Button style={{ margin: 3 }} bsSize="small" onClick={() => this.editUser(index, user)}>
-                    Edit User
-                                    </Button>
-                  <Button bsStyle="warning" bsSize="small" onClick={() => this.deleteUser(index, user)}>Delete User</Button>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-        {modalEditUser}
-      </div>);
+      <Box width='full' pad='medium' gap='medium'>
+        <Text weight='bold' size='large'>User Management</Text>
+        <EmailForms />
+        <Box pad='medium' background='white' elevation='xsmall' round='xxsmall' margin={{ top: 'medium' }} overflow='auto'>
+          <DataTable
+            columns={columns.map(column => ({
+              ...column,
+              search: column.property === 'firstName' || column.property === 'lastName'
+            }))}
+            data={allUsers}
+          />
+        </Box>
+        {modal}
+      </Box >
+    );
   }
 }
-export default UserManagement;

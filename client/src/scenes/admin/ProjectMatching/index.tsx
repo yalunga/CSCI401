@@ -1,150 +1,80 @@
-import * as React from 'react';
-import ProjectsList from './ProjectsList';
-import {
-  Table,
-  Button,
-  FormGroup,
-  FormControl,
-  Grid,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Text, Box, Anchor } from 'grommet';
+import { ClipLoader } from "react-spinners";
+import EditUserModal from '../../../components/EditUserModal';
 
-interface ProjectMatchingProps {
+
+export default () => {
+  const [loading, setLoading]: any = useState(false);
+  const [approvedProjects, setApprovedProjects]: any = useState([]);
+  const [editUser, setEditUser]: any = useState(null);
+
+  useEffect((): any => {
+    const getProjects = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/getprojectsfromsemester/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'));
+      const projects = await response.json();
+      const acceptedProjects = [];
+      for (const project of projects) {
+        if (project.statusId === 2) {
+          acceptedProjects.push(project);
+        }
+      }
+      setApprovedProjects(acceptedProjects);
+    }
+    getProjects();
+  }, []);
+
+  const assignProject = async () => {
+    setLoading(true);
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/assignment`);
+    const json = await response.json();
+    setApprovedProjects(json);
+    setLoading(false);
+    console.log('hi', json);
+  }
+  console.log(approvedProjects);
+  return (
+    <Box width='full' pad='medium' gap='small'>
+      <Box direction='row' justify='between' align='center'>
+        <Text weight='bold' size='large'>Projects</Text>
+        <Box direction='row' gap='small'>
+          {loading && <ClipLoader size={50} color='#990000' />}
+          <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
+            <Text>Assign Projects</Text>
+          </Box>
+        </Box>
+      </Box>
+      <Box width='full' background='white' elevation='small' round='xsmall'>
+        {approvedProjects.length > 0 ? approvedProjects.map((project: any, index: number) => (
+          <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round={index === approvedProjects.length - 1 ? 'xsmall' : 'none'}>
+            <Box direction='row' gap='xsmall' align='center'>
+              <Anchor href={`/admin/project/${project.projectId}/view`}>
+                <Text>{project.projectName}</Text>
+              </Anchor>
+              {project.members.map((student: any) => (
+                <Text size='small' color='dark-4' weight='normal' style={{ cursor: 'pointer' }} onClick={() => setEditUser(student)}>
+                  {student.firstName} {student.lastName}
+                </Text>
+              ))}
+            </Box>
+            <Text size='small' color='dark-4'>{project.stakeholderCompany}</Text>
+          </Box>
+        ))
+          :
+          <Box pad='medium' border={{ side: 'bottom', size: 'xsmall' }} round='xsmall'>
+            Assign projects when ready.
+          </Box>
+        }
+      </Box>
+      {editUser &&
+        <EditUserModal
+          editFirstName={editUser.firstName}
+          editLastName={editUser.lastName}
+          editEmail={editUser.email}
+          editUserType={editUser.userType}
+          closeModal={() => setEditUser(null)}
+        />
+      }
+    </Box>
+  )
 }
-
-interface ProjectMatchingState {
-  projects: Array<Project>;
-  isLoading: boolean;
-  isLaunched: boolean;
-}
-
-export type StudentInfo = {
-  userId: number;
-  firstName: string;
-  lastName: string;
-  rankings: Array<{}>;
-  orderedRankings: Array<{}>;
-};
-
-export type Project = {
-  projectId: number;
-  projectName: string;
-  minSize: number;
-  maxSize: number;
-  members: Array<StudentInfo>;
-};
-
-class ProjectMatching extends React.Component<ProjectMatchingProps, ProjectMatchingState> {
-
-  constructor(props: ProjectMatchingProps) {
-    super(props);
-
-    this.state = {
-      projects: [],
-      isLoading: false,
-      isLaunched: false
-    };
-    this.launch = this.launch.bind(this);
-    this.buttonTitle = this.buttonTitle.bind(this);
-    this.assignProjects = this.assignProjects.bind(this);
-  }
-
-  componentDidMount() {
-    this.setState({ isLoading: false });
-    fetch(`${process.env.REACT_APP_API_URL}/projects/assignment-retrieve`)
-      .then(response => response.json())
-      .then(data => this.setState({ projects: data }));
-  }
-
-  launch = () => {
-    this.setState({ isLaunched: true });
-    fetch(`${process.env.REACT_APP_API_URL}/projects/assignment`)
-      .then(response => response.json())
-      .then(data => this.setState({ projects: data }));
-  }
-
-  buttonTitle() {
-    if (this.state.isLaunched) {
-      return 'Clear Matchings';
-    }
-    return 'Let the games begin.';
-  }
-
-  assignProjects() {
-    var request = new XMLHttpRequest();
-    request.withCredentials = true;
-    request.open('POST', `${process.env.REACT_APP_API_URL}/projects/assign-to-students`);
-    var data = JSON.stringify(
-      this.state.projects
-    );
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(data);
-    alert('Projects Assigned');
-  }
-
-  render() {
-
-    const isLoading = this.state.isLoading;
-    const isLaunched = this.state.isLaunched;
-    const projects = this.state.projects;
-
-    if (isLoading) {
-      return <p>Loading...</p>;
-    }
-
-    const header = (
-      <div style={{ margin: 'auto', float: 'none', width: 1000 }}>
-        <h2>Project Matching</h2>
-        <form>
-          <Grid>
-            <Row>
-              <Col lg={8}>
-                <FormGroup>
-                  <FormControl
-                    type="text"
-                    placeholder="Enter number of ranked projects to consider"
-                  />
-                  <FormControl.Feedback />
-                  <Button type="submit" onClick={this.launch} style={{ margin: 5 }}>
-                    {this.buttonTitle()}
-                  </Button>
-                </FormGroup>
-              </Col>
-              <Col lg={4}>
-                <Button onClick={this.assignProjects} bsStyle="primary" disabled={projects.length === 0}>
-                  Assign Projects
-                  </Button>
-              </Col>
-            </Row>
-          </Grid>
-        </form>
-      </div>
-    );
-
-    if (!isLaunched && !projects.length) {
-      return header;
-    }
-
-    if (isLaunched && !projects.length) {
-      return (
-        <div style={{ margin: 'auto', float: 'none', width: 1000 }}>
-          {header}
-          <p>Loading...</p>
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        {header}
-
-        <ProjectsList projects={this.state.projects} />
-
-      </div>
-    );
-  }
-}
-
-export default ProjectMatching;

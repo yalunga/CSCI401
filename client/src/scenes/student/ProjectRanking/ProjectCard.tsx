@@ -1,144 +1,65 @@
-import * as React from 'react';
-import PropTypes from '../../../../node_modules/prop-types';
-import { DragSource, DropTarget } from 'react-dnd';
-import ItemTypes from './ItemTypes';
-import {
-    Button,
-    Glyphicon,
-    Panel,
-} from 'react-bootstrap';
+import React, { useRef } from 'react'
+import { useDrag } from 'react-dnd'
+import { Box, Stack } from 'grommet';
+import { View } from 'grommet-icons';
 
-const panelStyle = {
-    width: 600,
-};
+import ProjectDescriptionLayer from '../../../components/ProjectDescriptionLayer';
 
-const glyphStyle = {
-    padding: '5px',
-    cursor: 'move',
-    opacity: 0.5,
-};
-
-const cardStyle = {
-    textAlign: 'left',
-    width: 600,
-};
-
-const cardSource = {
-    beginDrag(props: any) {
-        return {
-            id: props.id,
-            originalIndex: props.findCard(props.id).index,
-        };
-    },
-
-    endDrag(props: any, monitor: any) {
-        const { id: droppedId, originalIndex } = monitor.getItem();
-        const didDrop = monitor.didDrop();
-
-        if (!didDrop) {
-            props.moveCard(droppedId, originalIndex);
-        }
-    },
-};
-
-const cardTarget = {
-    canDrop() {
-        return false;
-    },
-
-    hover(props: any, monitor: any) {
-        const { id: draggedId } = monitor.getItem();
-        const { id: overId } = props;
-
-        if (draggedId !== overId) {
-            const { index: overIndex } = props.findCard(overId);
-            props.moveCard(draggedId, overIndex);
-        }
-    },
-};
-
-interface State {
-    open: boolean;
+interface CardProps {
+  isDragging?: boolean;
+  isRanked: boolean;
+  index: number;
+  id: any;
+  name: string;
+  minSize: any;
+  maxSize: any;
+  technologies: any
+  background: any;
+  description: any;
+  stakeholderCompany: string;
+  moveCard: Function;
 }
 
-interface Props {
-    connectDragSource?: PropTypes.func.isRequired;
-    connectDropTarget?: PropTypes.func.isRequired;
-    isDragging?: PropTypes.bool.isRequired;
-    rank: PropTypes.any.isRequired;
-    id: PropTypes.any.isRequired;
-    name: PropTypes.string.isRequired;
-    minSize: PropTypes.any.isRequired;
-    maxSize: PropTypes.any.isRequired;
-    technologies: PropTypes.any.isRequired;
-    background: PropTypes.any.isRequired;
-    description: PropTypes.any.isRequired;
-    moveCard: PropTypes.func.isRequired;
-    findCard: PropTypes.func.isRequired;
+const Card: React.FC<CardProps> = ({
+  id, name, index, isRanked, stakeholderCompany, minSize, maxSize, background, description, technologies
+}) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  const [show, setShow] = React.useState();
+
+  const [{ isDragging }, drag] = useDrag({
+    item: { type: 'card', id, index, isRanked },
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
+
+  const opacity = isDragging ? 0 : 1
+  drag(ref)
+  return (
+    <Box>
+      <Stack anchor='right'>
+        <Box ref={ref} style={{ opacity, cursor: 'pointer' }} elevation='small' pad='small' round='xsmall' background='white'>
+          {name}
+        </Box>
+        <Box align='center' pad='small'>
+          <View style={{ cursor: 'pointer', opacity }} onClick={() => setShow(true)} />
+        </Box>
+      </Stack>
+      {show &&
+        <ProjectDescriptionLayer
+          name={name}
+          stakeholderCompany={stakeholderCompany}
+          minSize={minSize}
+          maxSize={maxSize}
+          background={background}
+          description={description}
+          technologies={technologies}
+          setShow={setShow}
+        />
+      }
+    </Box>
+  )
 }
 
-@DropTarget(ItemTypes.CARD, cardTarget, connect => ({
-    connectDropTarget: connect.dropTarget(),
-}))
-@DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-}))
-
-class ProjectCard extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            open: false,
-        };
-    }
-
-    render() {
-        const {
-            rank,
-            name,
-            minSize,
-            maxSize,
-            isDragging,
-            connectDragSource,
-            connectDropTarget,
-        } = this.props;
-        const opacity = isDragging ? 0 : 1;
-        const padding = 5;
-
-        const title = name + ' (' + minSize + '-' + maxSize + ' students)';
-
-        return connectDragSource(
-            connectDropTarget(
-                <div style={{ opacity }}>
-                    <div onClick={() => this.setState({ open: !this.state.open })} style={cardStyle as any}>
-                        <Glyphicon glyph="menu-hamburger" style={glyphStyle} />
-                        {rank <= 5
-                            ? <strong>{rank + '. ' + title}</strong>
-                            : <small>{title}</small>
-                        }
-                        <Glyphicon glyph={this.state.open ? 'menu-up' : 'menu-down'} style={{ padding }} />
-                    </div>
-                    <br />
-                    <Panel expanded={this.state.open} style={panelStyle}>
-                        <Panel.Collapse>
-                            <Panel.Body>
-                                <strong>Project Description</strong>
-                                <p>{this.props.description}</p>
-                                <br />
-                                <strong>Technologies Expected</strong>
-                                <p>{this.props.technologies}</p>
-                                <br />
-                                <strong>Background Requested</strong>
-                                <p>{this.props.background}</p>
-                            </Panel.Body>
-                        </Panel.Collapse>
-                    </Panel>
-                </div>
-            ),
-        );
-    }
-}
-
-export default ProjectCard;
+export default Card

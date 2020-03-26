@@ -1,93 +1,132 @@
 import * as React from 'react';
-import {
-  Route,
-  BrowserRouter
-} from 'react-router-dom';
-import {
-  Navbar,
-  Nav,
-  NavItem,
-  FormGroup,
-  Button
-} from 'react-bootstrap';
-import {
-  LinkContainer
-} from 'react-router-bootstrap';
-import Home from './Home/index';
-import Profile from './Profile/index';
-import ProjectProposal from './ProjectProposal/index';
-import ProjectPage from './ProjectPage/index';
-const logo = require('../../svg/logo.svg');
+import { Route, BrowserRouter } from 'react-router-dom';
+import { Box, Image, Anchor, Text, Stack } from 'grommet';
+import Home from './Home';
+import Profile from './Profile';
+import ProjectProposals from './ProjectProposals';
+import ProjectPage from './ProjectPage';
 
-interface StakeholderProps {
-}
-interface StakeholderState {
-  currentProject: number;
+
+interface StakeholderNavigationProps { }
+interface StakeholderNavigationState {
+  fallOrSpring: {
+    label: string;
+    value: string;
+  },
+  year: number;
 }
 
-class StakeholderNavigation extends React.Component<StakeholderProps, StakeholderState> {
-  constructor(props: StakeholderProps) {
+export default class StakeholderNavigation extends React.Component<StakeholderNavigationProps, StakeholderNavigationState> {
+  constructor(props: StakeholderNavigationProps) {
     super(props);
-  }
-  componentDidMount() {
     this.state = {
-      currentProject: 0
+      fallOrSpring: {
+        label: 'Fall',
+        value: '0'
+      },
+      year: 2020
     };
+    this.onChangeFallSpring = this.onChangeFallSpring.bind(this);
+    this.onChangeYear = this.onChangeYear.bind(this);
   }
-  logOutClicked() {
+
+  componentDidMount() {
+    let displayYear = 2020;
+    let displaySemester = '0';
+    let sessionYear = sessionStorage.getItem('viewingYear');
+    let sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
+
+    if (sessionYear === null) {
+      sessionStorage.setItem('viewingYear', '2020');
+    } else {
+      displayYear = Number(sessionYear);
+    }
+    if (sessionFallSpring === null) {
+      sessionStorage.setItem('viewingFallSpring', '0');
+    } else {
+      displaySemester = sessionFallSpring;
+    }
+    let fallSpringText = 'Spring';
+    if (displaySemester === '0') {
+      fallSpringText = 'Fall';
+    }
+    this.setState({ year: displayYear, fallOrSpring: { label: fallSpringText, value: displaySemester } });
+  }
+
+  onChangeFallSpring({ option }: any) {
+    sessionStorage.setItem('viewingFallSpring', option.value);
+    this.setState({
+      fallOrSpring: {
+        label: option.label,
+        value: option.value
+      }
+    });
+  }
+
+  onChangeYear({ option }: any) {
+    sessionStorage.setItem('viewingYear', option);
+    this.setState({ year: option });
+  }
+
+  renderOptionsFallSpring(option: any) {
+    return (
+      <Box pad='small'>
+        <Text weight='bold' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+          {option.label}
+        </Text>
+      </Box>
+    );
+  }
+  renderOptionsYear(year: any) {
+    return (
+      <Box pad='small'>
+        <Text weight='bold' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+          {year}
+        </Text>
+      </Box>
+    );
+  }
+
+  logout() {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('userType');
-    sessionStorage.clear();
     window.location.href = '/';
   }
 
   render() {
+    const { fallOrSpring, year } = this.state;
     return (
-      <BrowserRouter>
-        <div>
-          <Navbar>
-            <Navbar.Header>
-              <Navbar.Brand>
-                <img src={logo} className="App-logo" alt="logo" />
-              </Navbar.Brand>
-
-              <Navbar.Brand>
-                <LinkContainer to="/stakeholder">
-                  <a>Home</a>
-                </LinkContainer>
-              </Navbar.Brand>
-            </Navbar.Header>
-            <Nav>
-              <LinkContainer to="/stakeholder/profile">
-                <NavItem eventKey={1}>
-                  Profile
-                </NavItem>
-              </LinkContainer>
-
-              <LinkContainer to="/stakeholder/proposals">
-                <NavItem eventKey={2}>
-                  Project Proposal
-                </NavItem>
-              </LinkContainer>
-
-              <NavItem eventKey={6}>
-                <FormGroup>
-                  <Button type="submit" onClick={this.logOutClicked}>Log Out</Button>
-                </FormGroup>
-              </NavItem>
-            </Nav>
-          </Navbar>
-          <div className="content">
-            <Route exact={true} path="/stakeholder" component={Home} />
-            <Route path="/stakeholder/profile" component={Profile} />
-            {/* <Route path="/stakeholder/proposals" component={ProjectProposal}/> */}
-            <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage} />
-            <Route path="/stakeholder/proposals/:projectId?" handler={ProjectProposal} component={ProjectProposal} />
-          </div>
-        </div>
-      </BrowserRouter>
+      <Box height='full' width='full' background='#FAFBFD'>
+        <Stack anchor='top-right'>
+          <Box width='full' pad={{ horizontal: 'small' }} elevation='xsmall' background='white' direction='row'>
+            <Box width='small'>
+              <Image fit='contain' src='https://16mhpx3atvadrnpip2kwi9or-wpengine.netdna-ssl.com/wp-content/uploads/2016/10/USC-Shield.png' />
+            </Box>
+            <Box width='full' align='center' justify='start' pad={{ horizontal: 'medium' }} gap='medium' direction='row'>
+              <Anchor href='/stakeholder' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Home
+            </Anchor>
+              <Anchor href='/stakeholder/profile' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Profile
+            </Anchor>
+              <Anchor href='/stakeholder/proposals' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Project Proposals
+            </Anchor>
+            </Box>
+          </Box>
+          <Box pad='small' onClick={this.logout} style={{ cursor: 'pointer' }}>
+            <Text size='xsmall' color='dark-5' weight='bold' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+              Logout
+            </Text>
+          </Box>
+        </Stack>
+        <BrowserRouter>
+          <Route exact={true} path="/stakeholder" component={Home} />
+          <Route exact={true} path='/stakeholder/profile' component={Profile} />
+          <Route path="/stakeholder/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage} />
+          <Route exact={true} path='/stakeholder/proposals/:projectId?' handler={ProjectProposals} component={ProjectProposals} />
+        </BrowserRouter>
+      </Box>
     );
   }
 }
-
-export default StakeholderNavigation;

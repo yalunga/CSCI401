@@ -1,178 +1,141 @@
 import * as React from 'react';
-import {
-    Panel,
-    Button,
-    Table,
-    Form,
-    FormGroup,
-    Col,
-    FormControl,
-    ControlLabel
-} from 'react-bootstrap';
-const style = {
-    width: 1000,
-    float: 'none',
-    margin: 'auto'
-};
-interface ProfileProps {
-}
+import { Box, Text, TextInput } from 'grommet';
+import { ClipLoader } from 'react-spinners';
+
+interface ProfileProps { }
 interface User {
-    firstName: string;
-    email: string;
-    phone: string;
-    password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  organization: string;
+  semester: number;
 }
 interface ProfileState {
-    nfirstName: string;
-    nNumber: string;
-    nPassword: string;
-    nConfirm: string;
-    user: User;
-    isLoading: boolean;
-}
-var studentName = '';
-
-class StudentProfile extends React.Component<ProfileProps, ProfileState> {
-    constructor(props: ProfileProps) {
-        super(props);
-        this.state = {
-            nfirstName: '',
-            nNumber: '',
-            nPassword: '',
-            nConfirm: '',
-            user: {
-                firstName: '',
-                email: '',
-                phone: '',
-                password: ''
-            },
-            isLoading: false,
-        };
-        this.submitClicked = this.submitClicked.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
-    componentDidMount() {
-        this.setState({ isLoading: true });
-        this.setState({ isLoading: true });
-        fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email'))
-            .then(response => response.json())
-            .then(data => this.setState({ user: data, isLoading: false }));
-        this.setState({ nfirstName: this.state.user.firstName });
-        this.setState({ nfirstName: this.state.user.phone });
-
-    }
-    submitClicked() {
-        var request = new XMLHttpRequest();
-        request.withCredentials = true;
-        request.open('POST', `${process.env.REACT_APP_API_URL}/users/update-info`);
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        var data = JSON.stringify({
-            firstName: this.state.nfirstName,
-            email: this.state.user.email,
-            phone: this.state.nNumber,
-            password: this.state.nPassword
-        });
-        request.setRequestHeader('Cache-Control', 'no-cache');
-        request.send(data);
-        request.onreadystatechange = function () {
-            window.location.href = '/student/profile';
-        };
-    }
-    handleChange(e: any) {
-        // @ts-ignore
-        this.setState({ [e.target.id]: e.target.value });
-    }
-    render() {
-        if (this.state.isLoading) {
-            return <p>Loading...</p>;
-        }
-
-        return (
-            <div style={style as any}>
-                <Panel>
-                    <Panel.Heading>
-                        Profile
-            </Panel.Heading>
-                    <Panel.Body>
-                        <Form horizontal={true}>
-                            <FormGroup controlId="formHorizontalStudentName">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Name:
-                    </Col>
-                                <Col sm={10}>
-                                    <FormControl
-                                        type="text"
-                                        id="nfirstName"
-                                        defaultValue={this.state.user.firstName}
-                                        onChange={e => this.handleChange(e)}
-                                    />
-                                </Col>
-                            </FormGroup>
-
-                            <FormGroup controlId="formHorizontalStudentEmail">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Email:
-                    </Col>
-                                <Col sm={10}>
-                                    <FormControl
-                                        type="email"
-                                        id="email"
-                                        defaultValue={this.state.user.email}
-                                        onChange={e => this.handleChange(e)}
-                                    />
-                                </Col>
-                            </FormGroup>
-
-                            <FormGroup controlId="formHorizontalStudentPhone">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Phone:
-                    </Col>
-                                <Col sm={10}>
-                                    <FormControl
-                                        type="tel"
-                                        id="nNumber"
-                                        defaultValue={this.state.user.phone}
-                                        onChange={e => this.handleChange(e)}
-                                    />
-                                </Col>
-                            </FormGroup>
-
-                            <FormGroup controlId="formHorizontalStudentName">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    New Password:
-                    </Col>
-                                <Col sm={10}>
-                                    <FormControl
-                                        type="password"
-                                        id="nPassword"
-                                        onChange={e => this.handleChange(e)}
-                                    />
-                                </Col>
-                            </FormGroup>
-
-                            <FormGroup controlId="formHorizontalStudentName">
-                                <Col componentClass={ControlLabel} sm={2}>
-                                    Confirm Password:
-                    </Col>
-                                <Col sm={10}>
-                                    <FormControl
-                                        type="password"
-                                        id="nConfirm"
-                                        onChange={e => this.handleChange(e)}
-                                    />
-                                </Col>
-                            </FormGroup>
-                            <FormGroup>
-                                <Col smOffset={2} sm={10}>
-                                    <Button type="submit" bsStyle="primary" onClick={this.submitClicked}>Edit/Save Profile</Button>
-                                </Col>
-                            </FormGroup>
-                        </Form>
-                    </Panel.Body>
-                </Panel>
-            </div>
-        );
-    }
+  user: User;
+  isLoading: boolean;
 }
 
-export default StudentProfile;
+export default class StudentProfile extends React.Component<ProfileProps, ProfileState> {
+  constructor(props: ProfileProps) {
+    super(props);
+    this.state = {
+      user: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        organization: '',
+        semester: 0
+      },
+      isLoading: false,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+    fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email')) // link
+      .then(response => response.json())
+      .then(data => this.setState({
+        user: data,
+        isLoading: false
+      }))
+      .catch((error) => {
+        console.log('error: ' + error);
+      });
+  }
+
+  handleChange(e: any) {
+    // @ts-ignore
+    var user = { ...this.state.user };
+    // @ts-ignore
+    user[e.target.name] = e.target.value;
+    this.setState({
+      user
+    });
+  }
+
+  handleSubmit(e: any) {
+    this.setState({ isLoading: true })
+    fetch(`${process.env.REACT_APP_API_URL}/users/update-info`, {
+      method: 'POST',
+      body: JSON.stringify({
+        email: sessionStorage.getItem('email'),
+        phone: this.state.user.phone,
+        password: '',
+        firstName: this.state.user.firstName,
+        lastName: this.state.user.lastName,
+        userType: '',
+        semester: this.state.user.semester,
+        organization: this.state.user.organization
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      this.setState({ isLoading: false })
+      return res.json()
+    }).catch((err) => console.log(err));
+  }
+  render() {
+    const { user: { firstName, lastName, phone }, isLoading } = this.state;
+    return (
+      <Box width='full' align='center' pad='medium'>
+        <Box width='large' elevation='xsmall' background='white' round='xxsmall' pad='small' gap='small'>
+          <Box width='full' border={{ side: 'bottom', color: 'light-4', size: '1px' }} pad={{ vertical: 'xsmall' }}>
+            <Text weight='bold'>Edit Profile</Text>
+          </Box>
+          {!isLoading ?
+            <Box gap='medium'>
+              <Box gap='xxxsmall'>
+                <Text size='small' color='dark-4'>First Name</Text>
+                <Box border='bottom'>
+                  <TextInput
+                    plain
+                    style={{ padding: 1 }}
+                    name='firstName'
+                    onChange={this.handleChange}
+                    value={firstName}
+                  />
+                </Box>
+              </Box>
+              <Box gap='xxxsmall'>
+                <Text size='small' color='dark-4'>Last Name</Text>
+                <Box border='bottom'>
+                  <TextInput
+                    plain
+                    style={{ padding: 1 }}
+                    name='lastName'
+                    onChange={this.handleChange}
+                    value={lastName}
+                  />
+                </Box>
+              </Box>
+              <Box gap='xxxsmall'>
+                <Text size='small' color='dark-4'>Phone</Text>
+                <Box border='bottom'>
+                  <TextInput
+                    plain
+                    style={{ padding: 1 }}
+                    name='phone'
+                    onChange={this.handleChange}
+                    value={phone}
+                  />
+                </Box>
+              </Box>
+              <Box background='brand' width='small' pad='xsmall' align='center' round='xxsmall' alignSelf='start' onClick={this.handleSubmit}>
+                <Text>Edit</Text>
+              </Box>
+            </Box>
+            :
+            <Box width='full' align='center' pad='small'>
+              <ClipLoader size={150} color='#990000' />
+            </Box>
+          }
+        </Box>
+      </Box>
+    );
+  }
+}
