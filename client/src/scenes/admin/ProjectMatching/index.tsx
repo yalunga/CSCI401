@@ -8,18 +8,22 @@ export default () => {
   const [loading, setLoading]: any = useState(false);
   const [approvedProjects, setApprovedProjects]: any = useState([]);
   const [editUser, setEditUser]: any = useState(null);
+  const [hasRunAlgorthm, setHasRunAlgorithm]: any = useState(false);
 
   useEffect((): any => {
     const getProjects = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/getprojectsfromsemester/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'));
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/assignment-retrieve/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'));
       const projects = await response.json();
-      const acceptedProjects = [];
-      for (const project of projects) {
-        if (project.statusId === 2) {
-          acceptedProjects.push(project);
+      console.log(projects);
+      if (projects) {
+        const acceptedProjects = [];
+        for (const project of projects) {
+          if (project.statusId === 2) {
+            acceptedProjects.push(project);
+          }
         }
+        setApprovedProjects(acceptedProjects);
       }
-      setApprovedProjects(acceptedProjects);
     }
     getProjects();
   }, []);
@@ -30,7 +34,18 @@ export default () => {
     const json = await response.json();
     setApprovedProjects(json);
     setLoading(false);
-    console.log('hi', json);
+    setHasRunAlgorithm(true);
+  }
+
+  const confirmAssignment = async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/assign-to-students/${sessionStorage.getItem('viewingYear')}/${sessionStorage.getItem('viewingFallSpring')}`, {
+      method: 'POST',
+      body: JSON.stringify(approvedProjects),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(response);
   }
   console.log(approvedProjects);
   return (
@@ -42,6 +57,11 @@ export default () => {
           <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
             <Text>Assign Projects</Text>
           </Box>
+          {hasRunAlgorthm && (
+            <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => confirmAssignment()}>
+              <Text>Confirm Assignment</Text>
+            </Box>
+          )}
         </Box>
       </Box>
       <Box width='full' background='white' elevation='small' round='xsmall'>

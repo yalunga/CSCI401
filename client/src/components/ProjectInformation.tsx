@@ -89,7 +89,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
         }),
         headers: {
           'Content-Type': 'application/json'
-        },
+        }
       })
         .then((res) => res.text())
         .then((responsetext => console.log('dabao here: ' + responsetext)))
