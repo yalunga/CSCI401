@@ -137,8 +137,9 @@ public class ProjectService {
       ArrayList<Project> projects = new ArrayList<>(projectsVector);
 			ArrayList<Student> students = new ArrayList<>(studentsVector);
 
-      ProjectAssignment assignment;
-      print(new Project[students.size() - 1], projects, students, 0);
+			ProjectAssignment assignment;
+			HashMap<Project, Integer> assignedValue = new HashMap<>();
+      print(new Project[students.size() - 1], projects, students, 0, );
 
     } catch (Exception e) {
       System.out.println("Error running brute force algorithm.");
@@ -148,11 +149,11 @@ public class ProjectService {
     return savedProjects;
   }
 
-  private void print(Project[] store, List<Project> projects, List<Student> students, int depth) {
+  private void print(Project[] store, List<Project> projects, List<Student> students, int depth, HashMap<Project, Integer> assignedValue) {
     for(Project p: projects) {
       if(depth < store.length) {
         store[depth] = p;
-        print(store, projects, students, depth + 1);
+        print(store, projects, students, depth + 1, assignedValue);
       } else {
           for(int i = 0; i < store.length; i++) {
             System.out.println(students.get(i).getFirstName() + " " + students.get(i).getLastName() + ": " + store[i].getProjectName() + ", ");

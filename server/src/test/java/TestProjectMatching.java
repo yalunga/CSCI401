@@ -1,4 +1,3 @@
-package capstone.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import capstone.model.Project;
 import capstone.model.users.Student;
+import capstone.service.ProjectService;
+import capstone.service.UserService;
 
 
 public class TestProjectMatching {
