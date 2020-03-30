@@ -127,6 +127,41 @@ public class ProjectService {
 		savedProjects = maxAlgorithm.assignedProjects();
 		return savedProjects;
 	}
+
+	public List<Project> runBruteForceAlgorithm() {
+    try {
+      System.out.println("Running brute force algorithm.");
+      int targetSemester = 2020;
+
+      int targetFallSpring = 0;
+      ArrayList<Project> projects = new ArrayList<>(projectsVector);
+			ArrayList<Student> students = new ArrayList<>(studentsVector);
+
+      ProjectAssignment assignment;
+      print(new Project[students.size() - 1], projects, students, 0);
+
+    } catch (Exception e) {
+      System.out.println("Error running brute force algorithm.");
+      e.printStackTrace();
+    }
+
+    return savedProjects;
+  }
+
+  private void print(Project[] store, List<Project> projects, List<Student> students, int depth) {
+    for(Project p: projects) {
+      if(depth < store.length) {
+        store[depth] = p;
+        print(store, projects, students, depth + 1);
+      } else {
+          for(int i = 0; i < store.length; i++) {
+            System.out.println(students.get(i).getFirstName() + " " + students.get(i).getLastName() + ": " + store[i].getProjectName() + ", ");
+					}
+					System.out.println(students.get(depth).getFirstName() + " " + students.get(depth).getLastName() + ": " + p.getProjectName() + ", ");
+					System.out.println("----------------");
+      }
+    }
+  }
 	
 	public void initTables() {
 		System.out.println("INIT TABLES");
@@ -206,13 +241,13 @@ public class ProjectService {
         }
         
         for(Student s: studentsVector) {
-        	System.out.println("student name: " + s.getLastName());
+        	// System.out.println("student name: " + s.getLastName());
 			for (Map.Entry<String, Integer> entry : s.rankings.entrySet()) {
 				Project p  = GetProjectWithName(projectsVector, entry.getKey());
 				int projectId = p.getProjectId();
-				System.out.println("projectId: " + projectId + ", Ranking: " + entry.getValue());
+				// System.out.println("projectId: " + projectId + ", Ranking: " + entry.getValue());
 				Long studentId = s.getUserId();
-				System.out.println("studentId: " + studentId);
+				// System.out.println("studentId: " + studentId);
 				
 				rankings.add(new Ranking(studentId, projectId, entry.getValue()));
 				s.orderedRankings.add(p.getProjectName());
