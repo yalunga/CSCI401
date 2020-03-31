@@ -12,6 +12,8 @@ import capstone.model.users.User;
 @Transactional
 public interface StudentRepository extends UserBaseRepository<Student> {
   Student findByUserId(Long user_id);
-	List<User> findAllByProject(Project project); /* ... */ 
+
+  List<User> findAllByProjectId(int projectId); /* ... */
+
   ArrayList<Student> findBySemesterAndFallSpring(int semester, int fallSpring);
 }

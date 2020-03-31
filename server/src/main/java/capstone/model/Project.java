@@ -38,7 +38,7 @@ public class Project implements Comparable<Object> {
   // information that correlates directly to db.Projects
   @Id
   @GeneratedValue
-  int projectId;
+  Integer projectId;
   String projectName;
   int statusId;
 
@@ -122,11 +122,11 @@ public class Project implements Comparable<Object> {
     this.projSatScore = projSatScore;
   }
 
-  public int getProjectId() {
+  public Integer getProjectId() {
     return projectId;
   }
 
-  public void setProjectId(int projectId) {
+  public void setProjectId(Integer projectId) {
     this.projectId = projectId;
   }
 
