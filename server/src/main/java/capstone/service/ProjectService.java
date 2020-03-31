@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import capstone.model.Global;
 import capstone.model.Project;
 import capstone.model.Ranking;
 import capstone.model.users.Student;
+import capstone.model.AdminConfiguration;
 import capstone.repository.AdminConfigurationRepository;
 import capstone.repository.GlobalRepository;
 import capstone.repository.ProjectsRepository;
@@ -231,43 +234,42 @@ public class ProjectService {
     return repository.findByProjectId(projectId);
   }
 
-  public void saveAssignment(ArrayList<Project> projects) {
-    /*
-     * AdminConfiguration ac = configRepo.findById(Long.valueOf(1)); if (ac == null)
-     * { ac = new AdminConfiguration(); } ArrayList<Project> finalProjects =
-     * (ArrayList<Project>) ac.getAssignment(); for (Project p : projects) { Project
-     * saveProj = findByProjectId(p.getProjectId()); List<Student> saveMembers =
-     * saveProj.getMembers(); for (Student s : p.getMembers()) {
-     * saveMembers.add(userService.findByUserId(s.getUserId())); }
-     * saveProj.setMembers(saveMembers); finalProjects.add(saveProj); }
-     * ac.setAssignment(finalProjects); configRepo.save(ac);
-     */
-    savedProjects = projects;
+  public void saveAssignment(ArrayList<Project> projects, int semester, int fallSpring) {
+
+    AdminConfiguration ac = configRepo.findBySemesterAndFallSpring(semester, fallSpring);
+    if (ac == null) {
+      ac = new AdminConfiguration();
+      ac.setSemester(semester);
+      ac.setFallSpring(fallSpring);
+    }
+    ArrayList<Project> finalProjects = (ArrayList<Project>) ac.getAssignment();
+    for (Project p : projects) {
+      Project saveProj = findByProjectId(p.getProjectId());
+      List<Student> saveMembers = saveProj.getMembers();
+      for (Student s : p.getMembers()) {
+        saveMembers.add(userService.findByUserId(s.getUserId()));
+      }
+      saveProj.setMembers(saveMembers);
+      finalProjects.add(saveProj);
+    }
+    ac.setAssignment(finalProjects);
+    configRepo.save(ac);
   }
 
-  public List<Project> getExistingAssignments() {
-
-    Global g = globalRepo.findAll().get(0);
-    int fall_spring = g.getFallSpring();
-    int semester = g.getSemester();
-
-    List<Project> allProjects = findAll();
-    List<Project> currentProjects = new ArrayList<Project>();
-    for (Project p : allProjects) {
-      if (p.getSemester() == semester && p.getFallSpring() == fall_spring) {
-        currentProjects.add(new Project(p));
-      }
+  public List<Project> getExistingAssignments(int semester, int fallSpring) {
+    AdminConfiguration ac = configRepo.findBySemesterAndFallSpring(semester, fallSpring);
+    if (ac == null) {
+      return new ArrayList<Project>();
     }
+    List<Project> currentProjects = ac.getAssignment();
 
     Collection<Student> allStudents = userService.getStudents();
-    for (Iterator<Student> it = allStudents.iterator(); it.hasNext();) {
-      Student s = it.next();
-      for (Iterator<Project> itP = currentProjects.iterator(); itP.hasNext();) {
-        Project p = itP.next();
+    for (Student student : allStudents) {
+      for (Project project : currentProjects) {
         // p.members = new ArrayList<Student>();
-        if (p.getProjectId() == s.getProject().getProjectId()) {
-          System.out.println(s.getFirstName() + s.getProject().getProjectId());
-          (p.members).add(s);
+        if (student.getProjectId() != null && project.getProjectId() == student.getProjectId()) {
+          System.out.println(student.getLastName() + " " + student.getProjectId());
+          (project.members).add(student);
         }
       }
     }

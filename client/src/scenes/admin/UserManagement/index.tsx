@@ -11,6 +11,7 @@ import {
 } from 'grommet';
 import EmailForms from './EmailForms';
 import TableHeader from '../../TableHelpers/TableHeaders';
+import EditUserModal from '../../../components/EditUserModal';
 
 interface UserListProps { }
 
@@ -52,7 +53,6 @@ export default class UserManagement extends React.Component<UserListProps, UserL
     this.closeModal = this.closeModal.bind(this);
     this.deleteUser = this.deleteUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.onChangeUserType = this.onChangeUserType.bind(this);
   }
 
   componentDidMount() {
@@ -103,9 +103,6 @@ export default class UserManagement extends React.Component<UserListProps, UserL
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  onChangeUserType({ option }: any) {
-    this.setState({ editUserType: option });
-  }
 
   deleteUser(user: User) {
     this.setState({ userToDelete: user });
@@ -121,25 +118,6 @@ export default class UserManagement extends React.Component<UserListProps, UserL
     window.location.reload();
   }
 
-  submitEdit = () => {
-    var request = new XMLHttpRequest();
-    request.withCredentials = true;
-    request.open('POST', `${process.env.REACT_APP_API_URL}/users/update-info`);
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    var data = JSON.stringify({
-      firstName: this.state.editFirstName,
-      lastName: this.state.editLastName,
-      userType: this.state.editUserType,
-      semester: this.state.editSemester,
-      email: this.state.editEmail,
-      originalEmail: this.state.originalEmail
-    });
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(data);
-    alert('User has been updated succesfully!');
-    window.location.reload();
-    this.setState({ userToEdit: undefined });
-  }
 
   render() {
     const columns = [
@@ -192,59 +170,14 @@ export default class UserManagement extends React.Component<UserListProps, UserL
     let modal = <div></div>;
     if (userToEdit !== undefined) {
       modal = (
-        <Layer position='top' modal margin={{ top: 'xlarge' }}>
-          <Box pad='medium' gap='small'>
-            <Heading level={3} margin='none'>Edit</Heading>
-            <Box direction='row' gap='small' width='full'>
-              <Box basis='1/3' align='center' justify='center'>
-                <Text size='medium' weight='bold'>First Name</Text>
-              </Box>
-              <Box border='all' round='xxsmall' width='medium'>
-                <TextInput height='small' plain value={this.state.editFirstName} name='editFirstName' onChange={this.handleChange} />
-              </Box>
-            </Box>
-            <Box direction='row' gap='small' width='full'>
-              <Box basis='1/3' align='center' justify='center'>
-                <Text size='medium' weight='bold'>Last Name</Text>
-              </Box>
-              <Box border='all' round='xxsmall' width='medium'>
-                <TextInput height='small' plain value={this.state.editLastName} name='editLastName' onChange={this.handleChange} />
-              </Box>
-            </Box>
-            <Box direction='row' gap='small' width='full'>
-              <Box basis='1/3' align='center' justify='center'>
-                <Text size='medium' weight='bold'>Email</Text>
-              </Box>
-              <Box border='all' round='xxsmall' width='medium'>
-                <TextInput height='small' plain value={this.state.editEmail} name='editEmail' onChange={this.handleChange} />
-              </Box>
-            </Box>
-            <Box direction='row' gap='small' width='full'>
-              <Box basis='1/3' align='center' justify='center'>
-                <Text size='medium' weight='bold'>User Type</Text>
-              </Box>
-              <Box border='all' round='xxsmall' width='medium'>
-                <Select options={['Admin', 'Student', 'Stakeholder']} plain value={this.state.editUserType} name='editUserType' onChange={this.onChangeUserType} />
-              </Box>
-            </Box>
-            <Box direction='row' gap='small' width='full'>
-              <Box basis='1/3' align='center' justify='center'>
-                <Text size='medium' weight='bold'>Project Assignment</Text>
-              </Box>
-              <Box border='all' round='xxsmall' width='medium'>
-                <Select options={[]} plain />
-              </Box>
-            </Box>
-            <Box width='full' justify='end' direction='row' gap='small'>
-              <Box width='xsmall' elevation='xsmall' background='#FFCB02' pad='xsmall' align='center' round='xxsmall' className='pointer' onClick={this.submitEdit}>
-                <Text>Edit</Text>
-              </Box>
-              <Box width='xsmall' elevation='xsmall' background='light-4' pad='xsmall' align='center' round='xxsmall' className='pointer' onClick={this.closeModal}>
-                <Text>Cancel</Text>
-              </Box>
-            </Box>
-          </Box>
-        </Layer>
+        <EditUserModal
+          editFirstName={this.state.editFirstName}
+          editLastName={this.state.editLastName}
+          editEmail={this.state.editEmail}
+          editUserType={this.state.editUserType}
+          editSemester={this.state.editSemester}
+          closeModal={this.closeModal}
+        />
       );
     }
     return (
