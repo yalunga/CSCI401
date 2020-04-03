@@ -25,7 +25,7 @@ public class TestProjectMatchingHope {
 		// 	System.out.println("");
 		// }
 
-		ps.runBruteForceAlgorithm();
+		//ps.runBruteForceAlgorithm();
 		
 		System.out.println("Succcessful Algorithm");
 	}

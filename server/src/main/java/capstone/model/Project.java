@@ -270,10 +270,16 @@ public class Project implements Comparable<Object> {
 			System.out.println("proj id:" + getProjectId());
 			double totalScore = 0;
 			if (!members.isEmpty()) {
+				System.out.println("members not empty");
 			for (Student student : members) {
-				int ranking = student.getRankings().get(this.projectName);
+				System.out.println("student " + student.getLastName());
+				System.out.println(student.getRankings().containsKey(this.projectName));
+				if (student.getRankings().containsKey(this.projectName)) {
+					int ranking = student.getRankings().get(this.projectName);
+				
 				//System.out.println("ranking: " + ranking);
-				totalScore += ProjectAssignment.getStudentSatScore(ranking);
+					totalScore += ProjectAssignment.getStudentSatScore(ranking);
+				}
 			}
 			}
 			

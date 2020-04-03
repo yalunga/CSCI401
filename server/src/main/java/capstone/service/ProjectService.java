@@ -51,7 +51,7 @@ public class ProjectService {
 	List<Ranking> rankings = new ArrayList<Ranking>();
 	public List<Project> runAlgorithm() {
 		System.out.println("RUNNING ALGORITHM");
-		for (int iteration = 0; iteration < 30; iteration++) {
+		for (int iteration = 0; iteration < 1; iteration++) {
 			
 			System.out.println("iteration " + iteration + "!");
 			//Global g = globalRepo.findAll().get(0);
@@ -128,41 +128,6 @@ public class ProjectService {
 		return savedProjects;
 	}
 
-	public List<Project> runBruteForceAlgorithm() {
-    try {
-      System.out.println("Running brute force algorithm.");
-      int targetSemester = 2020;
-
-      int targetFallSpring = 0;
-      ArrayList<Project> projects = new ArrayList<>(projectsVector);
-			ArrayList<Student> students = new ArrayList<>(studentsVector);
-
-			ProjectAssignment assignment;
-			HashMap<Project, Integer> assignedValue = new HashMap<>();
-      print(new Project[students.size() - 1], projects, students, 0, );
-
-    } catch (Exception e) {
-      System.out.println("Error running brute force algorithm.");
-      e.printStackTrace();
-    }
-
-    return savedProjects;
-  }
-
-  private void print(Project[] store, List<Project> projects, List<Student> students, int depth, HashMap<Project, Integer> assignedValue) {
-    for(Project p: projects) {
-      if(depth < store.length) {
-        store[depth] = p;
-        print(store, projects, students, depth + 1, assignedValue);
-      } else {
-          for(int i = 0; i < store.length; i++) {
-            System.out.println(students.get(i).getFirstName() + " " + students.get(i).getLastName() + ": " + store[i].getProjectName() + ", ");
-					}
-					System.out.println(students.get(depth).getFirstName() + " " + students.get(depth).getLastName() + ": " + p.getProjectName() + ", ");
-					System.out.println("----------------");
-      }
-    }
-  }
 	
 	public void initTables() {
 		System.out.println("INIT TABLES");
