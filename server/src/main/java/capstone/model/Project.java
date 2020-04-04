@@ -296,7 +296,7 @@ public class Project implements Comparable<Object> {
     double totalScore = 0;
     if (!members.isEmpty()) {
       for (Student student : members) {
-        int ranking = -1;
+        int ranking = 0;
         for (Ranking r : rankings) {
           if (r.getStudentId() == student.getId() && r.getProjectId() == this.projectId) {
             ranking = r.getRank();

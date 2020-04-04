@@ -22,6 +22,7 @@ import capstone.service.ProjectService;
 public class ProjectAssignment {
 
   private ArrayList<Project> projects;
+  private ArrayList<Project> eliminatedProjects;
   private ArrayList<Student> students;
   private ArrayList<Student> unassignedStudents;
   private List<Ranking> rankings;
@@ -202,6 +203,7 @@ public class ProjectAssignment {
     EliminateProjects();
     Bump();
 
+    PlaceUnassignedStudents();
     // PrintProjects();
     // JSONOutput();
 
@@ -220,7 +222,7 @@ public class ProjectAssignment {
     System.out.print("Satisfaction: " + algoSatScore);
     // writer.close();
 
-    PlaceUnassignedStudents();
+    
 
     // Clean up duplicate assignments
     PrintProjects();
@@ -232,6 +234,26 @@ public class ProjectAssignment {
       System.out.print(p.getProjectName() + " ");
       p.printMembers();
     }
+    System.out.println("unassigned students: " + unassignedStudents.size());
+    ArrayList<Integer> listOfStudents = new ArrayList<Integer>();
+    for (Project p : projects) {
+    	for (Student s: p.getMembers()) {
+    		listOfStudents.add(Integer.parseInt(s.getLastName()));
+    	}
+    }
+    Collections.sort(listOfStudents);
+    System.out.println("LIST OF STUDENTS: ");
+    ArrayList<Integer> duplicates = new ArrayList<Integer>();
+    int j = 1;
+	for (Integer i : listOfStudents) {
+		if (duplicates.contains(i)) {
+			System.out.println("DUPLICATE");
+		}
+		System.out.print(i + " ");
+		if (!duplicates.contains(i)) duplicates.add(i);
+		j++;
+	}
+	System.out.println("");
   }
 
   /*
@@ -318,7 +340,7 @@ public class ProjectAssignment {
   }
 
   void EliminateProjects() {
-
+	  eliminatedProjects = new ArrayList<Project>();
     for (int i = projects.size() - 1; i >= 0; i--) {
       Project p = projects.get(i);
       // && unassignedStudents.size() >= GetTotalMaxSpots()
@@ -331,8 +353,8 @@ public class ProjectAssignment {
           }
         }
         p.members.clear();
-
-        projects.remove(i);
+        eliminatedProjects.add(p);
+        projects.remove(p);
 
       }
     }
@@ -399,37 +421,55 @@ public class ProjectAssignment {
 
   void assignLeftoverStudents() {
     Collections.shuffle(unassignedStudents);
-    System.out.println("number of unassignedStudents: " + unassignedStudents.size());
-    ArrayList<Project> unassignedProjects = new ArrayList<Project>();
-    for (Project p : projects) {
-      if (p.members.size() < p.getMinSize()) {
-        unassignedProjects.add(p);
-      }
+    while (unassignedStudents.size() > 0) {
+	    System.out.println("number of unassignedStudents: " + unassignedStudents.size());
+	    ArrayList<Project> unassignedProjects = new ArrayList<Project>();
+	    for (Project p : projects) {
+	      if (p.members.size() < p.getMinSize()) {
+	    	System.out.println("ADDING UNASSIGNED PROJECT");
+	        unassignedProjects.add(p);
+	      }
+	    }
+	    for (Project p: eliminatedProjects) {
+			projects.add(p);
+			unassignedProjects.add(p);
+		}
+	    for (Project p : unassignedProjects) {
+	      System.out.println("unassigned project " + p.getProjectId());
+	      ArrayList<Student> unassignedStudentsCopy = new ArrayList<Student>();
+	      for (int i = 0; i < unassignedStudents.size(); i++) {
+	        unassignedStudentsCopy.add(unassignedStudents.get(i));
+	      }
+	      for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
+	
+	        Student s = it.next();
+	        System.out.println("ASSIGNING UNASSIGNED STUDENT" + s.getLastName());
+	        if (p.members.size() < p.getMaxSize()) {
+	          p.members.add(s);
+	          unassignedStudentsCopy.remove(s);
+	        } else {
+	          break;
+	        }
+	      }
+	      unassignedStudents.clear();
+	      for (int i = 0; i < unassignedStudentsCopy.size(); i++) {
+	        unassignedStudents.add(unassignedStudentsCopy.get(i));
+	      }
+	      unassignedStudentsCopy.clear();
+	      
+	    }
     }
+    for (int i = projects.size() - 1; i >= 0; i--) {
+		Project p = projects.get(i);
+		// && unassignedStudents.size() >= GetTotalMaxSpots()
+		if (p.members.size() == 0) {
+			System.out.println("Eliminated " + p.getProjectName());
 
-    for (Project p : unassignedProjects) {
-      ArrayList<Student> unassignedStudentsCopy = new ArrayList<Student>();
-      for (int i = 0; i < unassignedStudents.size(); i++) {
-        unassignedStudentsCopy.add(unassignedStudents.get(i));
-      }
-      for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
+			projects.remove(i);
 
-        Student s = it.next();
-        System.out.println("ASSIGNING UNASSIGNED STUDENT" + s.getLastName());
-        if (p.members.size() < p.getMaxSize()) {
-          p.members.add(s);
-          unassignedStudentsCopy.remove(s);
-        } else {
-          break;
-        }
-      }
-      unassignedStudents.clear();
-      for (int i = 0; i < unassignedStudentsCopy.size(); i++) {
-        unassignedStudents.add(unassignedStudentsCopy.get(i));
-      }
-      unassignedStudentsCopy.clear();
 
-    }
+		}
+	}
   }
 
   Project GetProjectWithName(String projname) {
