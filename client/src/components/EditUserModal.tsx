@@ -7,11 +7,22 @@ import {
   Heading,
   Select
 } from 'grommet';
-export default ({ editFirstName, editLastName, editEmail, editUserType, editSemester, closeModal }: any) => {
+export default ({
+  editFirstName,
+  editLastName,
+  editEmail,
+  editUserType,
+  editSemester,
+  editProject,
+  closeModal,
+  projects,
+  moveStudent }: any
+) => {
   const [firstName, setFirstName] = useState(editFirstName);
   const [lastName, setLastName] = useState(editLastName);
   const [email, setEmail] = useState(editEmail);
   const [userType, setUserType] = useState(editUserType);
+  const [userProject, setUserProject] = useState(editProject);
 
   const onChangeUserType = ({ option }: any) => {
     setUserType(option);
@@ -32,8 +43,7 @@ export default ({ editFirstName, editLastName, editEmail, editUserType, editSeme
     });
     request.setRequestHeader('Cache-Control', 'no-cache');
     request.send(data);
-    alert('User has been updated succesfully!');
-    window.location.reload();
+    moveStudent(userProject.projectId);
     closeModal();
   }
 
@@ -78,7 +88,23 @@ export default ({ editFirstName, editLastName, editEmail, editUserType, editSeme
             <Text size='medium' weight='bold'>Project Assignment</Text>
           </Box>
           <Box border='all' round='xxsmall' width='medium'>
-            <Select options={[]} plain />
+            <Select
+              options={projects}
+              plain
+              children={(option: any) => (
+                <Box pad='small'>
+                  <Text>{option.projectName}</Text>
+                </Box>
+              )}
+              value={
+                <Box pad='small'>
+                  <Text>
+                    {userProject ? userProject.projectName : ''}
+                  </Text>
+                </Box>
+              }
+              onChange={({ option }) => setUserProject(option)}
+            />
           </Box>
         </Box>
         <Box width='full' justify='end' direction='row' gap='small'>
