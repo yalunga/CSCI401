@@ -47,6 +47,35 @@ export default () => {
     });
     console.log(response);
   }
+
+  const getProjectFromStudentId = (studentId: number) => {
+    for (const project of approvedProjects) {
+      for (const student of project.members) {
+        if (student.userId === studentId) {
+          return project;
+        }
+      }
+    }
+  }
+
+  const moveStudent = (projectId: number) => {
+    const prevProjects = approvedProjects;
+    // removing student from the project they were assigned
+    for (const project of prevProjects) {
+      for (const student of project.members) {
+        if (student.userId === editUser.userId) {
+          project.members.splice(project.members.indexOf(editUser), 1);
+        }
+      }
+    }
+    // adding student to new project
+    for (const project of prevProjects) {
+      if (project.projectId === projectId) {
+        project.members.push(editUser);
+      }
+    }
+    setHasRunAlgorithm(true);
+  }
   console.log(approvedProjects);
   return (
     <Box width='full' pad='medium' gap='small'>
@@ -92,7 +121,10 @@ export default () => {
           editLastName={editUser.lastName}
           editEmail={editUser.email}
           editUserType={editUser.userType}
+          editProject={getProjectFromStudentId(editUser.userId)}
           closeModal={() => setEditUser(null)}
+          projects={approvedProjects}
+          moveStudent={moveStudent}
         />
       }
     </Box>
