@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Box, Anchor } from 'grommet';
 import { ClipLoader } from "react-spinners";
-import EditUserModal from '../../../components/EditUserModal';
+import EditProjectAssignmentModal from '../../../components/EditProjectAssignmentModal';
 
 
 export default () => {
@@ -45,7 +45,8 @@ export default () => {
         'Content-Type': 'application/json'
       }
     });
-    console.log(response);
+    console.log(await response.json());
+    alert('Assignment Confirmed');
   }
 
   const getProjectFromStudentId = (studentId: number) => {
@@ -68,10 +69,12 @@ export default () => {
         }
       }
     }
-    // adding student to new project
-    for (const project of prevProjects) {
-      if (project.projectId === projectId) {
-        project.members.push(editUser);
+    if (projectId !== null) {
+      // adding student to new project
+      for (const project of prevProjects) {
+        if (project.projectId === projectId) {
+          project.members.push(editUser);
+        }
       }
     }
     setHasRunAlgorithm(true);
@@ -116,11 +119,9 @@ export default () => {
         }
       </Box>
       {editUser &&
-        <EditUserModal
+        <EditProjectAssignmentModal
           editFirstName={editUser.firstName}
           editLastName={editUser.lastName}
-          editEmail={editUser.email}
-          editUserType={editUser.userType}
           editProject={getProjectFromStudentId(editUser.userId)}
           closeModal={() => setEditUser(null)}
           projects={approvedProjects}

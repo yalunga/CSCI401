@@ -46,6 +46,10 @@ public class UserService {
     return studentRepo.findAll();
   }
 
+  public ArrayList<Student> getStudentsBySemester(int semester, int fallSpring) {
+    return studentRepo.findBySemesterAndFallSpring(semester, fallSpring);
+  }
+
   public Collection<Stakeholder> getStakeholders() {
     return stakeholderRepo.findAll();
   }

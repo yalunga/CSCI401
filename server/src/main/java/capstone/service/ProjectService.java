@@ -242,7 +242,7 @@ public class ProjectService {
       ac.setSemester(semester);
       ac.setFallSpring(fallSpring);
     }
-    ArrayList<Project> finalProjects = (ArrayList<Project>) ac.getAssignment();
+    ArrayList<Project> finalProjects = new ArrayList<Project>();
     for (Project p : projects) {
       Project saveProj = findByProjectId(p.getProjectId());
       List<Student> saveMembers = saveProj.getMembers();
@@ -263,16 +263,17 @@ public class ProjectService {
     }
     List<Project> currentProjects = ac.getAssignment();
 
-    Collection<Student> allStudents = userService.getStudents();
-    for (Student student : allStudents) {
-      for (Project project : currentProjects) {
-        // p.members = new ArrayList<Student>();
-        if (student.getProjectId() != null && project.getProjectId() == student.getProjectId()) {
-          System.out.println(student.getLastName() + " " + student.getProjectId());
-          (project.members).add(student);
-        }
-      }
-    }
+    // Collection<Student> allStudents = userService.getStudents();
+    // for (Student student : allStudents) {
+    // for (Project project : currentProjects) {
+    // // p.members = new ArrayList<Student>();
+    // if (student.getProjectId() != null && project.getProjectId() ==
+    // student.getProjectId()) {
+    // System.out.println(student.getLastName() + " " + student.getProjectId());
+    // (project.members).add(student);
+    // }
+    // }
+    // }
     return currentProjects;
   }
 
