@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Route, BrowserRouter } from 'react-router-dom';
 import { Box, Image, Anchor, Text, Stack } from 'grommet';
+import ProfilePage from './Profile';
+import ProjectRankingPage from './ProjectRanking';
+
+import WeeklyReviews from './WeeklyReviews/index';
+//import FinalPresentationReview from './FinalPresentationReviews/index';
 
 interface StakeholderNavigationProps { }
 interface StakeholderNavigationState {
@@ -24,26 +29,15 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
   }
 
   componentDidMount() {
-    let displayYear = 2020;
-    let displaySemester = '0';
-    let sessionYear = sessionStorage.getItem('viewingYear');
-    let sessionFallSpring = sessionStorage.getItem('viewingFallSpring');
-
-    if (sessionYear === null) {
-      sessionStorage.setItem('viewingYear', '2020');
-    } else {
-      displayYear = Number(sessionYear);
-    }
-    if (sessionFallSpring === null) {
-      sessionStorage.setItem('viewingFallSpring', '0');
-    } else {
-      displaySemester = sessionFallSpring;
-    }
-    let fallSpringText = 'Spring';
-    if (displaySemester === '0') {
-      fallSpringText = 'Fall';
-    }
-    this.setState({ year: displayYear, fallOrSpring: { label: fallSpringText, value: displaySemester } });
+    fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email')) // link
+      .then(response => response.json())
+      .then(data => {
+        sessionStorage.setItem('viewingYear', data.semester);
+        sessionStorage.setItem('viewingFallSpring', data.fallSpring);
+      })
+      .catch((error) => {
+        console.log('error: ' + error);
+      });
   }
 
 
@@ -72,6 +66,9 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
               <Anchor href='/student/project' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Your Project
               </Anchor>
+              <Anchor href='/student/weekly_status' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                 Weekly Status Reviews
+              </Anchor>
               <Anchor href='/student/review' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Final Presentation Reviews
               </Anchor>
@@ -84,10 +81,11 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
           </Box>
         </Stack>
         <BrowserRouter>
-          <Route exact={true} path="/student" />
-          <Route path="/student/ranking" />
+          <Route exact={true} path="/student" component={ProfilePage} />
+          <Route path="/student/ranking" component={ProjectRankingPage} />
           <Route exact={true} path='/student/project' />
-          <Route exact={true} path='/student/review' />
+          <Route exact={true} path='/student/weekly_status' component={WeeklyReviews}/>
+          {/* <Route exact={true} path='/student/review' component={FinalPresentationReview} /> */}
         </BrowserRouter>
       </Box>
     );

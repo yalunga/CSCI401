@@ -22,6 +22,8 @@ interface ProjectState {
   fallSpringSum: number;
   semester: number;
   errorMsg: string;
+  stakeholderId?: number;
+  stakeholderCompany?: string;
 }
 
 var nameSet = new Set();
@@ -38,7 +40,7 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
       description: '',
       fallSpringSum: 0,
       semester: this.showCurrentYear(),
-      errorMsg: ''
+      errorMsg: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitProject = this.submitProject.bind(this);
@@ -64,10 +66,17 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
           background: data.background,
           semester: data.semester,
           fallSpringSum: data.fallSpring,
-          description: data.description
+          description: data.description,
         }))
         .catch((err) => console.log('GET error: ' + err));
     }
+    fetch(`${process.env.REACT_APP_API_URL}/users/` + sessionStorage.getItem('email'))
+      .then(response => response.json())
+      .then((data) => this.setState({
+        stakeholderId: data.userId,
+        stakeholderCompany: data.organization
+      }))
+      .catch((err) => console.log('GET error: ' + err));
   }
 
   showCurrentYear() {
@@ -76,7 +85,7 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
 
   getProjectList() {
     nameSet.clear();
-    fetch(`${process.env.REACT_APP_API_URL}/projects/getprojectsfromsemester/` + this.state.semester + '/' + 0)
+    fetch(`${process.env.REACT_APP_API_URL}/projects/getprojectsfromsemester/` + this.state.semester + '/' + this.state.fallSpringSum)
       .then((response) => response.json())
       .then((data) => {
         console.log('data: ' + data);
@@ -124,6 +133,8 @@ export default class ProjectProposals extends React.Component<ProjectProps, Proj
         description: this.state.description,
         fallSpring: this.state.fallSpringSum,
         semester: this.state.semester,
+        stakeholderId: this.state.stakeholderId,
+        stakeholderCompany: this.state.stakeholderCompany
       }),
       headers: {
         'Content-Type': 'application/json'
