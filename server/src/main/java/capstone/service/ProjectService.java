@@ -245,7 +245,11 @@ public class ProjectService {
     ArrayList<Project> finalProjects = new ArrayList<Project>();
     for (Project p : projects) {
       Project saveProj = findByProjectId(p.getProjectId());
-      List<Student> saveMembers = saveProj.getMembers();
+      saveProj.setMembers(new ArrayList<Student>());
+    }
+    for (Project p : projects) {
+      Project saveProj = findByProjectId(p.getProjectId());
+      ArrayList<Student> saveMembers = new ArrayList<Student>();
       for (Student s : p.getMembers()) {
         saveMembers.add(userService.findByUserId(s.getUserId()));
       }

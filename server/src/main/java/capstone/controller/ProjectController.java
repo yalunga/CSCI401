@@ -241,7 +241,7 @@ public class ProjectController {
           try {
             userService.saveUser(saveStudent);
           } catch (Exception e) {
-            System.out.println("HERE IS AN ERROR: " + e.getMessage());
+            e.printStackTrace();
           }
           System.out.println(saveStudent.getLastName() + " " + project.getProjectName());
         }
