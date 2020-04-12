@@ -227,11 +227,19 @@ public class ProjectAssignment {
 		PrintProjects();
   }
   void PrintProjects() {
+	  	ArrayList<Long> orderedStudents = new ArrayList<Long>();
 		System.out.println("Projects: ");
 		for (Project p : projects) {
 			System.out.print(p.getProjectName() + " ");
 			p.printMembers();
+			for (Student s : p.getMembers())
+				orderedStudents.add(s.getUserId());
 		}
+		Collections.sort(orderedStudents);
+		System.out.println("unassigned students size: " + unassignedStudents.size());
+		for (Long l : orderedStudents) 
+			System.out.print(l + " ");
+		System.out.println("");
 	}
 
 	/*
