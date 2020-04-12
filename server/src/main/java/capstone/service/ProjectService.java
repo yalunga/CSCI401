@@ -46,7 +46,6 @@ public class ProjectService {
   GlobalRepository globalRepo;
   @Autowired
   StudentRepository studentRepo;
-
   private ProjectAssignment maxAlgorithm;
   private static String folder_name = "src/main/java/capstone/algorithm/real_data";
   private static int NUM_RANKED = 5; // number of projects that each student can rank
@@ -194,7 +193,6 @@ public class ProjectService {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     for (Student s : studentsVector) {
       System.out.println("student name: " + s.getLastName());
       for (Map.Entry<String, Integer> entry : s.rankings.entrySet()) {
