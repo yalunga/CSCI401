@@ -5,12 +5,9 @@ import {
     Select,
     CheckBox
   } from 'grommet';
-
   import ThisWeekTaskList from './ThisWeekTaskList';
   import NextWeekTaskList from './NextWeekTaskList';
-import { Task } from 'grommet-icons';
 
-  
   interface TaskListProps {}
 
   interface Task {
@@ -49,8 +46,8 @@ import { Task } from 'grommet-icons';
           this.handleChangeThisWeekTasks = this.handleChangeThisWeekTasks.bind(this);
           this.handleChangeNextWeekTasks = this.handleChangeNextWeekTasks.bind(this);
           this.handleCheck = this.handleCheck.bind(this);
-      } 
-
+          this.submitTasks = this.submitTasks.bind(this);
+      }
       addNewTaskThisWeek(e: any){
         this.setState((prevState) => ({
           thisWeekTaskList: [...prevState.thisWeekTaskList, { index: Math.random(), hours: "", description: ""}],
@@ -94,38 +91,38 @@ import { Task } from 'grommet-icons';
         });
       }
 
-      submitTasks = () => {
-        console.log(this.state.thisWeekTaskList);
-        
+      async submitTasks() {
+        var request = new XMLHttpRequest();
+        request.withCredentials = true;
+        request.open('POST', `${process.env.REACT_APP_API_URL}/assignment/weeklyReportForm`);
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        var data = JSON.stringify({
+            dueDate: this.state.date,
+            email: sessionStorage.getItem('email'),
+            thisWeekTaskList: JSON.stringify(this.state.thisWeekTaskList),
+            nextWeekTaskList: JSON.stringify(this.state.nextWeekTaskList),
+        });
+        console.log(JSON.stringify(this.state.thisWeekTaskList));
+        try {
+          const response = await fetch( `${process.env.REACT_APP_API_URL}/assignment/weeklyReportForm`, {
+            method: 'POST',
+            body: data,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          const responseText = await response.text();
+          alert('Tasks were sent.');
+          this.setState({thisWeekTaskList: [{index: Math.random(), hours: "", description: ""}],
+          nextWeekTaskList: [{index: Math.random(), hours: "", description: ""}]});
+        } catch (error) {
+          console.log(error);
+          alert('There was an error sending tasks.')
+        }
+    
       }
 
-
-
-    //   editTask(task: Task) {
-        
-    //   }
-
-      
-    //   componentDidMount() {
-
-    //   }
-
-    // editTask(task: Task) {
-
-    // }
-
-    // deleteTask(task: Task) {
-
-    // }
-    
-    // handleChange(e: any) {
-
-    // }
-
-    // submitTasks = () => {
-
-    // }
-    render() {
+  render() {
         const {date, allDates, confirmSubmission, thisWeekTaskList, nextWeekTaskList} = this.state;
         return (
             <Box width='full' pad='medium' gap='medium'>
