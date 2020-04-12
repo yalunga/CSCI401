@@ -104,13 +104,13 @@ export default class StakeholderNavigation extends React.Component<StakeholderNa
             </Box>
             <Box width='full' align='center' justify='start' pad={{ horizontal: 'medium' }} gap='medium' direction='row'>
               <Anchor href='/stakeholder' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
-                Home
+                Projects
             </Anchor>
               <Anchor href='/stakeholder/profile' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Profile
             </Anchor>
               <Anchor href='/stakeholder/proposals' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
-                Project Proposals
+                New Project Proposals
             </Anchor>
             </Box>
           </Box>

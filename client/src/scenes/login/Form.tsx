@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { Box, TextInput, Text } from 'grommet';
+import { Box, TextInput, Text, Anchor } from 'grommet';
+import Alert from '../../components/Alert';
 
 interface LoginProps { }
 interface LoginState {
@@ -8,6 +9,7 @@ interface LoginState {
   password: string;
   token: string;
   errorMsg: string;
+  alert: boolean;
 }
 
 export default class LoginForm extends React.Component<LoginProps, LoginState> {
@@ -17,11 +19,27 @@ export default class LoginForm extends React.Component<LoginProps, LoginState> {
       email: '',
       password: '',
       token: '',
-      errorMsg: ''
+      errorMsg: '',
+      alert: false
     };
     this.getToken = this.getToken.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.clearErrorMessage = this.clearErrorMessage.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
+  }
+
+  resetPassword() {
+    var request = new XMLHttpRequest();
+    var hostname = window.location.hostname;
+    request.withCredentials = true;
+    request.open('POST', `${process.env.REACT_APP_API_URL}/users/password-reset`);
+    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    var data = JSON.stringify({
+      email: this.state.email,
+    });
+    request.setRequestHeader('Cache-Control', 'no-cache');
+    request.send(data);
+    alert('Password reset email sent.');
   }
 
   async getToken() {
@@ -109,7 +127,8 @@ export default class LoginForm extends React.Component<LoginProps, LoginState> {
           <Box background='brand' width='small' pad='xsmall' align='center' round='xxsmall' alignSelf='center' onClick={this.getToken}>
             <Text>Login</Text>
           </Box>
-          <Text textAlign='center' size='small' color='dark-5'>Forgot Password?</Text>
+          <Anchor alignSelf= 'center' size='small' color='dark-5' onClick={this.resetPassword}>Forgot Password?</Anchor>
+          {this.state.alert && <Alert text='Password Reset Email Sent' />}
         </Box>
       </Box>
     );

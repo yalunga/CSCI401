@@ -126,7 +126,7 @@ export default class StudentProfile extends React.Component<ProfileProps, Profil
                 </Box>
               </Box>
               <Box background='brand' width='small' pad='xsmall' align='center' round='xxsmall' alignSelf='start' onClick={this.handleSubmit}>
-                <Text>Edit</Text>
+                <Text>Save</Text>
               </Box>
             </Box>
             :

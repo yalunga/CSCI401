@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Box, Text, TextInput } from 'grommet';
+import { Box, Text, TextInput, Anchor } from 'grommet';
 import { ClipLoader } from "react-spinners";
+// import { Alert } from 'grommet-icons';
 
 interface AdminRegistrationProps { }
 interface AdminRegistrationState {
@@ -47,6 +48,10 @@ export default class AdminForm extends React.Component<AdminRegistrationProps, A
     if (this.state.password !== this.state.confirm) {
       this.setState({ errorMsg: 'Your passwords do not match. Please try again.', loading: false });
       return;
+    }
+    if(this.state.phone.length !== 10 && this.state.phone.length !== 12){
+      this.setState({ loading: false });
+      return alert('Please enter a valid phone number.');
     }
     var data = JSON.stringify({
       firstName: this.state.firstName,
@@ -194,6 +199,12 @@ export default class AdminForm extends React.Component<AdminRegistrationProps, A
               </Box>
             }
           </Box>
+        </Box>
+        <Box align='center'>
+          <Text size='small'>
+            Already Registered?
+            <Anchor href='/'> Back to Login Page.</Anchor>
+          </Text>
         </Box>
       </Box>
     );
