@@ -6,7 +6,6 @@ import javax.persistence.Id;
 
 @Entity
 public abstract class Assignment {
-	//
 	@Id
 	@GeneratedValue
 	private Long assignmentId; 

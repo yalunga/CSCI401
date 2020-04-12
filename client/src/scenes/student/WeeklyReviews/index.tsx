@@ -48,25 +48,6 @@ import {
           this.handleCheck = this.handleCheck.bind(this);
           this.submitTasks = this.submitTasks.bind(this);
       }
-      // Test initial get weekly reports endpoint
-      // componentDidMount() {
-      //   this.setState({ isLoading: true }); // add spinner 
-      //     sessionStorage.setItem('viewingYear', '2019');
-        
-      //   if (sessionStorage.getItem('viewingFallSpring') === null) {
-      //     sessionStorage.setItem('viewingFallSpring', '1');
-      //   }
-
-      //   fetch(`${process.env.REACT_APP_API_URL}/assignment/getweeklyreport/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'), {
-      //         method: 'get',
-      //         headers: new Headers({
-      //           'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
-      //         })
-      //       })
-      //       .then(response => response.json())
-      //       .then(data => console.log(data));
-      // }
-
       addNewTaskThisWeek(e: any){
         this.setState((prevState) => ({
           thisWeekTaskList: [...prevState.thisWeekTaskList, { index: Math.random(), hours: "", description: ""}],

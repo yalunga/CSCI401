@@ -11,21 +11,11 @@ import capstone.model.Project;
 import capstone.model.assignment.WeeklyReport;
 import capstone.model.users.Student;
 
-/*@Embeddable
-class TaskId implements Serializable {
-	private static final long serialVersionUID = 1L;
-	String name;
-	long reportId;
-}*/
-
 @Entity
 public class Task extends Assignment {
 	//@EmbeddedId TaskId id;
 	public String taskid;
 	
-	// @MapsId("report_id")
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// WeeklyReport report;
 	@OneToOne(targetEntity= Project.class)
 	Project project;
 

@@ -26,10 +26,6 @@ import capstone.model.assignment.Task;
 @Entity
 public class WeeklyReport extends Assignment
 {
-	// @Id
-	// @GeneratedValue
-	// Long id;
-	
 	//@MapsId("student_id")
 	@OneToOne(targetEntity = Student.class)
 	Student student;
