@@ -1,5 +1,8 @@
 package capstone.service;
 
+import java.util.Collection;
+import java.util.Vector;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,10 @@ public class AssignmentService {
 		if (a.getClass() == WeeklyReport.class) {
 			weeklyRepo.save((WeeklyReport) a);
 		} 
-	}
+    }
+
+    public Collection<WeeklyReport> getWeeklyReports() {
+        return weeklyRepo.findAll(); 
+    }
 
 }

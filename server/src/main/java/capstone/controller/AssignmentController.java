@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import capstone.model.Project;
 import capstone.model.assignment.Task;
 // import capstone.model.Deliverable;
 // import capstone.model.PeerReview;
@@ -64,7 +66,7 @@ public class AssignmentController {
 	private EmailService emailService;
 
 	public AssignmentController() {
-	}
+	 }
 
 	/* Deliverables */
 
@@ -127,7 +129,7 @@ public class AssignmentController {
 	// }
 	// }
 	// }
-
+ 
 	/* Weekly Status Reports */
 
 	@PostMapping("/weeklyReportForm")
@@ -141,10 +143,13 @@ public class AssignmentController {
 		System.out.println(info.get("email"));
 		Student s = userService.findStudentByEmail(info.get("email"));
 		//Project assigned to student? 
+		Project p = userService.getStudentProject(s);
 
 	//	System.out.println(info.get("nextWeekTaskList"));
 		WeeklyReport wr = new WeeklyReport();
 		wr.setStudent(s);
+		wr.setProject(p);
+		wr.semester = 2019; 
 		wr.setSubmitDateTime(timeStamp);
 		wr.setDueDate(info.get("dueDate"));
 		ArrayList<Task> thisweekTaskList = new ArrayList<>();
@@ -164,7 +169,7 @@ public class AssignmentController {
 			Task t = new Task();
 			t.setHours((String) task.get("hours"));
 			t.setDescription((String) task.get("description"));
-			taskRepo.save(t);
+			//taskRepo.save(t);
 			nextweekTaskList.add(t);
 		}
 		wr.setNextWeekTasks(nextweekTaskList);
@@ -195,6 +200,23 @@ public class AssignmentController {
 
 		return Constants.SUCCESS;
 	}
+	// Stakeholder view of the weekly reports
+	@GetMapping("getweeklyreport/{semester}/{fallspring}")
+	@CrossOrigin
+	public Collection<WeeklyReport> getWeeklyReportsforStakeholder(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
+	{
+		List<WeeklyReport> weeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
+
+		// List<WeeklyReport> validReports = new ArrayList<WeeklyReport>();
+		// for (WeeklyReport wr: weeklyReports) {
+		// 	//TO DO: parse by Semester
+		
+		// }
+		return weeklyReports; 
+	}
+
+
+
 
 	/* Peer Reviews */
 	
