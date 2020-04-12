@@ -230,7 +230,7 @@ public class ProjectController {
   // Assign projects to students
   @PostMapping("/assign-to-students/{semester}/{fallspring}")
   @CrossOrigin
-  public @ResponseBody String assignProjectsToStudents(@RequestBody ArrayList<Project> projects,
+  public @ResponseBody ArrayList<Student> assignProjectsToStudents(@RequestBody ArrayList<Project> projects,
       @PathVariable("semester") int semester, @PathVariable("fallspring") int fallSpring) {
     for (Project project : projects) {
       if (project.getProjectId() > 0) {
@@ -238,13 +238,24 @@ public class ProjectController {
           // Set the given project for each student
           Student saveStudent = userService.findByUserId(student.getUserId());
           saveStudent.setProject(project.getProjectId());
-          userService.saveUser(saveStudent);
+          try {
+            userService.saveUser(saveStudent);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
           System.out.println(saveStudent.getLastName() + " " + project.getProjectName());
         }
       }
     }
+    ArrayList<Student> students = userService.getStudentsBySemester(semester, fallSpring);
+    ArrayList<Student> studentsWithoutProjects = new ArrayList<Student>();
+    for (Student s : students) {
+      if (s.getProjectId() == null) {
+        studentsWithoutProjects.add(s);
+      }
+    }
     projectService.saveAssignment(projects, semester, fallSpring);
-    return Constants.SUCCESS;
+    return studentsWithoutProjects;
   }
 
   // Submit project ranking for a student

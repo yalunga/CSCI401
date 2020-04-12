@@ -286,7 +286,6 @@ public class Project implements Comparable<Object> {
     this.stakeholderId = orig.stakeholderId;
     this.stakeholderCompany = orig.stakeholderCompany;
   }
-
   public double returnProjSatScore(List<Ranking> rankings) {
     double maxScore = ProjectAssignment.getStudentSatScore(1) * maxSize; // max score possible
     // System.out.println("p_max: " + p_max);
@@ -296,14 +295,15 @@ public class Project implements Comparable<Object> {
     double totalScore = 0;
     if (!members.isEmpty()) {
       for (Student student : members) {
-        int ranking = -1;
+        
         for (Ranking r : rankings) {
           if (r.getStudentId() == student.getId() && r.getProjectId() == this.projectId) {
-            ranking = r.getRank();
+            int ranking = r.getRank();
+            totalScore += ProjectAssignment.getStudentSatScore(ranking);
           }
         }
         // System.out.println("ranking: " + ranking);
-        totalScore += ProjectAssignment.getStudentSatScore(ranking);
+        
       }
     }
 
@@ -334,30 +334,27 @@ public class Project implements Comparable<Object> {
   /* Comparator Stuff */
 
   @Override
-  public int compareTo(Object o) {
-    if (!(o instanceof Project))
-      throw new ClassCastException();
+		public int compareTo(Object o) {
+			if (!(o instanceof Project))
+				throw new ClassCastException();
 
-    Project p = (Project) o;
+			Project p = (Project) o;
 
-    return (this.projectName).compareTo(p.projectName);
-  }
-
-  // sorts by popularity in descending order
-  public static class popularityComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
-      if (!(o1 instanceof Project) || !(o2 instanceof Project))
-        throw new ClassCastException();
-
-      Project p1 = (Project) o1;
-      Project p2 = (Project) o2;
-
-      if (p1.returnPopularity() > p2.returnPopularity())
-        return -1;
-      else if (p1.returnPopularity() < p2.returnPopularity())
-        return 1;
-      else
-        return 0;
-    }
-  }
+			return (this.projectName).compareTo(p.projectName);
+		}
+		
+		// sorts by popularity in descending order
+		public static class popularityComparator implements Comparator {
+			public int compare(Object o1, Object o2) {
+				if (!(o1 instanceof Project) || !(o2 instanceof Project))
+					throw new ClassCastException();
+				
+				Project p1 = (Project) o1;
+				Project p2 = (Project) o2;
+							
+		        if (p1.returnPopularity() > p2.returnPopularity()) return -1;
+		        else if (p1.returnPopularity() < p2.returnPopularity()) return 1;
+		        else return 0;
+			}
+		}
 }

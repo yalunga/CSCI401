@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Box, Anchor } from 'grommet';
 import { ClipLoader } from "react-spinners";
-import EditUserModal from '../../../components/EditUserModal';
-
+import EditProjectAssignmentModal from '../../../components/EditProjectAssignmentModal';
+import UnAssignedStudentsModal from '../../../components/UnassignedStudentsModal';
+import Alert from '../../../components/Alert';
 
 export default () => {
   const [loading, setLoading]: any = useState(false);
   const [approvedProjects, setApprovedProjects]: any = useState([]);
   const [editUser, setEditUser]: any = useState(null);
   const [hasRunAlgorthm, setHasRunAlgorithm]: any = useState(false);
+  const [hasMadeChanges, setHasMadeChanges]: any = useState(false);
+  const [unassignedStudents, setUnassignedStudents]: any = useState([]);
+  const [alertText, setAlertText]: any = useState('');
 
   useEffect((): any => {
     const getProjects = async () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/projects/assignment-retrieve/` + sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('viewingFallSpring'));
       const projects = await response.json();
-      console.log(projects);
       if (projects) {
         const acceptedProjects = [];
         for (const project of projects) {
@@ -23,6 +26,9 @@ export default () => {
           }
         }
         setApprovedProjects(acceptedProjects);
+        if (acceptedProjects.length > 0) {
+          setHasRunAlgorithm(true);
+        }
       }
     }
     getProjects();
@@ -35,6 +41,7 @@ export default () => {
     setApprovedProjects(json);
     setLoading(false);
     setHasRunAlgorithm(true);
+    setHasMadeChanges(true);
   }
 
   const confirmAssignment = async () => {
@@ -45,7 +52,14 @@ export default () => {
         'Content-Type': 'application/json'
       }
     });
-    console.log(response);
+    const unassignedStudents = await response.json();
+
+    setAlertText('Assignment confirmed.');
+    setTimeout(() => {
+      setAlertText('');
+      setHasMadeChanges(false);
+      setUnassignedStudents(unassignedStudents);
+    }, 3000);
   }
 
   const getProjectFromStudentId = (studentId: number) => {
@@ -68,25 +82,38 @@ export default () => {
         }
       }
     }
-    // adding student to new project
-    for (const project of prevProjects) {
-      if (project.projectId === projectId) {
-        project.members.push(editUser);
+    if (projectId !== null) {
+      // adding student to new project
+      for (const project of prevProjects) {
+        if (project.projectId === projectId) {
+          project.members.push(editUser);
+        }
       }
     }
-    setHasRunAlgorithm(true);
+    setHasMadeChanges(true);
   }
-  console.log(approvedProjects);
+
+  const addStudent = (student: any, projectId: number) => {
+    const prevProjects = approvedProjects;
+    for (const project of prevProjects) {
+      if (project.projectId === projectId) {
+        project.members.push(student);
+      }
+    }
+    setHasMadeChanges(true);
+  }
   return (
     <Box width='full' pad='medium' gap='small'>
       <Box direction='row' justify='between' align='center'>
         <Text weight='bold' size='large'>Projects</Text>
         <Box direction='row' gap='small'>
           {loading && <ClipLoader size={50} color='#990000' />}
-          <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
-            <Text>Assign Projects</Text>
-          </Box>
-          {hasRunAlgorthm && (
+          {!hasRunAlgorthm &&
+            <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => assignProject()}>
+              <Text>Assign Projects</Text>
+            </Box>
+          }
+          {hasMadeChanges && (
             <Box background='brand' pad='small' align='center' elevation='small' round='xsmall' style={{ cursor: 'pointer' }} onClick={() => confirmAssignment()}>
               <Text>Confirm Assignment</Text>
             </Box>
@@ -115,16 +142,23 @@ export default () => {
           </Box>
         }
       </Box>
+      {alertText && <Alert text={alertText} />}
       {editUser &&
-        <EditUserModal
+        <EditProjectAssignmentModal
           editFirstName={editUser.firstName}
           editLastName={editUser.lastName}
-          editEmail={editUser.email}
-          editUserType={editUser.userType}
           editProject={getProjectFromStudentId(editUser.userId)}
           closeModal={() => setEditUser(null)}
           projects={approvedProjects}
           moveStudent={moveStudent}
+        />
+      }
+      {unassignedStudents.length > 0 &&
+        <UnAssignedStudentsModal
+          projects={approvedProjects}
+          moveStudent={addStudent}
+          unassignedStudents={unassignedStudents}
+          closeModal={() => setUnassignedStudents([])}
         />
       }
     </Box>

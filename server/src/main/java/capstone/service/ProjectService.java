@@ -46,7 +46,6 @@ public class ProjectService {
   GlobalRepository globalRepo;
   @Autowired
   StudentRepository studentRepo;
-
   private ProjectAssignment maxAlgorithm;
   private static String folder_name = "src/main/java/capstone/algorithm/real_data";
   private static int NUM_RANKED = 5; // number of projects that each student can rank
@@ -194,7 +193,6 @@ public class ProjectService {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     for (Student s : studentsVector) {
       System.out.println("student name: " + s.getLastName());
       for (Map.Entry<String, Integer> entry : s.rankings.entrySet()) {
@@ -242,10 +240,14 @@ public class ProjectService {
       ac.setSemester(semester);
       ac.setFallSpring(fallSpring);
     }
-    ArrayList<Project> finalProjects = (ArrayList<Project>) ac.getAssignment();
+    ArrayList<Project> finalProjects = new ArrayList<Project>();
     for (Project p : projects) {
       Project saveProj = findByProjectId(p.getProjectId());
-      List<Student> saveMembers = saveProj.getMembers();
+      saveProj.setMembers(new ArrayList<Student>());
+    }
+    for (Project p : projects) {
+      Project saveProj = findByProjectId(p.getProjectId());
+      ArrayList<Student> saveMembers = new ArrayList<Student>();
       for (Student s : p.getMembers()) {
         saveMembers.add(userService.findByUserId(s.getUserId()));
       }
@@ -263,16 +265,17 @@ public class ProjectService {
     }
     List<Project> currentProjects = ac.getAssignment();
 
-    Collection<Student> allStudents = userService.getStudents();
-    for (Student student : allStudents) {
-      for (Project project : currentProjects) {
-        // p.members = new ArrayList<Student>();
-        if (student.getProjectId() != null && project.getProjectId() == student.getProjectId()) {
-          System.out.println(student.getLastName() + " " + student.getProjectId());
-          (project.members).add(student);
-        }
-      }
-    }
+    // Collection<Student> allStudents = userService.getStudents();
+    // for (Student student : allStudents) {
+    // for (Project project : currentProjects) {
+    // // p.members = new ArrayList<Student>();
+    // if (student.getProjectId() != null && project.getProjectId() ==
+    // student.getProjectId()) {
+    // System.out.println(student.getLastName() + " " + student.getProjectId());
+    // (project.members).add(student);
+    // }
+    // }
+    // }
     return currentProjects;
   }
 
