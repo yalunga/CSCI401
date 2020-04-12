@@ -31,7 +31,6 @@ public class UserService {
   private ProjectsRepository projectRepo;
 
   public UserService() {
-    System.out.println("IN USER SERVICE CONSTRUCTOR");
   }
 
   public Collection<User> getUsers() {

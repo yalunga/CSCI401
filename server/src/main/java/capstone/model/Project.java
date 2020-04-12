@@ -356,5 +356,37 @@ public class Project implements Comparable<Object> {
 		        else if (p1.returnPopularity() < p2.returnPopularity()) return 1;
 		        else return 0;
 			}
-		}
+    }
+    // sorts by min size in ascending order
+		public static class openSpotsToMinSizeComparator implements Comparator {
+			public int compare(Object o1, Object o2) {
+				if (!(o1 instanceof Project) || !(o2 instanceof Project))
+					throw new ClassCastException();
+				
+				Project p1 = (Project) o1;
+				Project p2 = (Project) o2;
+        int openSpots1 = p1.getMembers().size()-p1.getMinSize();
+        int openSpots2 = p2.getMembers().size()-p2.getMinSize();
+		        if (openSpots1 < openSpots2) return -1;
+		        else if (openSpots1 > openSpots2) return 1;
+		        else return 0;
+			}
+    }
+    
+    // sorts by min size in descending order
+		public static class openSpotsToMaxSizeComparator implements Comparator {
+			public int compare(Object o1, Object o2) {
+				if (!(o1 instanceof Project) || !(o2 instanceof Project))
+					throw new ClassCastException();
+				
+				Project p1 = (Project) o1;
+				Project p2 = (Project) o2;
+        
+        int openSpots1 = p1.getMaxSize()-p1.getMembers().size();
+        int openSpots2 = p2.getMaxSize()-p2.getMembers().size();
+		        if (openSpots1 > openSpots2) return -1;
+		        else if (openSpots1 < openSpots2) return 1;
+		        else return 0;
+			}
+    }
 }
