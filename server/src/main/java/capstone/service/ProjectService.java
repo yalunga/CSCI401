@@ -71,7 +71,7 @@ public class ProjectService {
       for (int iteration = 0; iteration < 30; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
-          // Student student = studentRepo.findByUserId(rank.getStudentId());
+          //Student student = studentRepo.findByUserId(rank.getId());
           Student student = null;
           for (Student s : studentRepo.findAll()) {
             if (s.getUserId() == rank.getStudentId()) {
