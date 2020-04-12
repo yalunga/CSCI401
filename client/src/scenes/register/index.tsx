@@ -5,6 +5,7 @@ import { Box, Image } from 'grommet';
 import StudentForm from './StudentForm';
 import StakeholderForm from './StakeholderForm';
 import AdminForm from './AdminForm';
+import Reset from './Reset';
 
 export default class Register extends React.Component {
   render() {
@@ -20,6 +21,7 @@ export default class Register extends React.Component {
             <Route path="/register/student" component={StudentForm} />
             <Route path="/register/stakeholder" component={StakeholderForm} />
             <Route path="/register/admin" component={AdminForm} />
+            <Route path="/register/reset" component={Reset} />
           </Switch>
         </BrowserRouter>
       </Box>
