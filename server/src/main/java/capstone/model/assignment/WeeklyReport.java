@@ -2,6 +2,7 @@ package capstone.model.assignment;
 
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Embeddable;
@@ -40,10 +41,14 @@ public class WeeklyReport extends Assignment
 	@OneToMany(targetEntity= Task.class, cascade=CascadeType.ALL)
 	private List<Task> nextWeekTasks;
 
+	@OneToMany(targetEntity=String.class, cascade=CascadeType.ALL)
+	private List<String> dueDates;
+
 	public WeeklyReport() {
 
 		 setThisWeekTasks(new ArrayList<Task>());
 		 setNextWeekTasks(new ArrayList<Task>());
+		 setDueDates(new ArrayList<String>());
 	}
 
 	public WeeklyReport(WeeklyReport orig) {
@@ -88,7 +93,12 @@ public class WeeklyReport extends Assignment
 	public void setNextWeekTasks(List<Task> nextweekTasks) {
 		this.nextWeekTasks = nextweekTasks;
 	}
-	
-	
 
+	public List<String> getDueDates() {
+		return dueDates;
+	}
+	
+	public void setDueDates(List<String> dueDates) {
+		this.dueDates = dueDates;
+	}
 }

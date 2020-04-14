@@ -60,6 +60,7 @@ public class AssignmentController {
 	 // TO DO
 
 	/* Weekly Status Reports */
+
 	@PostMapping("/weeklyReportForm")
 	@CrossOrigin
 	public @ResponseBody String weeklyReportSubmissionAttempt(@RequestBody Map<String, String> info) {
@@ -113,6 +114,42 @@ public class AssignmentController {
 		// 	//TO DO: parse by Semester
 		// }
 		return weeklyReports; 
+	}
+
+	@PostMapping("/setWeeklyReportDueDates")
+	@CrossOrigin
+	public @ResponseBody String setWeeklyReportDueDates(@RequestBody Map<String, String> data) {
+		System.out.println("Received HTTP POST for setting due dates");
+		List<WeeklyReport> allWeeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
+		List<WeeklyReport> weeklyReports = new ArrayList<WeeklyReport>();
+
+		try {
+			// Filter by semester
+			for (WeeklyReport wr: allWeeklyReports) {
+				if (Integer.toString(wr.getSemester()) == data.get("semester") && Integer.toString(wr.getFallSpring()) == data.get("fallSpring")) {
+					weeklyReports.add(wr);
+				}
+			}
+
+			// Set due dates for given semester
+			List<String> dueDates = Arrays.asList(data.get("dueDates").split(","));
+			for (WeeklyReport wr: weeklyReports) {
+				wr.setDueDates(dueDates);
+			}
+
+			return Constants.SUCCESS;
+		} catch (Exception e) {
+			System.out.println("Error setting due dates.");
+			e.printStackTrace();
+			return Constants.ERROR;
+		}
+	}
+
+	@GetMapping("/getWeeklyReportDueDates/{semester}/{fallSpring}")
+	@CrossOrigin
+	public Collection<String> getWeeklyReportDueDates() {
+		List<WeeklyReport> weeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
+		return weeklyReports.get(0).getDueDates();
 	}
 
 	/* Peer Reviews */
