@@ -71,7 +71,7 @@ public class ProjectService {
       for (int iteration = 0; iteration < 30; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
-          //Student student = studentRepo.findByUserId(rank.getId());
+          // Student student = studentRepo.findByUserId(rank.getId());
           Student student = null;
           for (Student s : studentRepo.findAll()) {
             if (s.getUserId() == rank.getStudentId()) {
@@ -162,7 +162,9 @@ public class ProjectService {
         newStudent.setLastName(last);
         newStudent.setEmail(elements[0] + "@usc.edu");
         newStudent.setPassword(EncryptPassword.encryptPassword("student"));
-        newStudent.setUserId(Long.parseLong(last));
+        int userId = Integer.parseInt(last);
+        userId += 2;
+        newStudent.setUserId(new Long(userId));
         // newStudent.setUserId(students.size());
 
         for (int i = 1; i <= NUM_RANKED; i++) { // for the student's Top 5 projects...
