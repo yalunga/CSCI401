@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import capstone.model.Global;
 import capstone.model.Project;
 import capstone.model.assignment.Task;
@@ -34,6 +35,7 @@ import capstone.model.assignment.WeeklyReport;
 import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
 import capstone.repository.GlobalRepository;
+
 import capstone.repository.TaskRepository;
 import capstone.repository.WeeklyReportRepository;
 import capstone.service.AssignmentService;
@@ -51,6 +53,7 @@ public class AssignmentController {
 	private UserService userService;
 	@Autowired
 	private AssignmentService assignmentService;
+
 	@Autowired
 	private GlobalRepository globalRepo;
 	@Autowired
@@ -152,7 +155,6 @@ public class AssignmentController {
 		return validReports; 
 	}
 
-	
 	/* Peer Reviews */
 	// TO DO 
 }

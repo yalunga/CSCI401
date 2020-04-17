@@ -274,7 +274,7 @@ public class ProjectController {
     }
     for (Ranking newRank : projects) {
       newRank.setStudentId(user.getUserId());
-      newRank.setRank(projects.indexOf(newRank));
+      newRank.setRank(projects.indexOf(newRank) + 1);
       try {
         projectService.saveRanking(newRank);
       } catch (Exception e) {
