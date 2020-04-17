@@ -300,9 +300,11 @@ public class Project implements Comparable<Object> {
           if (r.getStudentId() == student.getId() && r.getProjectId() == this.projectId) {
             int ranking = r.getRank();
             totalScore += ProjectAssignment.getStudentSatScore(ranking);
+            System.out.println("ranking: " + ranking);
+            System.out.println("totalScore: " + totalScore);
           }
         }
-        // System.out.println("ranking: " + ranking);
+        
         
       }
     }
