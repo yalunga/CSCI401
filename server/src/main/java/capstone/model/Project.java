@@ -300,9 +300,11 @@ public class Project implements Comparable<Object> {
           if (r.getStudentId() == student.getId() && r.getProjectId() == this.projectId) {
             int ranking = r.getRank();
             totalScore += ProjectAssignment.getStudentSatScore(ranking);
+            System.out.println("ranking: " + ranking);
+            System.out.println("totalScore: " + totalScore);
           }
         }
-        // System.out.println("ranking: " + ranking);
+        
         
       }
     }
@@ -387,6 +389,20 @@ public class Project implements Comparable<Object> {
 		        if (openSpots1 > openSpots2) return -1;
 		        else if (openSpots1 < openSpots2) return 1;
 		        else return 0;
+			}
+    }
+    // sorts by name in ascending order
+		public static class alphabeticalComparator implements Comparator {
+			public int compare(Object o1, Object o2) {
+				if (!(o1 instanceof Project) || !(o2 instanceof Project))
+					throw new ClassCastException();
+				
+				Project p1 = (Project) o1;
+				Project p2 = (Project) o2;
+							
+        if (p1.getProjectId() < p2.getProjectId()) return -1;
+        else if (p1.getProjectId() > p2.getProjectId()) return 1;
+        else return 0;
 			}
     }
 }
