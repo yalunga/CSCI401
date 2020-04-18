@@ -332,27 +332,77 @@ public class ProjectAssignment {
   }
 
   void EliminateProjects() {
-    eliminatedProjects = new ArrayList<Project>();
+	ArrayList<Project> lessThanMinProjects = new ArrayList<Project>();
+	int numberOfStudents = 0;
     for (int i = projects.size() - 1; i >= 0; i--) {
       Project p = projects.get(i);
       // && unassignedStudents.size() >= GetTotalMaxSpots()
       if (p.members.size() < p.getMinSize()) {
-        System.out.println("Eliminated " + p.getProjectName());
-
-        for (Student s : p.members) {
-          if (!unassignedStudents.contains(s)) {
-            System.out.println(s.getLastName() + " " + s);
-            unassignedStudents.add(s);
-          }
-        }
-        p.members.clear();
-
-        eliminatedProjects.add(p);
-        projects.remove(p);
-
+		lessThanMinProjects.add(p);
+		numberOfStudents += p.members.size();
+        // projects.remove(p);
       }
-    }
-    // writer.println("");
+	}
+	Collections.sort(lessThanMinProjects, new Project.openSpotsToMinSizeComparator());
+	int firstIndex = 0;
+	int lastIndex = lessThanMinProjects.size()-1;
+	while (firstIndex < lastIndex && numberOfStudents > 0) {
+		System.out.println("first index " + firstIndex);
+		System.out.println("last index " + lastIndex);
+		Project firstProject = lessThanMinProjects.get(firstIndex);
+		while (firstProject.members.size() < firstProject.getMinSize() && numberOfStudents > 0) {
+			System.out.println("firstProject.members.size(): " + firstProject.members.size());
+			System.out.println("firstProject.getMinSize(): " + firstProject.getMinSize());
+			Project lastProject = lessThanMinProjects.get(lastIndex);
+			if (lastProject.members.size() > 0) {
+				System.out.println("last project.members.size(): " + lastProject.members.size());
+				firstProject.members.add(lastProject.members.get(0));
+				lastProject.members.remove(0);
+				numberOfStudents--;
+			} else {
+				lastIndex--;
+			}
+		}
+		if (firstProject.members.size() == firstProject.getMinSize()) firstIndex++;
+	}
+	
+	eliminatedProjects = new ArrayList<Project>();
+	System.out.println("numberOfStudents: " + numberOfStudents);
+	Collections.shuffle(unassignedStudents);
+	numberOfStudents = unassignedStudents.size();
+	int unassignedStudentsIndex = numberOfStudents-1;
+	while (firstIndex < lastIndex && numberOfStudents > 0) {
+		System.out.println("first index " + firstIndex);
+		System.out.println("last index " + lastIndex);
+		Project firstProject = lessThanMinProjects.get(firstIndex);
+		while (firstProject.members.size() < firstProject.getMinSize() && numberOfStudents > 0) {
+			System.out.println("firstProject.members.size(): " + firstProject.members.size());
+			System.out.println("firstProject.getMinSize(): " + firstProject.getMinSize());
+			System.out.println("numberOfStudents: " + numberOfStudents);
+			//System.out.println("last project.members.size(): " + lastProject.members.size());
+			firstProject.members.add(unassignedStudents.get(unassignedStudentsIndex));
+			unassignedStudents.remove(unassignedStudentsIndex);
+			unassignedStudentsIndex--;
+			numberOfStudents--;
+		}
+		if (firstProject.members.size() == firstProject.getMinSize()) firstIndex++;
+	}
+	if (numberOfStudents > 0) {
+		for (int index = firstIndex; index <= lastIndex; index++) {
+			Project p = lessThanMinProjects.get(index);
+			for (Student s : p.members) {
+			  if (!unassignedStudents.contains(s)) {
+			    System.out.println(s.getLastName() + " " + s);
+			    unassignedStudents.add(s);
+			  }
+			}
+			p.members.clear();
+			System.out.println("Eliminated " + p.getProjectName());
+			eliminatedProjects.add(p);
+			projects.remove(p);
+		}
+	}
+        
   }
 
   void Bump() {
@@ -467,7 +517,7 @@ public class ProjectAssignment {
         projects.add(p);
         unassignedProjects.add(p);
       }
-      Collections.sort(unassignedProjects, new Project.openSpotsToMinSizeComparator());
+      Collections.sort(unassignedProjects, new Project.openSpotsToMaxSizeComparator());
       for (Project p : unassignedProjects) {
         ArrayList<Student> unassignedStudentsCopy = new ArrayList<Student>();
         for (int i = 0; i < unassignedStudents.size(); i++) {
@@ -475,7 +525,7 @@ public class ProjectAssignment {
         }
         for (it = unassignedStudents.iterator(); it.hasNext();) {
           Student s = it.next();
-          if (p.members.size() < p.getMinSize()) {
+          if (p.members.size() < p.getMaxSize()) {
             p.members.add(s);
             unassignedStudentsCopy.remove(s);
             lastAssignedProject = p;
@@ -493,12 +543,13 @@ public class ProjectAssignment {
     }
     // weren't able to fill the min size for the last project we assigned
     if (lastAssignedProject != null && lastAssignedProject.getMembers().size() < lastAssignedProject.getMinSize()) {
-      Collections.sort(assignedProjects, new Project.openSpotsToMaxSizeComparator());
+      Collections.sort(assignedProjects, new Project.openSpotsToMinSizeComparator());
       List<Student> lastAssignedProjectMembers = lastAssignedProject.getMembers();
       int index = -1;
       for (Project p : assignedProjects) {
+		  if (lastAssignedProjectMembers.size()-index-2 < p.getMinSize()-p.getMembers().size()) continue;
         while (index < lastAssignedProjectMembers.size() - 1) {
-          index++;
+			index++;
           if (p.getMembers().size() < p.getMaxSize()) {
             p.getMembers().add(lastAssignedProjectMembers.get(index));
             unassignedStudents.remove(lastAssignedProjectMembers.get(index));
@@ -506,7 +557,7 @@ public class ProjectAssignment {
             break;
           }
         }
-      }
+	  }
       lastAssignedProject.getMembers().clear();
     }
     Collections.sort(assignedProjects, new Project.openSpotsToMaxSizeComparator());
