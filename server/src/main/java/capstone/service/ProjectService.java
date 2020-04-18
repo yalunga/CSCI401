@@ -147,6 +147,7 @@ public class ProjectService {
         System.out.println("Student " + s.getUserId());
       }
     }
+    Collections.sort(savedProjects, new Project.alphabeticalComparator());
     return savedProjects;
   }
 

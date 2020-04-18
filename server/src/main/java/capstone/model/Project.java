@@ -391,4 +391,18 @@ public class Project implements Comparable<Object> {
 		        else return 0;
 			}
     }
+    // sorts by name in ascending order
+		public static class alphabeticalComparator implements Comparator {
+			public int compare(Object o1, Object o2) {
+				if (!(o1 instanceof Project) || !(o2 instanceof Project))
+					throw new ClassCastException();
+				
+				Project p1 = (Project) o1;
+				Project p2 = (Project) o2;
+							
+        if (p1.getProjectId() < p2.getProjectId()) return -1;
+        else if (p1.getProjectId() > p2.getProjectId()) return 1;
+        else return 0;
+			}
+    }
 }
