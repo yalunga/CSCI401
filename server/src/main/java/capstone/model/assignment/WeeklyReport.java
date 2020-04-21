@@ -16,7 +16,9 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
-
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 
 import org.springframework.scheduling.TaskScheduler;
 
@@ -41,7 +43,9 @@ public class WeeklyReport extends Assignment
 	@OneToMany(targetEntity= Task.class, cascade=CascadeType.ALL)
 	private List<Task> nextWeekTasks;
 
-	@OneToMany(targetEntity=String.class, cascade=CascadeType.ALL)
+	@ElementCollection
+  @CollectionTable(name="weekly_report")
+  @Column(name="dueDates")
 	private List<String> dueDates;
 
 	public WeeklyReport() {
