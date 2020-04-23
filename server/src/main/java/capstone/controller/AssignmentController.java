@@ -27,10 +27,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
+import capstone.model.Global;
 import capstone.model.Project;
 import capstone.model.assignment.DueDate;
 import capstone.model.assignment.Task;
 import capstone.model.assignment.WeeklyReport;
+import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
 import capstone.repository.DueDateRepository;
 import capstone.repository.TaskRepository;
@@ -50,6 +53,9 @@ public class AssignmentController {
 	private UserService userService;
 	@Autowired
 	private AssignmentService assignmentService;
+
+	@Autowired
+	private GlobalRepository globalRepo;
 	@Autowired
 	private WeeklyReportRepository weeklyRepo;
 	@Autowired
@@ -70,7 +76,6 @@ public class AssignmentController {
 	public @ResponseBody String weeklyReportSubmissionAttempt(@RequestBody final Map<String, String> info) {
 		System.out.println("Received HTTP POST");
 		final String timeStamp = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss").format(new Date());
-
 		System.out.println(timeStamp);
 		System.out.println(info.get("email"));
 		final Student s = userService.findStudentByEmail(info.get("email"));

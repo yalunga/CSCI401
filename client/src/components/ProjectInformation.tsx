@@ -60,8 +60,8 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     this.onChangeMax = this.onChangeMax.bind(this);
   }
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
-    //fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
+    // fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
+    fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
       .then(response => response.json())
       .then(data => this.setState({
         project: data,
@@ -232,99 +232,99 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
       }
     ];
     const columnsT = [
-      {        
+      {
         property: 'First Name',
         header: <TableHeader>First Name</TableHeader>,
         render: (datum: any) => (
           <Text>{datum.firstName}</Text>
         ),
-        },
-        {
+      },
+      {
         property: 'Last Name',
         header: <TableHeader>Last Name</TableHeader>,
         render: (datum: any) => (
           <Text>{datum.lastName}</Text>
         ),
-        },
-        {
+      },
+      {
         property: 'Email',
         header: <TableHeader>Email</TableHeader>,
         render: (datum: any) => (
           <Text>{datum.email}</Text>
         ),
-        }
-      ];
-      const columnsR = [
-        {        
-          property: 'Week',
-          header: <TableHeader>Status Report Date</TableHeader>,
-          render: (datum: any) => (
-            <Text>{datum.firstName}</Text>
-          ),
-          },
-          {
-          property: 'Student',
-          header: <TableHeader>Student</TableHeader>,
-          render: (datum: any) => (
-            <Text>{datum.lastName}</Text>
-          ),
-          },
-          {
-            property: 'Time',
-            header: <TableHeader>Submission Time</TableHeader>,
-            render: (datum: any) => (
-              <Text>{datum.time}</Text>
-            ),
-            },
-        ];
-        const pTheme = deepMerge(grommet, {
-          global: {
-            edgeSize: {
-              small: "12px"
-            },
-            elevation: {
-              light: {
-                small: "0px 1px 5px rgba(0, 0, 0, 0.50)",
-                medium: "0px 3px 8px rgba(0, 0, 0, 0.50)"
-              }
-            }
-          },
-          tab: {
-            active: {
-              //background: "dark-1",
-              color: "maroon",
-              border: undefined,
-            },
-            //background: "light-1",
-            border: undefined,
-            color: "black",
-            hover: {
-              background: "light-3"
-            },
-            margin: undefined,
-            pad: {
-              bottom: undefined,
-              horizontal: "small"
-            },
-          },
-          tabs: {
-            //background: "dark-3",
-            color: "black",
-            gap: "small",
-            header: {
-              //border: undefined,
-              //background: "light-1",
-            },
+      }
+    ];
+    const columnsR = [
+      {
+        property: 'Week',
+        header: <TableHeader>Status Report Date</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.firstName}</Text>
+        ),
+      },
+      {
+        property: 'Student',
+        header: <TableHeader>Student</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.lastName}</Text>
+        ),
+      },
+      {
+        property: 'Time',
+        header: <TableHeader>Submission Time</TableHeader>,
+        render: (datum: any) => (
+          <Text>{datum.time}</Text>
+        ),
+      },
+    ];
+    const pTheme = deepMerge(grommet, {
+      global: {
+        edgeSize: {
+          small: "12px"
+        },
+        elevation: {
+          light: {
+            small: "0px 1px 5px rgba(0, 0, 0, 0.50)",
+            medium: "0px 3px 8px rgba(0, 0, 0, 0.50)"
           }
-        });
+        }
+      },
+      tab: {
+        active: {
+          //background: "dark-1",
+          color: "maroon",
+          border: undefined,
+        },
+        //background: "light-1",
+        border: undefined,
+        color: "black",
+        hover: {
+          background: "light-3"
+        },
+        margin: undefined,
+        pad: {
+          bottom: undefined,
+          horizontal: "small"
+        },
+      },
+      tabs: {
+        //background: "dark-3",
+        color: "black",
+        gap: "small",
+        header: {
+          //border: undefined,
+          //background: "light-1",
+        },
+      }
+    });
     return (
       <Box width='large' elevation='xsmall' round='xxsmall' background='white' pad='small' gap='medium'>
         {this.props.entryType === 'view' &&
-        <Grommet theme={pTheme}>
-          <Tabs>
-            <Tab title = "Project Information">
-              <Box margin="small" pad="large">
-              <Text weight='bold' size='large'>Project Information</Text>
+          <Grommet theme={pTheme}>
+            <Tabs>
+              <Tab title="Project Information">
+                <Box margin="small" pad="large">
+                  <Text weight='bold' size='large'>Project Information</Text>
                   <Input
                     title='Project Name'
                     name='projectName'
@@ -373,104 +373,104 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
                     onChange={this.handleChange}
                     disabled={this.props.entryType === 'view' ? true : false}
                   />
-              </Box>
-            </Tab>
-            <Tab title = "Team Information">
-              <Box margin="small" pad="large">
-              <Text weight="bold" size="large">Team Contact Information</Text>
-                      <DataTable
-                      columns={columnsT.map(column => ({
-                      ...column,
-                      }))}
-                      />
-              </Box> 
-            </Tab>
-            <Tab title = "Deliverables">
-              <Box margin="small" pad="large">
-                <Text weight='bold' size='large'>Project Deliverables</Text>
+                </Box>
+              </Tab>
+              <Tab title="Team Information">
+                <Box margin="small" pad="large">
+                  <Text weight="bold" size="large">Team Contact Information</Text>
                   <DataTable
-                  columns={columnsD.map(column => ({
-                  ...column,
-                  }))}
+                    columns={columnsT.map(column => ({
+                      ...column,
+                    }))}
+                  />
+                </Box>
+              </Tab>
+              <Tab title="Deliverables">
+                <Box margin="small" pad="large">
+                  <Text weight='bold' size='large'>Project Deliverables</Text>
+                  <DataTable
+                    columns={columnsD.map(column => ({
+                      ...column,
+                    }))}
                   //data={this.state.deliverables} 
-                />
-              {this.state.alert && <Alert text='Changed Project State' />}
-              </Box>
-            </Tab>
-            <Tab title = "Status Reports">
-              <Box margin="small" pad="large">
-                <Text weight="bold" size="large">Weekly Status Reports</Text>
+                  />
+                  {this.state.alert && <Alert text='Changed Project State' />}
+                </Box>
+              </Tab>
+              <Tab title="Status Reports">
+                <Box margin="small" pad="large">
+                  <Text weight="bold" size="large">Weekly Status Reports</Text>
                   <DataTable
                     columns={columnsR.map(column => ({
-                    ...column,
+                      ...column,
                     }))}
-                    />
-              </Box>
-            </Tab>
-          </Tabs>
-        </Grommet>
+                  />
+                </Box>
+              </Tab>
+            </Tabs>
+          </Grommet>
         }
-        
-        {this.props.entryType !== 'view' && 
+
+        {this.props.entryType !== 'view' &&
           //<Text weight='bold' size='large'>Project Information</Text>
           <Input
-          title='Project Name'
-          name='projectName'
-          value={this.state.project.projectName}
-          onChange={this.handleChange}
-          disabled={this.props.entryType === 'view' ? true : false}
+            title='Project Name'
+            name='projectName'
+            value={this.state.project.projectName}
+            onChange={this.handleChange}
+            disabled={this.props.entryType === 'view' ? true : false}
 
           />
         }
         {this.props.entryType !== 'view' &&
-        <Box direction='row' gap='xsmall'>
-          <Select
-            title='Min Number of Students'
-            name='minSize'
-            options={Array.from({ length: 20 }, (v, i) => i + 1)}
-            onChange={this.onChangeMin}
-            value={this.state.project.minSize}
-            disabled={this.props.entryType === 'view'}
-            icon={this.props.entryType !== 'view' ? true : false}
-          />
-          <Select
-            title='Max Number of Students'
-            name='maxSize'
-            options={Array.from({ length: 20 - this.state.project.minSize }, (v, i) => i + this.state.project.minSize + 1)}
-            onChange={this.onChangeMax}
-            value={this.state.project.maxSize}
-            disabled={this.props.entryType === 'view'}
-            icon={this.props.entryType !== 'view' ? true : false}
-          />
-        </Box>
+          <Box direction='row' gap='xsmall'>
+            <Select
+              title='Min Number of Students'
+              name='minSize'
+              options={Array.from({ length: 20 }, (v, i) => i + 1)}
+              onChange={this.onChangeMin}
+              value={this.state.project.minSize}
+              disabled={this.props.entryType === 'view'}
+              icon={this.props.entryType !== 'view' ? true : false}
+            />
+            <Select
+              title='Max Number of Students'
+              name='maxSize'
+              options={Array.from({ length: 20 - this.state.project.minSize }, (v, i) => i + this.state.project.minSize + 1)}
+              onChange={this.onChangeMax}
+              value={this.state.project.maxSize}
+              disabled={this.props.entryType === 'view'}
+              icon={this.props.entryType !== 'view' ? true : false}
+            />
+          </Box>
         }
         {this.props.entryType !== 'view' &&
-        <Input
-          title='Technologies Expected'
-          name='technologies'
-          value={this.state.project.technologies}
-          onChange={this.handleChange}
-          disabled={this.props.entryType === 'view'}
-        />
-      }
-      {this.props.entryType !== 'view' &&
-        <Input
-          title='Background Requested'
-          name='background'
-          value={this.state.project.background}
-          onChange={this.handleChange}
-          disabled={this.props.entryType === 'view' ? true : false} 
-        />
-    }
-    {this.props.entryType !== 'view' &&
-        <TextArea
-          title='Description'
-          name='description'
-          value={this.state.project.description}
-          onChange={this.handleChange}
-          disabled={this.props.entryType === 'view'}
-        />
-      }
+          <Input
+            title='Technologies Expected'
+            name='technologies'
+            value={this.state.project.technologies}
+            onChange={this.handleChange}
+            disabled={this.props.entryType === 'view'}
+          />
+        }
+        {this.props.entryType !== 'view' &&
+          <Input
+            title='Background Requested'
+            name='background'
+            value={this.state.project.background}
+            onChange={this.handleChange}
+            disabled={this.props.entryType === 'view' ? true : false}
+          />
+        }
+        {this.props.entryType !== 'view' &&
+          <TextArea
+            title='Description'
+            name='description'
+            value={this.state.project.description}
+            onChange={this.handleChange}
+            disabled={this.props.entryType === 'view'}
+          />
+        }
         {this.props.entryType !== 'view' &&
           <Box background='brand' width='small' pad='xsmall' align='center' round='xxsmall' alignSelf='start' onClick={this.handleSubmit}>
             <Text>Submit</Text>
