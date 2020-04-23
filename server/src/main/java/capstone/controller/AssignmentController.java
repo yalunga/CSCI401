@@ -131,6 +131,9 @@ public class AssignmentController {
 		final int semester = Integer.parseInt(data.get("semester"));
 
 		try {
+			// Clear all old due dates
+			dueDateRepo.deleteAll();
+
 			// Save all due dates
 			for (final String dueDateString : dueDateStrings) {
 				final DueDate dueDate = new DueDate();
@@ -150,7 +153,7 @@ public class AssignmentController {
 	@GetMapping("/getWeeklyReportDueDates/{semester}/{fallSpring}")
 	@CrossOrigin
 	public Collection<String> getWeeklyReportDueDates(@PathVariable("semester") final int semester,
-	@PathVariable("fallspring") final int fallSpring) {
+	@PathVariable("fallSpring") final int fallSpring) {
 		try {
 			// Filter by semester and fallSpring
 			ArrayList<DueDate> dueDates = dueDateRepo.findBySemesterAndFallSpring(semester, fallSpring);
