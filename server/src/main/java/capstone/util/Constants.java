@@ -4,6 +4,7 @@ public class Constants {
 	/* Generic Response Bodies */
 	public static String SUCCESS = "success";
 	public static String EMPTY = "";
+	public static String ERROR = "ERROR";
 	
 	/* Login */
 	public static String STUDENT = "Student";

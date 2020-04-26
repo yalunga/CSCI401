@@ -30,12 +30,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import capstone.model.Global;
 import capstone.model.Project;
+import capstone.model.assignment.DueDate;
 import capstone.model.assignment.Task;
 import capstone.model.assignment.WeeklyReport;
 import capstone.model.users.Stakeholder;
 import capstone.model.users.Student;
-import capstone.repository.GlobalRepository;
-
+import capstone.repository.DueDateRepository;
 import capstone.repository.TaskRepository;
 import capstone.repository.WeeklyReportRepository;
 import capstone.service.AssignmentService;
@@ -60,6 +60,8 @@ public class AssignmentController {
 	private WeeklyReportRepository weeklyRepo;
 	@Autowired
 	private EmailService emailService;
+	@Autowired 
+	private DueDateRepository dueDateRepo;
 
 	public AssignmentController() {
 	}
@@ -68,91 +70,109 @@ public class AssignmentController {
 	 // TO DO
 
 	/* Weekly Status Reports */
+
 	@PostMapping("/weeklyReportForm")
 	@CrossOrigin
-	public @ResponseBody String weeklyReportSubmissionAttempt(@RequestBody Map<String, String> info) {
-		//Global g = globalRepo.findAll().get(0);
+	public @ResponseBody String weeklyReportSubmissionAttempt(@RequestBody final Map<String, String> info) {
 		System.out.println("Received HTTP POST");
-		String timeStamp = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss").format(new Date());
+		final String timeStamp = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss").format(new Date());
 		System.out.println(timeStamp);
 		System.out.println(info.get("email"));
-		Student s = userService.findStudentByEmail(info.get("email"));
-		Project p = userService.getStudentProject(s);
+		final Student s = userService.findStudentByEmail(info.get("email"));
+		final Project p = userService.getStudentProject(s);
 
-		WeeklyReport wr = new WeeklyReport();
+		final WeeklyReport wr = new WeeklyReport();
 		wr.setStudent(s);
 		wr.setProject(p);
-		wr.semester = 2020; //g.getSemester();
-		wr.fallSpring = 0; //g.getFallSpring(); 
+		wr.semester = 2019;
 		wr.setSubmitDateTime(timeStamp);
 		wr.setDueDate(info.get("dueDate"));
-		ArrayList<Task> thisweekTaskList = new ArrayList<>();
-		ArrayList<Task> nextweekTaskList = new ArrayList<>();
+		final ArrayList<Task> thisweekTaskList = new ArrayList<>();
+		final ArrayList<Task> nextweekTaskList = new ArrayList<>();
 
-		for (Object o : (org.json.simple.JSONArray) JSONValue.parse(info.get("thisWeekTaskList"))) {
-			JSONObject task = (JSONObject) o;
-			Task t = new Task();
+		for (final Object o : (org.json.simple.JSONArray) JSONValue.parse(info.get("thisWeekTaskList"))) {
+			final JSONObject task = (JSONObject) o;
+			final Task t = new Task();
 			t.setHours((String) task.get("hours"));
 			t.setDescription((String) task.get("description"));
 			thisweekTaskList.add(t);
 		}
 		wr.setThisWeekTasks(thisweekTaskList);
-		for (Object o : (org.json.simple.JSONArray) JSONValue.parse(info.get("nextWeekTaskList"))) {
-			JSONObject task = (JSONObject) o;
-			Task t = new Task();
+		for (final Object o : (org.json.simple.JSONArray) JSONValue.parse(info.get("nextWeekTaskList"))) {
+			final JSONObject task = (JSONObject) o;
+			final Task t = new Task();
 			t.setHours((String) task.get("hours"));
 			t.setDescription((String) task.get("description"));
 			nextweekTaskList.add(t);
 		}
 		wr.setNextWeekTasks(nextweekTaskList);
-	
+
 		assignmentService.saveAssignment(wr);
 		System.out.println("Weekly report saved!");
 
 		return Constants.SUCCESS;
 	}
-	// Weekly Report endpoint gets all reports based on semester and fallspring
-	@GetMapping("getweeklyreportsfromsemester/{semester}/{fallspring}")
-	@CrossOrigin
-	public Collection<WeeklyReport> getWeeklyReportsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
-	{
-		List<WeeklyReport> weeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
-		System.out.println("In the get weekly reports from semester"); 
-		System.out.println("semester: " + semester + " value: " + fallspring);		
-		List<WeeklyReport> validReports = new ArrayList<WeeklyReport>();
-		System.out.println("reports size: " + weeklyReports.size());
-		for (WeeklyReport wr : weeklyReports) {
 
-			if (wr.getSemester() == semester && wr.getFallSpring() == fallspring) {
-				validReports.add(wr);
-			}
-		}
-		System.out.println("valid reports size: " + validReports.size());
-		return validReports; 
-	}
-	// Weekly Report endpoint gets all reports based on stakeholder
-	@GetMapping("getweeklyreportsbystakeholder/{semester}/{email:.+}") 
+	// Stakeholder view of the weekly reports
+	@GetMapping("getweeklyreport/{semester}/{fallspring}")
 	@CrossOrigin
-	public Collection<WeeklyReport> getWeeklyReportsByStakeholder(@PathVariable("semester") int semester, @PathVariable("email") String email)
-	{
-		System.out.println("stakeholder email : " + email);
-		List<WeeklyReport> weeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
-		Stakeholder user = userService.findStakeholderByEmail(email);
-		Collection<Project> projects = user.getProjectIds();
-		if (projects == null) {
-			System.out.println("Stakeholder does not have projects assigned!");
-		}
-		List<WeeklyReport> validReports = new ArrayList<WeeklyReport>();
-		
-		for (Project p : projects) {
-			for (WeeklyReport wr : weeklyReports) {
-				if (wr.getSemester() == semester && wr.getProject().getProjectId() == p.getProjectId()) {
-					validReports.add(wr);
-				}
+	public Collection<WeeklyReport> getWeeklyReportsforStakeholder(@PathVariable("semester") final int semester,
+			@PathVariable("fallspring") final int fallspring) {
+		final List<WeeklyReport> weeklyReports = (List<WeeklyReport>) assignmentService.getWeeklyReports();
+		// List<WeeklyReport> validReports = new ArrayList<WeeklyReport>();
+		// for (WeeklyReport wr: weeklyReports) {
+		// //TO DO: parse by Semester
+		// }
+		return weeklyReports;
+	}
+
+	// Admin side setting due dates
+	@PostMapping("/setWeeklyReportDueDates")
+	@CrossOrigin
+	public @ResponseBody String setWeeklyReportDueDates(@RequestBody final Map<String, String> data) {
+		System.out.println("Received HTTP POST for setting due dates");
+		final List<String> dueDateStrings = Arrays.asList(data.get("dueDateStrings").split(","));
+		final int fallSpring = Integer.parseInt(data.get("fallSpring"));
+		final int semester = Integer.parseInt(data.get("semester"));
+
+		try {
+			// Clear all old due dates
+			dueDateRepo.deleteAll();
+
+			// Save all due dates
+			for (final String dueDateString : dueDateStrings) {
+				final DueDate dueDate = new DueDate();
+				dueDate.setDueDateString(dueDateString);
+				dueDate.setSemester(semester);
+				dueDate.setFallSpring(fallSpring);
+				dueDateRepo.save(dueDate);
 			}
+			return Constants.SUCCESS;
+		} catch (final Exception e) {
+			System.out.println("Error setting due dates.");
+			e.printStackTrace();
+			return Constants.ERROR;
 		}
-		System.out.println("valid reports size: " + validReports.size());
-		return validReports; 
+	}
+
+	@GetMapping("/getWeeklyReportDueDates/{semester}/{fallSpring}")
+	@CrossOrigin
+	public Collection<String> getWeeklyReportDueDates(@PathVariable("semester") final int semester,
+	@PathVariable("fallSpring") final int fallSpring) {
+		try {
+			// Filter by semester and fallSpring
+			ArrayList<DueDate> dueDates = dueDateRepo.findBySemesterAndFallSpring(semester, fallSpring);
+			ArrayList<String> dueDateStrings = new ArrayList<>();
+			for (DueDate dueDate: dueDates) {
+				dueDateStrings.add(dueDate.getDueDateSring());
+			}
+
+			return dueDateStrings;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error retrieving due dates");
+			return new ArrayList<>();
+		}
 	}
 
 	/* Peer Reviews */
