@@ -359,9 +359,7 @@ public class ProjectAssignment {
         if (lastProject.members.size() > 0) {
           System.out.println("last project.members.size(): " + lastProject.members.size());
           firstProject.members.add(lastProject.members.get(0));
-          System.out.println("REMOVING LAST PROJECT MEMBERS BEFORE GET 0: " + unassignedStudents.size());
           unassignedStudents.remove(lastProject.members.get(0));
-          System.out.println("REMOVING LAST PROJECT MEMBERS AFTER GET 0: " + unassignedStudents.size());
           lastProject.members.remove(0);
           numberOfStudents--;
         } else {
@@ -384,9 +382,7 @@ public class ProjectAssignment {
           if (p.members.size() < p.getMaxSize() && firstProject.members.size() > 0) {
             System.out.println("p project.members.size(): " + p.members.size());
             p.members.add(firstProject.members.get(0));
-            System.out.println("REMOVING FIRST PROJECT MEMBERS BEFORE GET 0: " + unassignedStudents.size());
             unassignedStudents.remove(firstProject.members.get(0));
-            System.out.println("REMOVING FIRST PROJECT MEMBERS AFTER GET 0: " + unassignedStudents.size());
             firstProject.members.remove(0);
             numberLessThanMin--;
           } else {
@@ -426,9 +422,7 @@ public class ProjectAssignment {
         unwantedProject = unwantedProjects.get(unwantedIndex);
         while (unwantedProject.members.size() < unwantedProject.getMaxSize() && numberOfStudents > 0) {
           unwantedProject.members.add(unassignedStudents.get(0));
-          System.out.println("REMOVING UNASSIGNEDSTUDENTS BEFORE GET 0: " + unassignedStudents.size());
           unassignedStudents.remove(0);
-          System.out.println("REMOVING UNASSIGNEDSTUDENTS BEFORE GET 0: " + unassignedStudents.size());
           numberOfStudents--;
         }
         if (unwantedProject.members.size() == unwantedProject.getMaxSize()) {
@@ -464,7 +458,7 @@ public class ProjectAssignment {
         unwantedIndex++;
       }
     }
-    if (numberOfStudents == 0) unassignedStudents.clear();
+    //if (numberOfStudents == 0) unassignedStudents.clear();
     System.out.println("NUMBER OF STUDENTS: " + numberOfStudents);
     System.out.println("UNASSIGNED STUDENTS SIZE: " + unassignedStudents.size());
   }
