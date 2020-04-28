@@ -287,7 +287,7 @@ public class Project implements Comparable<Object> {
     this.stakeholderCompany = orig.stakeholderCompany;
   }
   public double returnProjSatScore(List<Ranking> rankings) {
-    double maxScore = ProjectAssignment.getStudentSatScore(1) * maxSize; // max score possible
+    double maxScore = ProjectAssignment.getStudentSatScore(1) * this.members.size(); // max score possible
     // System.out.println("p_max: " + p_max);
     // System.out.println("maxSize: " + maxSize);
     // System.out.println("maxScore: " + maxScore);
