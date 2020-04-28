@@ -2,6 +2,7 @@ package capstone.model.assignment;
 
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Embeddable;
@@ -15,7 +16,9 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
-
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 
 import org.springframework.scheduling.TaskScheduler;
 
@@ -40,10 +43,16 @@ public class WeeklyReport extends Assignment
 	@OneToMany(targetEntity= Task.class, cascade=CascadeType.ALL)
 	private List<Task> nextWeekTasks;
 
+	@ElementCollection
+  @CollectionTable(name="weekly_report")
+  @Column(name="dueDates")
+	private List<String> dueDates;
+
 	public WeeklyReport() {
 
 		 setThisWeekTasks(new ArrayList<Task>());
 		 setNextWeekTasks(new ArrayList<Task>());
+		 setDueDates(new ArrayList<String>());
 	}
 
 	public WeeklyReport(WeeklyReport orig) {
@@ -88,7 +97,12 @@ public class WeeklyReport extends Assignment
 	public void setNextWeekTasks(List<Task> nextweekTasks) {
 		this.nextWeekTasks = nextweekTasks;
 	}
-	
-	
 
+	public List<String> getDueDates() {
+		return dueDates;
+	}
+	
+	public void setDueDates(List<String> dueDates) {
+		this.dueDates = dueDates;
+	}
 }

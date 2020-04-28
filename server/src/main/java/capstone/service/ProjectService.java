@@ -55,6 +55,7 @@ public class ProjectService {
   Vector<Project> projectsVector = new Vector<>();
   Vector<Student> studentsVector = new Vector<>();
   List<Ranking> rankings = new ArrayList<Ranking>();
+  Map<Student, Integer> maxAlgorithmStudentsToProjects = new HashMap<Student, Integer>();
 
   public List<Project> runAlgorithm() {
     try {
@@ -68,6 +69,8 @@ public class ProjectService {
       System.out.println("did we get here");
       ArrayList<Project> projects = repository.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
       rankings = rankRepo.findAll();
+      Double maxScore = 0.0;
+      Integer maxIteration = -1;
       for (int iteration = 0; iteration < 30; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
@@ -95,22 +98,56 @@ public class ProjectService {
         ProjectAssignment algorithm = new ProjectAssignment(projects, students, rankings);
         algorithm.run(iteration, NUM_RANKED, folder_name);
         double groupSatScore = algorithm.algoSatScore;
-        algorithms.put(groupSatScore, algorithm);
-        iterations.put(groupSatScore, iteration);
+        if (groupSatScore > maxScore) {
+          System.out.println("GROUP SAT SCORE IS GREATER THAN MAX SCORE");
+          maxScore = groupSatScore;
+          maxIteration = iteration;
+          System.out.println("MAX ITERATION " + maxIteration);
+          savedProjects.clear();
+          for (Project p : algorithm.assignedProjects()) {
+            System.out.println("Project " + p.getProjectId());
+            for (Student s : p.getMembers()) {
+              System.out.println("Student " + s.getUserId());
+              maxAlgorithmStudentsToProjects.put(s, p.getProjectId());
+            }
+            savedProjects.add(p);
+          }
+            
+        }
+        // algorithms.put(groupSatScore, algorithm);
+        // iterations.put(groupSatScore, iteration);
       }
 
-      Double maxScore = Collections.max(algorithms.keySet());
+      //  Collections.max(algorithms.keySet());
 
-      maxAlgorithm = algorithms.get(maxScore);
-      Integer maxIteration = iterations.get(maxScore);
+      // maxAlgorithm = algorithms.get(maxScore);
+      
       System.out.println("maxScore: " + maxScore + ". maxIteration: " + maxIteration);
 
       // System.out.println(maxAlgorithm.JSONOutputWeb());
-      savedProjects = maxAlgorithm.assignedProjects();
+      // savedProjects = maxAlgorithm.assignedProjects();
     } catch (Exception e) {
       System.out.println("HERE HEY hEy heA im here");
       e.printStackTrace();
     }
+    for (Project p : savedProjects) {
+      p.getMembers().clear();
+    }
+    for (Student s : maxAlgorithmStudentsToProjects.keySet()) {
+      Integer projectId = maxAlgorithmStudentsToProjects.get(s);
+      for (Project p : savedProjects) {
+        if (p.getProjectId() == projectId) {
+          p.getMembers().add(s);
+        }
+      }
+    }
+    for (Project p : savedProjects) {
+      System.out.println("Project " + p.getProjectId());
+      for (Student s : p.getMembers()) {
+        System.out.println("Student " + s.getUserId());
+      }
+    }
+    Collections.sort(savedProjects, new Project.alphabeticalComparator());
     return savedProjects;
   }
 
@@ -162,9 +199,7 @@ public class ProjectService {
         newStudent.setLastName(last);
         newStudent.setEmail(elements[0] + "@usc.edu");
         newStudent.setPassword(EncryptPassword.encryptPassword("student"));
-        int userId = Integer.parseInt(last);
-        userId += 2;
-        newStudent.setUserId(new Long(userId));
+        newStudent.setUserId(Long.parseLong(last)+1);
         // newStudent.setUserId(students.size());
 
         for (int i = 1; i <= NUM_RANKED; i++) { // for the student's Top 5 projects...
