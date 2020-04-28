@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Text, TableHeader, Grommet, Tabs, Tab, DataTable, grommet } from 'grommet';
+import { Box, Text, TableHeader, Grommet, Tabs, Tab, DataTable, grommet, Accordion, AccordionPanel } from 'grommet';
 import Input from './Input';
 import Select from './Select';
 import TextArea from './TextArea';
@@ -23,6 +23,7 @@ interface Project {
 }
 interface ProjectState {
   students: Array<StudentInfo>;
+  statusReports: Array<{}>;
   project: Project;
   isLoading: Boolean;
   alert: boolean
@@ -40,6 +41,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
     super(props);
     this.state = {
       students: [],
+      statusReports: [],
       project: {
         projectId: 0,
         projectName: '',
@@ -61,13 +63,24 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
   }
   componentDidMount() {
     // fetch(`${process.env.REACT_APP_API_URL}/projects/` + sessionStorage.getItem('email') + '/' + this.props.projectId)
+    // Implement Promise.all
     fetch(`${process.env.REACT_APP_API_URL}/projects/id/${this.props.projectId}`)
       .then(response => response.json())
       .then(data => this.setState({
         project: data,
         isLoading: false
       }))
-      .then(this.checkEntry);
+      .then(this.checkEntry); 
+    // Get status reports for stakeholder
+    fetch(`${process.env.REACT_APP_API_URL}/assignment/getweeklyreportsbystakeholder/`+ sessionStorage.getItem('viewingYear') + '/' + sessionStorage.getItem('email') , {
+      method: 'get',
+      headers: new Headers({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('jwt')
+      }) 
+    })
+    .then(response => response.json())
+    .then(data => this.setState({ statusReports: data, isLoading: false }));
+
   }
 
   checkEntry() {
@@ -259,23 +272,80 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
         property: 'Week',
         header: <TableHeader>Status Report Date</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.firstName}</Text>
+          <Text>{datum.dueDate}</Text>
         ),
       },
       {
         property: 'Student',
         header: <TableHeader>Student</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.lastName}</Text>
+          <Text>{datum.student.firstName} {datum.student.lastName}</Text>
         ),
       },
       {
         property: 'Time',
         header: <TableHeader>Submission Time</TableHeader>,
         render: (datum: any) => (
-          <Text>{datum.time}</Text>
+          <Text>{datum.submitDateTime}</Text>
         ),
       },
+      {
+        property: 'ThisWeekTasks',
+        header: <TableHeader>Tasks</TableHeader>,
+        render: (datum: any) => (
+          <Accordion>
+            <AccordionPanel label="This Week">
+              <Box pad="medium" background="light-2">
+                  <DataTable
+                  columns={[
+                    {
+                      property: 'hours',
+                      header:<Text>Hours</Text>,
+                      primary: true
+                    },
+                    {
+                      property: 'description',
+                      header: 'Task',
+                      render: datum => (
+                        <Text>{datum.description}</Text>
+                      )
+                    },
+                  ]}
+                  data={datum.thisWeekTasks}/>
+              </Box>
+            </AccordionPanel>
+          </Accordion>
+        ),
+      },
+      {
+        property: 'NextWeekTasks',
+        header: '',
+        render: (datum: any) => (
+          <Accordion>
+            <AccordionPanel label="Next Week">
+              <Box pad="medium" background="light-2">
+                  <DataTable
+                  columns={[
+                    {
+                      property: 'hours',
+                      header:<Text>Hours</Text>,
+                      primary: true
+                    },
+                    {
+                      property: 'description',
+                      header: 'Task',
+                      render: datum => (
+                        <Text>{datum.description}</Text>
+                      )
+                    },
+                  ]}
+                  data={datum.nextWeekTasks}/>
+              </Box>
+            </AccordionPanel>
+          </Accordion>
+        ),
+      },
+
     ];
     const pTheme = deepMerge(grommet, {
       global: {
@@ -318,7 +388,7 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
       }
     });
     return (
-      <Box width='large' elevation='xsmall' round='xxsmall' background='white' pad='small' gap='medium'>
+      <Box width='xlarge' elevation='xsmall' round='xxsmall' background='white' pad='small' gap='medium'>
         {this.props.entryType === 'view' &&
           <Grommet theme={pTheme}>
             <Tabs>
@@ -398,12 +468,13 @@ export default class ProjectInformation extends React.Component<ProjectProps, Pr
                 </Box>
               </Tab>
               <Tab title="Status Reports">
-                <Box margin="small" pad="large">
+                <Box margin="small" pad="small" align="center">
                   <Text weight="bold" size="large">Weekly Status Reports</Text>
                   <DataTable
                     columns={columnsR.map(column => ({
                       ...column,
                     }))}
+                    data={this.state.statusReports}
                   />
                 </Box>
               </Tab>

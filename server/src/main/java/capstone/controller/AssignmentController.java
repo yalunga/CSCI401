@@ -71,7 +71,7 @@ public class AssignmentController {
 	@PostMapping("/weeklyReportForm")
 	@CrossOrigin
 	public @ResponseBody String weeklyReportSubmissionAttempt(@RequestBody Map<String, String> info) {
-		//Global g = globalRepo.findAll().get(0);
+		Global g = globalRepo.findAll().get(0);
 		System.out.println("Received HTTP POST");
 		String timeStamp = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss").format(new Date());
 		System.out.println(timeStamp);
@@ -82,8 +82,8 @@ public class AssignmentController {
 		WeeklyReport wr = new WeeklyReport();
 		wr.setStudent(s);
 		wr.setProject(p);
-		wr.semester = 2020; //g.getSemester();
-		wr.fallSpring = 0; //g.getFallSpring(); 
+		wr.semester = g.getSemester();
+		wr.fallSpring = g.getFallSpring(); 
 		wr.setSubmitDateTime(timeStamp);
 		wr.setDueDate(info.get("dueDate"));
 		ArrayList<Task> thisweekTaskList = new ArrayList<>();
