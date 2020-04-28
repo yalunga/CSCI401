@@ -111,7 +111,7 @@ public class AssignmentController {
 
 		return Constants.SUCCESS;
 	}
-	// Weekly Report endpoint gets all reports based on semester and fallspring
+ 	// Weekly Report endpoint gets all reports based on semester and fallspring
 	@GetMapping("getweeklyreportsfromsemester/{semester}/{fallspring}")
 	@CrossOrigin
 	public Collection<WeeklyReport> getWeeklyReportsFromSemester(@PathVariable("semester") int semester, @PathVariable("fallspring") int fallspring)
@@ -122,7 +122,7 @@ public class AssignmentController {
 		List<WeeklyReport> validReports = new ArrayList<WeeklyReport>();
 		System.out.println("reports size: " + weeklyReports.size());
 		for (WeeklyReport wr : weeklyReports) {
-
+ 
 			if (wr.getSemester() == semester && wr.getFallSpring() == fallspring) {
 				validReports.add(wr);
 			}
