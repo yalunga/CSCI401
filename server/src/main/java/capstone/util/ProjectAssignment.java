@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -115,6 +116,36 @@ public class ProjectAssignment {
     for (Project p : projects) {
       p.members.clear();
     }
+    System.out.println("rankings size: " + rankings.size());
+    for (Ranking r : rankings) {
+      System.out.println("Rank " + r.getRank() + " for student " + r.getStudentId() + " for project " + r.getProjectId());
+    }
+    System.out.println("students size: " + students.size());
+    for (Student s: students) {
+      s.orderedRankings.clear();
+      //System.out.println("student " + s.getUserId() + "!");
+      for (int choice = 1; choice <= NUM_RANKED; choice++) {
+        for (Ranking r : rankings) {
+          // System.out.println("Rank " + r.getRank() + " for student " + r.getStudentId() + " for project " + r.getProjectId());
+          // System.out.println("choice " + choice);
+          // System.out.println("r.getStudentId() == s.getUserId(): " + (r.getStudentId().equals(s.getUserId())));
+          // System.out.println("r.getRank() == choice: " + (r.getRank() == choice));
+          if (r.getStudentId().equals(s.getUserId()) && r.getRank() == choice) {
+            int projectId = r.getProjectId();
+            Project p = null;
+            for (int i = 0; i < projects.size(); i++) {
+              if (projects.get(i).getProjectId() == projectId) {
+                p = projects.get(i);
+              }
+            }
+            String projectName = p.getProjectName();
+            System.out.println("ADDING " + projectName + " tO STUDENT " + s.getUserId() + " ORDERED RANKING for choice " + choice);
+            s.orderedRankings.add(projectName);
+          }  
+        }
+      }
+    }
+    
     // projects
     // projects = driver.getProjectsTable();
 
@@ -152,6 +183,7 @@ public class ProjectAssignment {
   public ProjectAssignment(ArrayList<Project> projects, ArrayList<Student> students, List<Ranking> rankings) {
     this.projects = new ArrayList<Project>(projects);
     this.students = new ArrayList<Student>(students);
+    System.out.println("students size: " + this.students.size());
     this.rankings = rankings;
     this.unassignedStudents = new ArrayList<Student>();
   }
@@ -200,6 +232,8 @@ public class ProjectAssignment {
     // PrintProjects();
     EliminateProjects();
     // PlaceUnassignedStudents();
+
+    
     Bump();
     PlaceUnassignedStudents();
     FinalChecks();
@@ -421,8 +455,10 @@ public class ProjectAssignment {
       while (unwantedIndex < unwantedProjects.size() && numberOfStudents > 0) {
         unwantedProject = unwantedProjects.get(unwantedIndex);
         while (unwantedProject.members.size() < unwantedProject.getMaxSize() && numberOfStudents > 0) {
+          System.out.println("remove 0 unassigned students size: " + unassignedStudents.size());
           unwantedProject.members.add(unassignedStudents.get(0));
           unassignedStudents.remove(0);
+          System.out.println("remove 0 unassigned students size: " + unassignedStudents.size());
           numberOfStudents--;
         }
         if (unwantedProject.members.size() == unwantedProject.getMaxSize()) {
@@ -458,7 +494,7 @@ public class ProjectAssignment {
         unwantedIndex++;
       }
     }
-    //if (numberOfStudents == 0) unassignedStudents.clear();
+    // if (numberOfStudents == 0) unassignedStudents.clear();
     System.out.println("NUMBER OF STUDENTS: " + numberOfStudents);
     System.out.println("UNASSIGNED STUDENTS SIZE: " + unassignedStudents.size());
   }
@@ -468,8 +504,10 @@ public class ProjectAssignment {
     Collections.shuffle(unassignedStudents);
     for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
       System.out.println("unassignedstudents size: " + unassignedStudents.size());
-      System.out.println("BUMPING UNASSIGNED STUDENT");
       Student s = it.next();
+      System.out.println("BUMPING UNASSIGNED STUDENT " + s.getUserId());
+
+      
       if (BumpHelper(s, 0, null, -1)) {
         it.remove();
       }
@@ -479,47 +517,100 @@ public class ProjectAssignment {
   boolean BumpHelper(Student s, int level, Project displacedProj, int indexOfDisplaced) {
     if (level > 3)
       return false;
+    System.out.println("LEVEL" + level);
+    System.out.println("s.orderedRankings.size: " + s.orderedRankings.size());
+    
+    // if there is space for their top 5
     for (int i = 0; i < s.orderedRankings.size(); i++) {
+      System.out.println("there is space for their top 5?");
       Project p = GetProjectWithName(s.orderedRankings.get(i));
-      if (p != null && p.members.size() < p.getMaxSize() && !p.members.contains(s) && p != displacedProj
-          && p.members.size() + 1 >= p.getMinSize()) { // found a spot for them
+      System.out.println("project: " + p.getProjectId());
+      System.out.println("project members size: " + p.members.size());
+      System.out.println("project max size: " + p.getMaxSize());
+      System.out.println("does p contain s: " + p.members.contains(s));
+      if (displacedProj != null)
+        System.out.println("displaced project: " + displacedProj.getProjectId());
+      System.out.println("student " + s.getUserId());
+      if (p != null && p.members.size() < p.getMaxSize() && !p.members.contains(s) && p != displacedProj && p.members.size() >= p.getMinSize()) { // found a
+                                                                                                            // spot for
+                                                                                                            // them
         System.out.println("ADDING " + s.getLastName() + " to project " + p.getProjectId());
-        if (displacedProj != null)
-          System.out.println("REMOVING " + displacedProj.members.get(indexOfDisplaced).getLastName() + " from project "
-              + displacedProj.getProjectId());
-
-        p.members.add(s);
-        if (displacedProj != null)
-          displacedProj.members.remove(indexOfDisplaced);
+        boolean add = (displacedProj == null) || (displacedProj.members.size() > displacedProj.getMinSize());
+        if (add) p.members.add(s);
+        if (displacedProj != null) {
+          displacedProj.members.remove(s);
+        }
         return true;
       }
     }
-
-    if (s.orderedRankings.size() <= 0) {
-      return false;
+    // if we need to bump someone out
+    for (int i = 0; i < s.orderedRankings.size(); i++) {
+      System.out.println("there is NOT space for their top 5?");
+      Project p = GetProjectWithName(s.orderedRankings.get(i));
+      System.out.println("project: " + p.getProjectId());
+      System.out.println("project members size: " + p.members.size());
+      System.out.println("project max size: " + p.getMaxSize());
+      System.out.println("does p contain s: " + p.members.contains(s));
+      if (displacedProj != null)
+        System.out.println("displaced project: " + displacedProj.getProjectId());
+      System.out.println("student " + s.getUserId());
+      //roject p = GetProjectWithName(s.orderedRankings.get(i));
+      if (p != null && p.members.size() == p.getMaxSize() && !p.members.contains(s) && p != displacedProj && p.members.size() >= p.getMinSize())  {
+        Random rand = new Random();
+        int index = rand.nextInt(p.members.size());
+        Student displaced = (p.members).get(index);
+        if (p.members.size() > p.getMinSize() && !p.members.contains(s) && BumpHelper(displaced, level + 1, p, index)) {
+          System.out.println("BUMP HELPER IF STATEMENT");
+          System.out.println("ADDED " + s.getLastName() + " to project " + p.getProjectId());
+          boolean add = (displacedProj == null) || (displacedProj.members.size() > displacedProj.getMinSize());
+          if (add) p.members.add(s);
+          if (displacedProj != null) {
+            displacedProj.members.remove(s);
+          }
+          return true;
+        }
+      }
     }
-
-    Project p = GetProjectWithName(s.orderedRankings.get(0));
-
-    if (p == null) {
-      return false;
-    }
-
-    Random rand = new Random();
-    int index = rand.nextInt(p.members.size());
-    Student displaced = (p.members).get(index);
-
-    if (p.members.size() - 1 >= p.getMinSize() && !p.members.contains(s)
-        && BumpHelper(displaced, level + 1, p, index)) {
-      System.out.println("BUMP HELPER IF STATEMENT");
-      // if (!p.members.contains(s)) {
-      // p.members.remove(displaced);
-      System.out.println("ADDED " + s.getLastName() + " to project " + p.getProjectId());
-      p.members.add(s);
-      // }
-      return true;
-    }
-
+    // Random rand = new Random();
+    // int randProjIndex = rand.nextInt(projects.size());
+    // Project randProject = projects.get(randProjIndex);
+    // //int displacedStudentIndex = rand.nextInt(randProject.members.size());
+    // //Student displaced = randProject.members.get(displacedStudentIndex);
+    // System.out.println("RANDOM project");
+    // // Project p = GetProjectWithName(s.orderedRankings.get(i));
+    // System.out.println("project: " + randProject.getProjectId());
+    // System.out.println("project members size: " + randProject.members.size());
+    // System.out.println("project max size: " + randProject.getMaxSize());
+    // System.out.println("does p contain s: " + randProject.members.contains(s));
+    // if (displacedProj != null)
+    //   System.out.println("displaced project: " + displacedProj.getProjectId());
+    // System.out.println("student " + s.getUserId());
+    // if (randProject != null && randProject.members.size() < randProject.getMaxSize() && !randProject.members.contains(s)
+    //     && randProject != displacedProj && randProject.members.size() >= randProject.getMinSize()) { // found a spot for them
+    //   System.out.println("ADDING " + s.getLastName() + " to project " + randProject.getProjectId());
+    //   boolean add = (displacedProj == null) || (displacedProj.members.size() > displacedProj.getMinSize());
+    //   if (add) randProject.members.add(s);
+    //   if (displacedProj != null) {
+    //     displacedProj.members.remove(s);
+    //   }
+    //   return true;
+    // } else if (randProject != null && randProject.members.size() == randProject.getMaxSize()
+    //     && !randProject.members.contains(s) && randProject != displacedProj && randProject.members.size() >= randProject.getMinSize()) { // found a spot for them
+    //   //Random rand = new Random();
+    //   int index = rand.nextInt(randProject.members.size());
+    //   Student displaced = (randProject.members).get(index);
+    //   if (randProject.members.size() > randProject.getMinSize() && !randProject.members.contains(s)
+    //       && BumpHelper(displaced, level + 1, randProject, index)) {
+    //     System.out.println("BUMP HELPER IF STATEMENT");
+    //     System.out.println("ADDED " + s.getLastName() + " to project " + randProject.getProjectId());
+    //     boolean add = (displacedProj == null) || (displacedProj.members.size() > displacedProj.getMinSize());
+    //     if (add) randProject.members.add(s);
+    //     if (displacedProj != null) {
+    //       displacedProj.members.remove(s);
+    //     }
+    //     return true;
+    //   }
+    // }
     return false;
   }
 
@@ -561,6 +652,7 @@ public class ProjectAssignment {
 
   void PlaceUnassignedStudents() {
     Collections.shuffle(unassignedStudents);
+    System.out.println("PLACE UNASSIGNED STUDENTS: " + unassignedStudents.size());
     ArrayList<Project> unassignedProjects = new ArrayList<Project>();
     ArrayList<Project> assignedProjects = new ArrayList<Project>();
     Iterator<Student> it = unassignedStudents.iterator();
@@ -583,8 +675,10 @@ public class ProjectAssignment {
         }
         for (it = unassignedStudents.iterator(); it.hasNext();) {
           Student s = it.next();
+          System.out.println("UNASSIGNED STUDENT " + s.getUserId());
           if (p.members.size() < p.getMinSize()) {
             p.members.add(s);
+            System.out.println("ADDING " + s.getUserId() + " TO PROJECT " +p.getProjectId());
             unassignedStudentsCopy.remove(s);
             lastAssignedProject = p;
           } else {
@@ -605,12 +699,14 @@ public class ProjectAssignment {
       List<Student> lastAssignedProjectMembers = lastAssignedProject.getMembers();
       int index = -1;
       for (Project p : assignedProjects) {
-        while (index < lastAssignedProjectMembers.size() - 1) {
+        while (index < lastAssignedProjectMembers.size()-1) {
           index++;
           if (p.getMembers().size() < p.getMaxSize()) {
+            System.out.println("LAST ASSXIGNED PROJECT ADDING " + lastAssignedProjectMembers.get(index).getUserId() + " TO PROJECT " +p.getProjectId());
             p.getMembers().add(lastAssignedProjectMembers.get(index));
             unassignedStudents.remove(lastAssignedProjectMembers.get(index));
           } else {
+            index--;
             break;
           }
         }
