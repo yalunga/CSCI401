@@ -360,7 +360,7 @@ public class Project implements Comparable<Object> {
 			}
     }
     // sorts by min size in ascending order
-		public static class openSpotsToMinSizeComparator implements Comparator {
+		public static class openSpotsToMinSizeAscendingComparator implements Comparator {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Project) || !(o2 instanceof Project))
 					throw new ClassCastException();
@@ -369,14 +369,23 @@ public class Project implements Comparable<Object> {
 				Project p2 = (Project) o2;
         int openSpots1 = p1.getMembers().size()-p1.getMinSize();
         int openSpots2 = p2.getMembers().size()-p2.getMinSize();
-		        if (openSpots1 < openSpots2) return -1;
-		        else if (openSpots1 > openSpots2) return 1;
-		        else return 0;
+            if (p1.getMembers().size() == 0 && p2.getMembers().size() == 0) {
+              if (openSpots1 < openSpots2) return 1;
+              else if (openSpots1 > openSpots2) return -1;
+              else return 0;
+            }
+            else if (p1.getMembers().size() == 0 && p2.getMembers().size() != 0) return 1;
+            else if (p1.getMembers().size() != 0 && p2.getMembers().size() == 0) return -1;
+		        else if (p1.getMembers().size() == p2.getMembers().size() && openSpots1 < openSpots2) return 1;
+		        else if (p1.getMembers().size() == p2.getMembers().size() && openSpots1 > openSpots2) return -1;
+            else if (p1.getMembers().size() > p2.getMembers().size() && openSpots1 == openSpots2) return -1;
+            else if (p1.getMembers().size() < p2.getMembers().size() && openSpots1 == openSpots2) return 1;
+            else return 0;
 			}
     }
     
     // sorts by min size in descending order
-		public static class openSpotsToMaxSizeComparator implements Comparator {
+		public static class openSpotsToMaxSizeDescendingComparator implements Comparator {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Project) || !(o2 instanceof Project))
 					throw new ClassCastException();
@@ -386,7 +395,10 @@ public class Project implements Comparable<Object> {
         
         int openSpots1 = p1.getMaxSize()-p1.getMembers().size();
         int openSpots2 = p2.getMaxSize()-p2.getMembers().size();
-		        if (openSpots1 > openSpots2) return -1;
+        if (p1.getMembers().size() == 0 && p2.getMembers().size() == 0) return 0;
+        else if (p1.getMembers().size() == 0 && p2.getMembers().size() != 0) return 1;
+        else if (p1.getMembers().size() != 0 && p2.getMembers().size() == 0) return -1;
+		        else if (openSpots1 > openSpots2) return -1;
 		        else if (openSpots1 < openSpots2) return 1;
 		        else return 0;
 			}

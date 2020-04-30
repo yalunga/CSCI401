@@ -72,7 +72,7 @@ public class ProjectService {
       rankings = rankRepo.findAll();
       Double maxScore = 0.0;
       Integer maxIteration = -1;
-      for (int iteration = 0; iteration < 30; iteration++) {
+      for (int iteration = 0; iteration < 50; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
           // Student student = studentRepo.findByUserId(rank.getId());
@@ -95,7 +95,9 @@ public class ProjectService {
             project.incN();
           }
         }
-        
+        for (int i = 0; i < projects.size(); i++) {
+          System.out.println("project id: " + projects.get(i).getProjectId());
+        }
         ProjectAssignment algorithm = new ProjectAssignment(projects, students, rankings);
         algorithm.run(iteration, NUM_RANKED, folder_name);
         double groupSatScore = algorithm.algoSatScore;
@@ -166,6 +168,7 @@ public class ProjectService {
 
         // System.out.println("projectIdString" +
         // Integer.parseInt(elements[0].substring(11)));
+        
         newProject.setProjectId(Integer.parseInt(elements[0].substring(11))); // TODO: MAKE THIS DYNAMIC WITH
                                                                               // AUTOINCREMENT
         newProject.setMinSize(Integer.parseInt(elements[1]));
@@ -175,7 +178,7 @@ public class ProjectService {
         newProject.setSemester(2020);
         projectsVector.addElement(newProject);
 
-        System.out.println("Saving project: " + newProject.getProjectName());
+        System.out.println("Saving project: " + newProject.getProjectId());
         save(newProject);
 
         // writer.println(newProject);
