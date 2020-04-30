@@ -212,7 +212,7 @@ public class ProjectService {
           // add rankedProject to the Student data structure:
           String projectName = rankedProject.getProjectName();
           newStudent.rankings.put(projectName, i);
-          newStudent.orderedRankings.add(projectName);
+          newStudent.orderedRankings.add(projectId);
           newStudent.semester = 2020;
 
           // popularity metrics:
@@ -241,7 +241,7 @@ public class ProjectService {
         System.out.println("studentId: " + studentId);
 
         rankRepo.save(new Ranking(studentId, projectId, entry.getValue()));
-        s.orderedRankings.add(p.getProjectName());
+        s.orderedRankings.add(projectId);
       }
     }
   }

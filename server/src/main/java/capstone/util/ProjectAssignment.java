@@ -132,15 +132,16 @@ public class ProjectAssignment {
           //  System.out.println("r.getRank() == choice: " + (r.getRank() == choice));
           if (r.getStudentId().equals(s.getUserId()) && r.getRank() == choice) {
             int projectId = r.getProjectId();
+            System.out.println("project id: " + projectId);
             Project p = null;
             for (int i = 0; i < projects.size(); i++) {
               if (projects.get(i).getProjectId() == projectId) {
                 p = projects.get(i);
               }
             }
-            String projectName = p.getProjectName();
-            System.out.println("ADDING " + projectName + " tO STUDENT " + s.getUserId() + " ORDERED RANKING for choice " + choice);
-            s.orderedRankings.add(projectName);
+            //String projectName = p.getProjectName();
+            System.out.println("ADDING " + projectId + " tO STUDENT " + s.getUserId() + " ORDERED RANKING for choice " + choice);
+            s.orderedRankings.add(projectId);
           }  
         }
       }
@@ -523,7 +524,7 @@ public class ProjectAssignment {
     // if there is space for their top 5
     for (int i = 0; i < s.orderedRankings.size(); i++) {
       System.out.println("there is space for their top 5?");
-      Project p = GetProjectWithName(s.orderedRankings.get(i));
+      Project p = getProjectById(s.orderedRankings.get(i));
       System.out.println("project: " + p.getProjectId());
       System.out.println("project members size: " + p.members.size());
       System.out.println("project max size: " + p.getMaxSize());
@@ -546,7 +547,7 @@ public class ProjectAssignment {
     // if we need to bump someone out
     //for (int i = 0; i < s.orderedRankings.size(); i++) {
       System.out.println("there is NOT space for their top 5?");
-      Project p = GetProjectWithName(s.orderedRankings.get(0));
+      Project p = getProjectById(s.orderedRankings.get(0));
       System.out.println("project: " + p.getProjectId());
       System.out.println("project members size: " + p.members.size());
       System.out.println("project max size: " + p.getMaxSize());
