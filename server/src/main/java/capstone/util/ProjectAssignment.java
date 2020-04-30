@@ -123,13 +123,13 @@ public class ProjectAssignment {
     System.out.println("students size: " + students.size());
     for (Student s: students) {
       s.orderedRankings.clear();
-      //System.out.println("student " + s.getUserId() + "!");
+      System.out.println("student " + s.getUserId() + "!");
       for (int choice = 1; choice <= NUM_RANKED; choice++) {
         for (Ranking r : rankings) {
-          // System.out.println("Rank " + r.getRank() + " for student " + r.getStudentId() + " for project " + r.getProjectId());
-          // System.out.println("choice " + choice);
-          // System.out.println("r.getStudentId() == s.getUserId(): " + (r.getStudentId().equals(s.getUserId())));
-          // System.out.println("r.getRank() == choice: " + (r.getRank() == choice));
+          //  System.out.println("Rank " + r.getRank() + " for student " + r.getStudentId() + " for project " + r.getProjectId());
+          //  System.out.println("choice " + choice);
+          //  System.out.println("r.getStudentId() == s.getUserId(): " + (r.getStudentId().equals(s.getUserId())));
+          //  System.out.println("r.getRank() == choice: " + (r.getRank() == choice));
           if (r.getStudentId().equals(s.getUserId()) && r.getRank() == choice) {
             int projectId = r.getProjectId();
             Project p = null;
@@ -544,9 +544,9 @@ public class ProjectAssignment {
       }
     }
     // if we need to bump someone out
-    for (int i = 0; i < s.orderedRankings.size(); i++) {
+    //for (int i = 0; i < s.orderedRankings.size(); i++) {
       System.out.println("there is NOT space for their top 5?");
-      Project p = GetProjectWithName(s.orderedRankings.get(i));
+      Project p = GetProjectWithName(s.orderedRankings.get(0));
       System.out.println("project: " + p.getProjectId());
       System.out.println("project members size: " + p.members.size());
       System.out.println("project max size: " + p.getMaxSize());
@@ -570,7 +570,7 @@ public class ProjectAssignment {
           return true;
         }
       }
-    }
+    //}
     // Random rand = new Random();
     // int randProjIndex = rand.nextInt(projects.size());
     // Project randProject = projects.get(randProjIndex);
