@@ -66,13 +66,12 @@ public class ProjectService {
       int targetFallSpring = 0;
       System.out.println("targetFallSpring: " + targetFallSpring);
       ArrayList<Student> students = studentRepo.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
-      //System.out.println("students size: " + students.size());
       System.out.println("did we get here");
       ArrayList<Project> projects = repository.findBySemesterAndFallSpring(targetSemester, targetFallSpring);
       rankings = rankRepo.findAll();
       Double maxScore = 0.0;
       Integer maxIteration = -1;
-      for (int iteration = 0; iteration < 50; iteration++) {
+      for (int iteration = 0; iteration < 10; iteration++) {
         System.out.println("iteration " + iteration + "!");
         for (Ranking rank : rankings) {
           // Student student = studentRepo.findByUserId(rank.getId());
@@ -98,6 +97,11 @@ public class ProjectService {
         for (int i = 0; i < projects.size(); i++) {
           System.out.println("project id: " + projects.get(i).getProjectId());
         }
+        // int i = 1;
+        // for (Ranking rank : rankings) {
+        //   System.out.println("ranking " + i + ": choice " + rank.getRank() + " student " + rank.getStudentId() + ", project: " + rank.getProjectId());
+        //   i++;
+        // }
         ProjectAssignment algorithm = new ProjectAssignment(projects, students, rankings);
         algorithm.run(iteration, NUM_RANKED, folder_name);
         double groupSatScore = algorithm.algoSatScore;
