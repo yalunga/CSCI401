@@ -95,6 +95,23 @@ public class ProjectController {
     return validProjects;
   }
 
+  @GetMapping("/{semester}/{fallspring}/rankings")
+  @CrossOrigin
+  public List<Ranking> getRankingsBySemester(@PathVariable("semester") int semester,
+      @PathVariable("fallspring") int fallSpring) {
+    List<Ranking> rankings = projectService.rankRepo.findAll();
+    List<Student> students = userService.getStudentsBySemester(semester, fallSpring);
+    List<Ranking> ranksForSemester = new ArrayList<Ranking>();
+    for (Ranking rank : rankings) {
+      for (Student student : students) {
+        if (rank.getStudentId() == student.getUserId()) {
+          ranksForSemester.add(rank);
+        }
+      }
+    }
+    return ranksForSemester;
+  }
+
   @GetMapping("/{email:.+}/rankings")
   @CrossOrigin
   public List<Ranking> getRankOrderedProjects(@PathVariable("email") String email) {

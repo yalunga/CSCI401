@@ -62,7 +62,7 @@ export default class ProjectRankingPage extends React.Component<Props, State> {
     for (const ranking of rankings) {
       for (const project of acceptedProjects) {
         if (project.projectId === ranking.projectId) {
-          rankedProjects[ranking.rank] = project;
+          rankedProjects[ranking.rank - 1] = project;
           acceptedProjects.splice(acceptedProjects.indexOf(project), 1);
         }
       }

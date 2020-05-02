@@ -6,6 +6,7 @@ import UserManagement from './UserManagement/index';
 import ProjectProposals from './ProjectProposals';
 import ProjectMatching from './ProjectMatching';
 import ProjectPage from './ProjectMatching/ProjectPage';
+import StudentRankings from './StudentRankings';
 
 interface AdminNavigationProps { }
 interface AdminNavigationState {
@@ -111,6 +112,9 @@ export default class AdminNavigation extends React.Component<AdminNavigationProp
               <Anchor href='/admin/proposals' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Project Proposals
             </Anchor>
+              <Anchor href='/admin/studentrankings' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
+                Student Rankings
+            </Anchor>
               <Anchor href='/admin/matching' size='xsmall' color='dark-5' style={{ textTransform: 'uppercase', letterSpacing: 2 }}>
                 Approved Projects
             </Anchor>
@@ -158,8 +162,8 @@ export default class AdminNavigation extends React.Component<AdminNavigationProp
           <Route exact path="/admin" component={UserManagement} />
           <Route exact path="/admin/proposals" component={ProjectProposals} />
           <Route exact path='/admin/matching' component={ProjectMatching} />
+          <Route exact path='/admin/studentrankings' component={StudentRankings} />
           <Route path="/admin/project/:projectId/:entry" handler={ProjectPage} component={ProjectPage} />
-
         </BrowserRouter>
       </Box>
     );
