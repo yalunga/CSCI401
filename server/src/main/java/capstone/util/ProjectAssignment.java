@@ -356,10 +356,8 @@ public class ProjectAssignment {
   }
 
   void Bump() {
-	
     Collections.shuffle(unassignedStudents);
     for (Iterator<Student> it = unassignedStudents.iterator(); it.hasNext();) {
-	  System.out.println("unassignedstudents size: " + unassignedStudents.size());
       System.out.println("BUMPING UNASSIGNED STUDENT");
       Student s = it.next();
       if (BumpHelper(s, 0, null, -1)) {
