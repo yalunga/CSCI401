@@ -288,29 +288,19 @@ public class Project implements Comparable<Object> {
   }
   public double returnProjSatScore(List<Ranking> rankings) {
     double maxScore = ProjectAssignment.getStudentSatScore(1) * this.members.size(); // max score possible
-    // System.out.println("p_max: " + p_max);
-    // System.out.println("maxSize: " + maxSize);
-    // System.out.println("maxScore: " + maxScore);
-    System.out.println("proj id:" + getProjectId());
     double totalScore = 0;
     if (!members.isEmpty()) {
       for (Student student : members) {
-        
         for (Ranking r : rankings) {
           if (r.getStudentId() == student.getId() && r.getProjectId() == this.projectId) {
             int ranking = r.getRank();
             totalScore += ProjectAssignment.getStudentSatScore(ranking);
-            System.out.println("ranking: " + ranking);
-            System.out.println("totalScore: " + totalScore);
           }
         }
-        
-        
       }
     }
 
     this.projSatScore = totalScore / maxScore;
-    System.out.println("this. project sat score: " + this.projSatScore);
     return this.projSatScore;
   }
 
@@ -360,7 +350,7 @@ public class Project implements Comparable<Object> {
 			}
     }
     // sorts by min size in ascending order
-		public static class openSpotsToMinSizeComparator implements Comparator {
+		public static class openSpotsToMinSizeAscendingComparator implements Comparator {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Project) || !(o2 instanceof Project))
 					throw new ClassCastException();
@@ -369,14 +359,23 @@ public class Project implements Comparable<Object> {
 				Project p2 = (Project) o2;
         int openSpots1 = p1.getMembers().size()-p1.getMinSize();
         int openSpots2 = p2.getMembers().size()-p2.getMinSize();
-		        if (openSpots1 < openSpots2) return -1;
-		        else if (openSpots1 > openSpots2) return 1;
-		        else return 0;
+            if (p1.getMembers().size() == 0 && p2.getMembers().size() == 0) {
+              if (openSpots1 < openSpots2) return 1;
+              else if (openSpots1 > openSpots2) return -1;
+              else return 0;
+            }
+            else if (p1.getMembers().size() == 0 && p2.getMembers().size() != 0) return 1;
+            else if (p1.getMembers().size() != 0 && p2.getMembers().size() == 0) return -1;
+		        else if (p1.getMembers().size() == p2.getMembers().size() && openSpots1 < openSpots2) return 1;
+		        else if (p1.getMembers().size() == p2.getMembers().size() && openSpots1 > openSpots2) return -1;
+            else if (p1.getMembers().size() > p2.getMembers().size() && openSpots1 == openSpots2) return -1;
+            else if (p1.getMembers().size() < p2.getMembers().size() && openSpots1 == openSpots2) return 1;
+            else return 0;
 			}
     }
     
     // sorts by min size in descending order
-		public static class openSpotsToMaxSizeComparator implements Comparator {
+		public static class openSpotsToMaxSizeDescendingComparator implements Comparator {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Project) || !(o2 instanceof Project))
 					throw new ClassCastException();
@@ -386,9 +385,16 @@ public class Project implements Comparable<Object> {
         
         int openSpots1 = p1.getMaxSize()-p1.getMembers().size();
         int openSpots2 = p2.getMaxSize()-p2.getMembers().size();
-		        if (openSpots1 > openSpots2) return -1;
-		        else if (openSpots1 < openSpots2) return 1;
-		        else return 0;
+        if (p1.getMembers().size() == 0 && p2.getMembers().size() == 0) {
+          if (openSpots1 < openSpots2) return 1;
+          else if (openSpots2 > openSpots2) return -1;
+          return 0;
+        }
+        else if (p1.getMembers().size() == 0 && p2.getMembers().size() != 0) return 1;
+        else if (p1.getMembers().size() != 0 && p2.getMembers().size() == 0) return -1;
+		    else if (openSpots1 > openSpots2) return -1;
+		    else if (openSpots1 < openSpots2) return 1;
+		    else return 0;
 			}
     }
     // sorts by name in ascending order
